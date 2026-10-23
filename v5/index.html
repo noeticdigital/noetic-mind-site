@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#061a38" />
+<title>Noetic Mind — Know what to build next</title>
+<meta name="description" content="Noetic Mind installs a discovery operating system inside your product team, trains you to run it every week, and coaches the hard calls. $5,000/month." />
+<!--
+  NOETIC MIND / V5 — A WORLD THAT DECIDES
+  One persistent 3D world (Three.js, generated in code, no model files). Scrolling flies the
+  camera across it, one station per step of the method: customers -> the outcome -> options
+  converge -> options tested -> ship, measure, and the evidence loops home.
+  Navy night, pale-blue architecture, glowing blue paths. No JS / no WebGL / reduced motion ->
+  a clean static page with every word present.
+-->
+<script>document.documentElement.classList.add('js');</script>
+<link rel="icon" type="image/svg+xml" href="../noetic-logo.svg" />
+<link rel="preconnect" href="https://fonts.bunny.net" />
+<link href="https://fonts.bunny.net/css?family=geist:400,500,600,700|geist-mono:400,500" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#061a38; --navy-2:#0a1f42; --raise:#0f2a55; --line:rgba(143,182,230,.18);
+    --white:#ffffff; --text:#e7eef8; --muted:#a9b8d0; --blue:#5e95d8; --blue-2:#8fb6e6; --blue-ink:#184c84;
+    --f:'Geist',system-ui,sans-serif; --mono:'Geist Mono',ui-monospace,monospace; --ease:cubic-bezier(.2,.7,.2,1);
+    --hero:1; --steps:0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:var(--f);background:var(--navy);color:var(--text);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--blue-2);outline-offset:3px;border-radius:6px}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+  .mono{font-family:var(--mono)}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-2)}
+  section[id]{scroll-margin-top:72px}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  /* buttons */
+  .btn{display:inline-flex;align-items:center;gap:14px;min-height:48px;padding:0 22px;border-radius:999px;background:var(--white);color:var(--navy);
+    font:600 15px var(--f);text-decoration:none;white-space:nowrap;transition:transform .2s var(--ease),background-color .2s var(--ease)}
+  .btn:hover{transform:translateY(-1px);background:#eaf2ff}
+  .btn svg{width:16px;height:16px}
+  .btn-ghost{background:transparent;color:var(--white);box-shadow:inset 0 0 0 1px rgba(255,255,255,.28)}
+  .btn-ghost:hover{background:rgba(255,255,255,.08)}
+
+  /* header */
+  .masthead{position:fixed;inset:0 0 auto 0;z-index:50;background:linear-gradient(rgba(6,26,56,.82),rgba(6,26,56,0));}
+  .bar{display:flex;align-items:center;gap:28px;height:72px}
+  .brand{display:flex;align-items:center;gap:10px;font:600 17px var(--f);text-decoration:none;color:var(--white)}
+  .brand img{width:28px;height:28px;border-radius:7px;box-shadow:0 0 0 1px rgba(255,255,255,.22)}
+  .nav{display:flex;gap:26px;margin-left:auto}
+  .nav a{font-size:14px;color:var(--muted);text-decoration:none}
+  .nav a:hover{color:var(--white)}
+  .bar .btn{min-height:44px;padding:0 18px;font-size:14px}
+
+  /* ---------- journey: static by default (no JS / no WebGL / reduced motion) ---------- */
+  .journey{position:relative;z-index:1}
+  .stage{padding:140px 0 80px}
+  .hero-copy{max-width:880px;margin:0 auto;padding:0 24px;text-align:center}
+  .hero-copy h1{font-size:clamp(42px,6.4vw,88px);font-weight:600;letter-spacing:-.045em;line-height:.98;color:var(--white)}
+  .hero-copy h1 span{display:block}
+  .hero-copy h1 .dim{color:#8ea3c4}
+  .hero-sub{max-width:600px;margin:26px auto 0;font-size:19px;color:var(--text)}
+  .hero-price{margin-top:14px;font:400 14px var(--mono);color:var(--muted)}
+  .hero-price strong{color:var(--white);font-weight:500}
+  .hero-cta{margin-top:28px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+  .scroll-hint{display:none}
+
+  .steps{list-style:none;max-width:720px;margin:96px auto 0;padding:0 24px;counter-reset:s}
+  .steps > li{display:grid;grid-template-columns:40px 1fr;gap:6px 18px;padding:22px 0;border-top:1px solid var(--line)}
+  .step-n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;font:500 12px var(--mono);color:var(--blue-2);box-shadow:inset 0 0 0 1px var(--line)}
+  .steps h3{font-size:20px;font-weight:600;color:var(--white);letter-spacing:-.01em;align-self:center}
+  .step-desc{grid-column:2;color:var(--muted);font-size:16px;max-width:52ch}
+  .step-bar{display:none}
+
+  /* ---------- journey: 3D mode ---------- */
+  .webgl .world{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block}
+  .webgl .journey{height:900vh}
+  .webgl .stage{position:sticky;top:0;height:100vh;padding:0;overflow:hidden;pointer-events:none}
+  .webgl .stage a,.webgl .stage button{pointer-events:auto}
+  .webgl .stage::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(60% 46% at 50% 26%,rgba(6,26,56,.86),rgba(6,26,56,0) 70%);opacity:var(--hero)}
+  .webgl .hero-copy{position:absolute;left:50%;top:clamp(110px,15vh,170px);width:min(880px,100%);transform:translate(-50%,calc((1 - var(--hero)) * -40px));opacity:var(--hero);visibility:visible}
+  .webgl .hero-copy.gone{visibility:hidden}
+  .webgl .scroll-hint{display:flex;position:absolute;left:50%;bottom:34px;transform:translateX(-50%);align-items:center;gap:10px;
+    font:500 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--blue-2);opacity:var(--hero)}
+  .webgl .scroll-hint i{display:block;width:1px;height:26px;background:linear-gradient(var(--blue-2),transparent)}
+  .webgl .steps{position:absolute;left:clamp(24px,4vw,56px);bottom:clamp(28px,6vh,64px);margin:0;padding:22px 24px 18px;width:min(430px,calc(100vw - 48px));
+    max-width:none;border-radius:18px;background:rgba(6,26,56,.72);box-shadow:inset 0 0 0 1px var(--line);backdrop-filter:blur(10px);
+    opacity:var(--steps);transform:translateY(calc((1 - var(--steps)) * 24px))}
+  .webgl .steps > li{border-top:0;padding:7px 0;gap:0 14px;grid-template-columns:30px 1fr}
+  .webgl .steps h3{font-size:14px;font-weight:500;color:var(--muted);transition:color .3s,font-size .3s}
+  .webgl .step-n{width:26px;height:26px;font-size:11px;transition:background-color .3s,color .3s}
+  .webgl .step-desc{max-height:0;opacity:0;overflow:hidden;font-size:15px;transition:max-height .45s var(--ease),opacity .35s var(--ease),margin .45s var(--ease)}
+  .webgl .step-bar{display:block;position:absolute;left:12px;top:40px;bottom:6px;width:2px;border-radius:2px;background:var(--line);opacity:0;transition:opacity .3s}
+  .webgl .step-bar::after{content:"";position:absolute;inset:0 0 auto 0;height:calc(var(--sp,0) * 100%);background:var(--blue-2);border-radius:2px}
+  .webgl .steps > li{position:relative}
+  .webgl .steps > li.active h3{font-size:19px;color:var(--white)}
+  .webgl .steps > li.active .step-n{background:var(--white);color:var(--navy);box-shadow:none}
+  .webgl .steps > li.active .step-desc{max-height:140px;opacity:1;margin:8px 0 10px}
+  .webgl .steps > li.active .step-bar{opacity:1}
+
+  /* ---------- content ---------- */
+  .content{position:relative;z-index:2;background:var(--navy)}
+  .sec{padding:120px 0;border-top:1px solid var(--line)}
+  .sec h2{font-size:clamp(34px,4.4vw,60px);font-weight:600;letter-spacing:-.04em;line-height:1.02;color:var(--white);max-width:18ch}
+  .lead{margin-top:20px;font-size:19px;color:var(--muted);max-width:56ch}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:64px;border-top:1px solid var(--line)}
+  .card{padding:34px 30px 34px 0}
+  .card + .card{padding-left:30px;border-left:1px solid var(--line)}
+  .card svg{width:54px;height:54px;color:var(--blue-2)}
+  .card h3{margin-top:22px;font-size:20px;font-weight:600;color:var(--white)}
+  .card p{margin-top:10px;color:var(--muted);font-size:16px}
+  .rhythm{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:56px}
+  .rhythm div{padding-top:16px;border-top:2px solid var(--blue)}
+  .rhythm strong{display:block;color:var(--white);font-weight:600}
+  .rhythm span{display:block;margin-top:6px;color:var(--muted);font-size:16px}
+
+  .price{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+  .amount{font-size:clamp(64px,8vw,112px);font-weight:600;letter-spacing:-.05em;line-height:.9;color:var(--white)}
+  .amount small{font-size:18px;letter-spacing:0;color:var(--muted);font-weight:400;margin-left:8px}
+  .price .lead{margin-top:18px}
+  .incl{list-style:none;margin-top:6px}
+  .incl li{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);color:var(--text)}
+  .incl li::before{content:"";flex:none;width:9px;height:9px;margin-top:8px;border-radius:2px;background:var(--blue-2)}
+  .fit{margin-top:22px;color:var(--muted);font-size:15px}
+  .price .btn{margin-top:30px}
+
+  .close{text-align:center}
+  .close h2{margin:0 auto}
+  .close .lead{margin:20px auto 0}
+  .close .btn{margin-top:32px}
+  .faq{max-width:820px;margin:96px auto 0;text-align:left;border-top:1px solid var(--line)}
+  .faq details{border-bottom:1px solid var(--line)}
+  .faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;align-items:center;min-height:64px;font-size:18px;font-weight:500;color:var(--white)}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"+";font:400 22px var(--mono);color:var(--blue-2)}
+  .faq details[open] summary::after{content:"–"}
+  .faq p{padding:0 0 22px;color:var(--muted);max-width:64ch}
+
+  .foot{position:relative;z-index:2;background:var(--navy);border-top:1px solid var(--line);padding:28px 0;font-size:14px;color:var(--muted)}
+  .foot .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center}
+  .foot .compare{margin-left:auto;display:flex;gap:14px}
+  .foot .compare a{color:var(--text);display:inline-flex;align-items:center;min-height:44px;min-width:32px;justify-content:center}
+  .brand{min-height:44px}
+
+  @media (max-width:900px){
+    .cards,.rhythm,.price{grid-template-columns:1fr}
+    .card,.card + .card{padding:28px 0;border-left:0}
+    .card + .card{border-top:1px solid var(--line)}
+    .price{gap:32px}
+  }
+  @media (max-width:760px){
+    body{font-size:16px}
+    .wrap{padding:0 20px}
+    .nav{display:none}
+    .bar{gap:12px}
+    .bar .btn{margin-left:auto;padding:0 14px;font-size:13px}
+    .hero-sub{font-size:17px}
+    .sec{padding:88px 0}
+    .webgl .journey{height:760vh}
+    .webgl .hero-copy{top:104px}
+    .webgl .steps{left:12px;right:12px;width:auto;bottom:14px;padding:16px 18px 12px}
+    .webgl .steps > li:not(.active){display:none}
+    .webgl .steps > li.active h3{font-size:18px}
+    .webgl .step-desc{font-size:15px}
+    .foot .compare{margin-left:0}
+  }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap bar">
+    <a class="brand" href="#top"><img src="../noetic-logo.svg" alt="" width="28" height="28" />Noetic Mind</a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#engagement">Engagement</a>
+      <a href="#pricing">Pricing</a>
+    </nav>
+    <a class="btn" href="#book">Book a demo session</a>
+  </div>
+</header>
+
+<main>
+  <section class="journey" id="top" aria-labelledby="hero-title">
+    <div class="stage">
+      <div class="hero-copy">
+        <p class="eyebrow">For Series A–B SaaS product teams</p>
+        <h1 id="hero-title" style="margin-top:18px"><span class="dim">You can build anything.</span><span>Know what to build next.</span></h1>
+        <p class="hero-sub">Noetic Mind installs a discovery operating system inside your team, trains you to run it every week, and coaches the hard calls.</p>
+        <p class="hero-price"><strong>$5,000/month</strong> · installation · training · coaching</p>
+        <div class="hero-cta">
+          <a class="btn" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demo%20session">Book a demo session
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></a>
+          <a class="btn btn-ghost" href="#how">See how it works</a>
+        </div>
+      </div>
+
+      <ol class="steps" id="how" aria-label="How Noetic Mind works">
+        <li><span class="step-n">01</span><h3>Start from customer progress</h3>
+          <p class="step-desc">Your team talks to customers every week about real past decisions: what they were trying to get done, and where they got stuck.</p><span class="step-bar" aria-hidden="true"></span></li>
+        <li><span class="step-n">02</span><h3>Agree one outcome</h3>
+          <p class="step-desc">Leadership agrees one measurable outcome for the team to move. An outcome, not a feature list.</p><span class="step-bar" aria-hidden="true"></span></li>
+        <li><span class="step-n">03</span><h3>Converge on real options</h3>
+          <p class="step-desc">Where customer struggle meets your outcome, a few materially different options take shape.</p><span class="step-bar" aria-hidden="true"></span></li>
+        <li><span class="step-n">04</span><h3>Test before you build</h3>
+          <p class="step-desc">Test the riskiest assumption behind each option. The weak ones die cheaply, before anyone builds them.</p><span class="step-bar" aria-hidden="true"></span></li>
+        <li><span class="step-n">05</span><h3>Ship, measure, feed it back</h3>
+          <p class="step-desc">Ship the smallest coherent slice, measure what moved, and return the evidence to the start. Next week starts smarter.</p><span class="step-bar" aria-hidden="true"></span></li>
+      </ol>
+
+      <div class="scroll-hint" aria-hidden="true"><i></i>Scroll to see how it works</div>
+    </div>
+  </section>
+
+  <div class="content">
+    <section class="sec" id="engagement" aria-labelledby="eng-title">
+      <div class="wrap">
+        <p class="eyebrow">The engagement</p>
+        <h2 id="eng-title" style="margin-top:16px">Installed with you. Run by your team. Sharpened together.</h2>
+        <p class="lead">Noetic installs the system, trains your team to run it, and helps you work through difficult product decisions. Your team owns the customer relationships, the roadmap, and the work.</p>
+        <div class="cards">
+          <div class="card">
+            <svg viewBox="0 0 54 54" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M27 6 46 17v20L27 48 8 37V17z"/><path d="M8 17l19 11 19-11M27 28v20"/></svg>
+            <h3>We install the system</h3><p>System installation and configuration, set up around your product and the outcome you need to move.</p>
+          </div>
+          <div class="card">
+            <svg viewBox="0 0 54 54" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M27 8 47 18 27 28 7 18z"/><path d="M7 27l20 10 20-10M7 36l20 10 20-10"/></svg>
+            <h3>We train your team</h3><p>Hands-on training in the weekly practice, so your team runs the loop itself.</p>
+          </div>
+          <div class="card">
+            <svg viewBox="0 0 54 54" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M10 12v8l17 10 17-10v-8"/><path d="M27 30v14"/><circle cx="10" cy="9" r="3"/><circle cx="44" cy="9" r="3"/><circle cx="27" cy="47" r="3"/></svg>
+            <h3>We coach the hard calls</h3><p>Coaching on evidence, assumptions and prioritization, and support on difficult product decisions.</p>
+          </div>
+        </div>
+        <div class="rhythm" aria-label="The operating rhythm">
+          <div><strong>Every week</strong><span>One customer conversation and one decision review, run by your team.</span></div>
+          <div><strong>Every delivery cycle</strong><span>An impact review: what you expected, and what actually happened.</span></div>
+          <div><strong>Every quarter</strong><span>Outcomes agreed again with leadership.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="pricing" aria-labelledby="price-title">
+      <div class="wrap price">
+        <div>
+          <p class="eyebrow">Pricing</p>
+          <h2 id="price-title" class="sr-only">Pricing</h2>
+          <p class="amount" style="margin-top:16px">$5,000<small>/ month</small></p>
+          <p class="lead">A managed discovery system, installed and coached inside your team.</p>
+          <a class="btn" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demo%20session">Book a demo session
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></a>
+        </div>
+        <div>
+          <ul class="incl">
+            <li>System installation and configuration</li>
+            <li>Hands-on training in the weekly practice</li>
+            <li>Coaching on evidence, assumptions, and prioritization</li>
+            <li>Support on difficult product decisions</li>
+          </ul>
+          <p class="fit">Best suited to Series A–early B SaaS teams with an accountable product owner, access to customers, and capacity to act on what they learn.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec close" id="book" aria-labelledby="close-title">
+      <div class="wrap">
+        <h2 id="close-title">See how your team could decide what to build next.</h2>
+        <p class="lead">A 45-minute private screenshare: a worked example, one of your live product decisions, and a fit discussion.</p>
+        <a class="btn" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demo%20session">Book a demo session
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 13 13 3M5 3h8v8"/></svg></a>
+        <div class="faq">
+          <details><summary>We already talk to customers. What changes?</summary>
+            <p>The connection between those conversations and product decisions. The system makes clear which outcome you’re pursuing, which opportunity matters, what evidence supports it, and what assumption to test next.</p></details>
+          <details><summary>Is this software or consulting?</summary>
+            <p>It’s a managed operating system installed inside your team, with training and ongoing coaching. You’re not buying a standalone software subscription, and you’re not outsourcing discovery.</p></details>
+          <details><summary>Who takes part, and how often?</summary>
+            <p>A small cross-functional team — typically product, design, and engineering — runs one customer conversation and one decision review each week. Leadership joins once a quarter to agree the outcomes the team is working toward.</p></details>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>Noetic Mind</span><span>© Noetic Digital</span><span>Led by George Reed</span>
+    <span class="compare">Compare: <a href="../">v1</a><a href="../Astra/">v2</a><a href="../v3/">v3</a><a href="../v4/">v4</a></span>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js" defer></script>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+const root = document.documentElement;
+const journey = document.getElementById('top');
+const heroCopy = document.querySelector('.hero-copy');
+const stepEls = Array.from(document.querySelectorAll('.steps > li'));
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const mobile = matchMedia('(max-width: 760px)').matches;
+
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = t => t * t * t * (t * (t * 6 - 15) + 10);               // smootherstep
+const span = (a, b, x) => ease(clamp((x - a) / (b - a)));
+
+function start() {
+  if (reduce || !journey) return;                                     // reduced motion: static page
+
+  // ---------- renderer ----------
+  const canvas = document.createElement('canvas');
+  canvas.className = 'world';
+  canvas.setAttribute('aria-hidden', 'true');
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+  } catch (e) { return; }
+  if (!renderer.getContext()) return;
+  document.body.prepend(canvas);
+  root.classList.add('webgl');
+
+  const DPR = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 1.75);
+  renderer.setPixelRatio(DPR);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.0;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const BG = new THREE.Color('#061a38');
+  const scene = new THREE.Scene();
+  scene.background = BG;
+  scene.fog = new THREE.FogExp2(BG, 0.0105);
+  const camera = new THREE.PerspectiveCamera(30, 1, 0.5, 600);
+
+  // ---------- light ----------
+  scene.add(new THREE.HemisphereLight(0xc6dcff, 0x0a1d3d, 1.25));
+  const sun = new THREE.DirectionalLight(0xffffff, 2.3);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(mobile ? 1024 : 2048, mobile ? 1024 : 2048);
+  Object.assign(sun.shadow.camera, { left: -30, right: 30, top: 30, bottom: -30, near: 1, far: 140 });
+  sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03;
+  scene.add(sun, sun.target);
+  const fill = new THREE.DirectionalLight(0x6f9cff, 0.6);
+  fill.position.set(40, 22, -30);
+  scene.add(fill);
+
+  // ---------- ground ----------
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400),
+    new THREE.MeshStandardMaterial({ color: '#0c2549', roughness: 1, metalness: 0 }));
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+  const grid = new THREE.GridHelper(400, 200, 0x1e4479, 0x1e4479);
+  grid.material.transparent = true; grid.material.opacity = 0.2; grid.position.y = 0.012;
+  scene.add(grid);
+
+  // ---------- materials ----------
+  const mBuild = new THREE.MeshStandardMaterial({ color: '#e6eefa', roughness: 0.8, metalness: 0 });
+  const mSoft  = new THREE.MeshStandardMaterial({ color: '#b9cbe6', roughness: 0.86, metalness: 0 });
+  const mTile  = new THREE.MeshStandardMaterial({ color: '#9fb6d6', roughness: 0.85, metalness: 0 });
+  const mFig   = new THREE.MeshStandardMaterial({ color: '#f4f8ff', roughness: 0.6 });
+  const GLOW = new THREE.Color(0.52, 0.8, 1.0);
+  const glow = (k = 2.2, opacity = 1, additive = false) => new THREE.MeshBasicMaterial({
+    color: GLOW.clone().multiplyScalar(k), toneMapped: false, transparent: additive || opacity < 1, opacity,
+    blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending, depthWrite: !additive });
+
+  // ---------- geometry kit (all sit on y = 0) ----------
+  const G = {
+    block: new RoundedBoxGeometry(1, 1, 1, 2, 0.07).translate(0, 0.5, 0),
+    box:   new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0),
+    prism: (() => { const g = new THREE.CylinderGeometry(0.58, 0.58, 1, 3, 1); g.rotateY(Math.PI / 2); g.rotateZ(Math.PI / 2); g.translate(0, 0.29, 0); return g; })(),
+    vault: (() => { const g = new THREE.CylinderGeometry(0.5, 0.5, 1, 20, 1, false, 0, Math.PI); g.rotateZ(Math.PI / 2); return g; })(),
+    cyl:   new THREE.CylinderGeometry(0.5, 0.5, 1, 20).translate(0, 0.5, 0),
+    ball:  new THREE.IcosahedronGeometry(0.5, 1),
+    fig:   new THREE.CapsuleGeometry(0.15, 0.4, 4, 8).translate(0, 0.35, 0),
+  };
+  G.tile = G.block;
+  const I = { block: [], tile: [], box: [], prism: [], vault: [], cyl: [], ball: [], fig: [] };
+  const UP = new THREE.Vector3(0, 1, 0);
+  function put(kind, x, y, z, sx, sy, sz, ry = 0) {
+    I[kind].push(new THREE.Matrix4().compose(new THREE.Vector3(x, y, z),
+      new THREE.Quaternion().setFromAxisAngle(UP, ry), new THREE.Vector3(sx, sy, sz)));
+  }
+  function bake(kind, mat) {
+    const list = I[kind]; if (!list.length) return;
+    const m = new THREE.InstancedMesh(G[kind], mat, list.length);
+    list.forEach((mx, i) => m.setMatrixAt(i, mx));
+    m.castShadow = true; m.receiveShadow = true;
+    scene.add(m);
+  }
+
+  let seed = 11;
+  const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const rr = (a, b) => a + (b - a) * rnd();
+
+  // ---------- stations ----------
+  const S = { cust: new THREE.Vector3(-17, 0, 13), hq: new THREE.Vector3(17, 0, 14),
+              plaza: new THREE.Vector3(0, 0, -6), build: new THREE.Vector3(-3, 0, -27) };
+
+  // 01 customers: a small neighbourhood with people
+  const houses = [[-20, 10], [-16.5, 9], [-13, 11.5], [-21, 14.5], [-17.5, 15.5], [-13.5, 16], [-22.5, 18.5], [-18.5, 19.8]];
+  houses.forEach(([x, z], i) => {
+    const ry = (i % 2 ? 0.12 : -0.08), w = rr(1.6, 2.1), d = rr(1.5, 1.8), h = rr(1.1, 1.5);
+    put('block', x, 0, z, w, h, d, ry);
+    put('prism', x, h, z, w + 0.1, rr(0.8, 1.0), d + 0.1, ry);
+  });
+  const people = [[-18.3, 11.6], [-15, 12.6], [-19.8, 12.4], [-16, 14.2], [-14.6, 10.2], [-20.2, 16.6], [-16.4, 17.7], [-12.2, 13.8], [-18, 9.6]];
+  people.forEach(([x, z]) => put('fig', x, 0, z, 1, 1, 1));
+  [[-24, 12], [-23.5, 9], [-11, 18], [-10.5, 15], [-24.5, 16]].forEach(([x, z]) => {
+    put('cyl', x, 0, z, 0.16, 0.7, 0.16); put('ball', x, 1.2, z, 1.1, 1.2, 1.1);
+  });
+
+  // 02 the outcome: the team's HQ
+  put('block', S.hq.x, 0, S.hq.z, 3.6, 10, 3.6);
+  put('block', S.hq.x - 3.5, 0, S.hq.z + 0.6, 2.8, 4.4, 3.2);
+  put('block', S.hq.x + 3.1, 0, S.hq.z - 0.6, 2.4, 6.2, 2.8);
+  put('box', S.hq.x - 0.7, 10, S.hq.z - 0.6, 1.1, 0.5, 0.9); put('box', S.hq.x + 0.8, 10, S.hq.z + 0.7, 0.8, 0.35, 0.8);
+  put('box', S.hq.x - 3.9, 4.4, S.hq.z + 0.3, 1.2, 0.4, 1.0);
+  [[13.2, 18.3], [14.4, 18.9], [21, 17.6], [12.6, 11.3]].forEach(([x, z]) => put('fig', x, 0, z, 1, 1, 1));
+  const beacon = new THREE.Mesh(new THREE.TorusGeometry(2.3, 0.07, 12, 96), glow(2.6));
+  beacon.rotation.x = Math.PI / 2; beacon.position.set(S.hq.x, 11.6, S.hq.z);
+  const beaconHalo = new THREE.Mesh(new THREE.TorusGeometry(2.3, 0.3, 12, 96), glow(0.8, 0.22, true));
+  beaconHalo.rotation.x = Math.PI / 2; beaconHalo.position.copy(beacon.position);
+  const beaconDot = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 12), glow(3.2));
+  beaconDot.position.set(S.hq.x, 11.6, S.hq.z);
+  scene.add(beacon, beaconHalo, beaconDot);
+
+  // 03/04 the field of options
+  const PITCH = 1.8, OPT = [[1, 1], [2, 4], [4, 2]], WIN = 1;
+  const optionMeshes = [];
+  for (let r = 0; r < 6; r++) for (let c = 0; c < 6; c++) {
+    const x = S.plaza.x + (c - 2.5) * PITCH, z = S.plaza.z + (r - 2.5) * PITCH;
+    const oi = OPT.findIndex(([orr, oc]) => orr === r && oc === c);
+    if (oi === -1) { put('tile', x, 0, z, 1.5, 0.3, 1.5); continue; }
+    const mat = new THREE.MeshStandardMaterial({ color: '#c9d9f1', roughness: 0.6, emissive: GLOW, emissiveIntensity: 0 });
+    const m = new THREE.Mesh(G.block, mat);
+    m.position.set(x, 0, z); m.scale.set(1.5, 0.3, 1.5); m.castShadow = m.receiveShadow = true;
+    scene.add(m); optionMeshes.push(m);
+  }
+  const winRing = new THREE.Mesh(new THREE.RingGeometry(1.25, 1.4, 64), glow(2.4, 1, true));
+  winRing.rotation.x = -Math.PI / 2; winRing.position.set(optionMeshes[WIN].position.x, 0.04, optionMeshes[WIN].position.z);
+  scene.add(winRing);
+
+  // 05 delivery: a building assembles, a measure rises
+  const floors = [];
+  for (let i = 0; i < 4; i++) {
+    const m = new THREE.Mesh(G.block, mBuild);
+    m.scale.set(3.6, 1.15, 3.0); m.castShadow = m.receiveShadow = true; m.visible = false;
+    m.userData.y = i * 1.18; m.position.set(S.build.x, m.userData.y, S.build.z);
+    scene.add(m); floors.push(m);
+  }
+  const roof = new THREE.Mesh(G.box, mSoft);
+  roof.scale.set(1.2, 0.45, 1.0); roof.position.set(S.build.x + 0.6, 4.72, S.build.z - 0.4); roof.visible = false; roof.castShadow = true;
+  scene.add(roof);
+  const meter = new THREE.Mesh(G.box, glow(2.3));
+  meter.position.set(S.build.x + 3.3, 0, S.build.z + 0.4); meter.scale.set(0.42, 0.001, 0.42);
+  const meterGhost = new THREE.Mesh(G.box, new THREE.MeshStandardMaterial({ color: '#16335f', roughness: 1, transparent: true, opacity: 0.55 }));
+  meterGhost.position.copy(meter.position); meterGhost.scale.set(0.44, 5.2, 0.44);
+  scene.add(meter, meterGhost);
+  [[-6.5, -24.8], [-6, -29.5], [0.5, -30.2], [1.2, -23.6]].forEach(([x, z]) => put('fig', x, 0, z, 1, 1, 1));
+  for (let i = 0; i < 3; i++) for (let j = 0; j < 2; j++) put('box', -8.6 + i * 0.62, 0, -27.4 + j * 0.62, 0.52, 0.52, 0.52);
+
+  // ---------- the paths ----------
+  const V = (x, z) => new THREE.Vector3(x, 0.07, z);
+  const curves = {
+    demand:  new THREE.CatmullRomCurve3([V(-15.2, 10.6), V(-12, 6.6), V(-8, 3.4), V(-4, 1.5), V(0, 0.7)]),
+    supply:  new THREE.CatmullRomCurve3([V(14.6, 11.6), V(11.6, 7), V(8, 3.6), V(4, 1.6), V(0, 0.7)]),
+    deliver: new THREE.CatmullRomCurve3([V(0, -12.3), V(0.3, -16.2), V(-0.9, -20.4), V(-2.4, -23.6)]),
+    back:    new THREE.CatmullRomCurve3([V(-6.5, -27.5), V(-16, -26), V(-25, -16), V(-27.5, -2), V(-25, 8), V(-20.5, 11.5)]),
+  };
+  function tube(curve, segs = 220) {
+    const core = new THREE.TubeGeometry(curve, segs, 0.075, 8, false);
+    const halo = new THREE.TubeGeometry(curve, segs, 0.26, 8, false);
+    const a = new THREE.Mesh(core, glow(2.6)), b = new THREE.Mesh(halo, glow(0.9, 0.2, true));
+    scene.add(a, b);
+    return { curve, set(f) { const n = Math.floor(segs * clamp(f)) * 48; core.setDrawRange(0, n); halo.setDrawRange(0, n); a.visible = b.visible = f > 0.002; } };
+  }
+  const P = { demand: tube(curves.demand), supply: tube(curves.supply), deliver: tube(curves.deliver, 160) };
+
+  // evidence returning home: a trail of light points
+  const backPts = curves.back.getSpacedPoints(64);
+  const backDots = new THREE.InstancedMesh(new THREE.SphereGeometry(0.12, 10, 8), glow(3), backPts.length);
+  const tmpM = new THREE.Matrix4();
+  backPts.forEach((p, i) => backDots.setMatrixAt(i, tmpM.makeTranslation(p.x, 0.16, p.z)));
+  backDots.count = 0; scene.add(backDots);
+
+  // flowing sparks along drawn paths
+  const sparkGeo = new THREE.SphereGeometry(0.13, 12, 10);
+  const sparks = ['demand', 'supply', 'deliver'].flatMap(k => [0, 1, 2].map(i => {
+    const m = new THREE.Mesh(sparkGeo, glow(4.2)); m.visible = false; scene.add(m); return { m, k, o: i / 3 };
+  }));
+
+  // halftone glow on the ground beside the paths
+  const dotPts = [];
+  (() => {
+    const samples = ['demand', 'supply', 'deliver'].map(k => curves[k].getSpacedPoints(140));
+    const R = 2.3, step = 0.55;
+    for (let x = -18; x <= 18; x += step) for (let z = -26; z <= 13; z += step) {
+      let best = null;
+      samples.forEach((arr, k) => arr.forEach((p, i) => {
+        const d = Math.hypot(p.x - x, p.z - z);
+        if (d < R && (!best || d < best.d)) best = { k, t: i / (arr.length - 1), d };
+      }));
+      if (best) dotPts.push({ x, z, ...best });
+    }
+  })();
+  const dots = new THREE.InstancedMesh(new THREE.CircleGeometry(0.1, 12).rotateX(-Math.PI / 2),
+    new THREE.MeshBasicMaterial({ toneMapped: false, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }), dotPts.length);
+  dotPts.forEach((p, i) => { dots.setMatrixAt(i, tmpM.makeTranslation(p.x, 0.03, p.z)); dots.setColorAt(i, new THREE.Color(0, 0, 0)); });
+  scene.add(dots);
+  const dotCol = new THREE.Color();
+  const KEYS = ['demand', 'supply', 'deliver'];
+  let lastDraw = '';
+  function updateDots(draw) {
+    const sig = draw.map(v => v.toFixed(3)).join();
+    if (sig === lastDraw) return; lastDraw = sig;
+    dotPts.forEach((p, i) => {
+      const reveal = clamp((draw[p.k] - p.t) / 0.07);
+      const fall = Math.pow(1 - p.d / 2.3, 1.7);
+      dotCol.copy(GLOW).multiplyScalar(fall * reveal * 0.9);
+      dots.setColorAt(i, dotCol);
+    });
+    dots.instanceColor.needsUpdate = true;
+  }
+
+  // interview signals rising from people
+  const pulses = people.map(([x, z], i) => {
+    const m = new THREE.Mesh(new THREE.RingGeometry(0.36, 0.44, 40), glow(1.8, 1, true));
+    m.rotation.x = -Math.PI / 2; m.position.set(x, 0.05, z); scene.add(m); return { m, o: i * 0.37 };
+  });
+
+  // ---------- scenery around the stations ----------
+  (() => {
+    const allSamples = Object.values(curves).flatMap(c => c.getSpacedPoints(90));
+    const clear = (x, z) => {
+      if (Math.abs(x - S.plaza.x) < 7.5 && z > -13.5 && z < 2) return false;
+      for (const s of Object.values(S)) if (Math.hypot(s.x - x, s.z - z) < (s === S.hq ? 8 : 8.5)) return false;
+      for (const p of allSamples) if (Math.hypot(p.x - x, p.z - z) < 3) return false;
+      return true;
+    };
+    const centres = [];
+    for (let tries = 0; centres.length < 9 && tries < 800; tries++) {
+      const cx = rr(-44, 44), cz = rr(-46, 34);
+      if (cx + cz < -44) continue;                       // keep the far band sparse (hero headroom)
+      if (!clear(cx, cz) || centres.some(c => Math.hypot(c[0] - cx, c[1] - cz) < 15)) continue;
+      centres.push([cx, cz]);
+    }
+    let placed = 0, tries = 0;
+    while (placed < 52 && tries < 4000) {
+      tries++;
+      const c = centres[tries % centres.length]; if (!c) break;
+      const x = c[0] + rr(-5.5, 5.5), z = c[1] + rr(-5.5, 5.5);
+      if (!clear(x, z)) continue;
+      placed++;
+      const kind = rnd(), ry = rr(-0.3, 0.3);
+      if (kind < 0.3) {                                  // office block
+        const w = rr(1.6, 3), d = rr(1.6, 3), h = rr(1.4, 6.5);
+        put('block', x, 0, z, w, h, d, ry);
+        if (rnd() < 0.6) put('box', x + rr(-0.3, 0.3), h, z + rr(-0.3, 0.3), w * 0.35, 0.35, d * 0.3, ry);
+      } else if (kind < 0.5) {                           // vaulted shed
+        const L = rr(2.4, 3.6), W = rr(1.6, 2.2);
+        put('block', x, 0, z, L, 0.9, W, ry); put('vault', x, 0.9, z, L, W * 0.7, W, ry);
+      } else if (kind < 0.68) {                          // pallets
+        for (let i = 0; i < 3; i++) for (let j = 0; j < 2; j++) put('box', x + i * 0.6, 0, z + j * 0.6, 0.5, 0.5, 0.5, 0);
+      } else if (kind < 0.86) {                          // trees
+        for (let i = 0; i < 3; i++) { const tx = x + rr(-1.2, 1.2), tz = z + rr(-1.2, 1.2), s = rr(0.8, 1.2);
+          put('cyl', tx, 0, tz, 0.15, 0.7 * s, 0.15); put('ball', tx, 1.15 * s, tz, 1.05 * s, 1.15 * s, 1.05 * s); }
+      } else {                                           // tank / silo pair
+        const r = rr(0.9, 1.3); put('cyl', x, 0, z, r * 2, rr(1.6, 3), r * 2); put('cyl', x + r * 2.4, 0, z, r * 1.6, rr(1.2, 2.4), r * 1.6);
+      }
+    }
+  })();
+
+  bake('block', mBuild); bake('tile', mTile); bake('box', mSoft); bake('prism', mSoft); bake('vault', mBuild);
+  bake('cyl', mBuild); bake('ball', mSoft); bake('fig', mFig);
+
+  // ---------- post ----------
+  let composer = null, bloom = null;
+  if (!mobile) {
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.85, 0.55, 0.92);
+    composer.addPass(bloom);
+    composer.addPass(new OutputPass());
+  }
+
+  // ---------- camera journey ----------
+  //            p      target.x  target.z  distance
+  //            p      x       z      dist   y
+  const KF = [[0.00,   2,    -6,    80,   0],
+              [0.05,   2,    -6,    76,   0],
+              [0.12, -16,    13,    31,   0],
+              [0.26, -15.4,  12.4,  27,   0],
+              [0.32,  16.5,  14,    44,   5.2],
+              [0.43,  16,    13.6,  40,   5.2],
+              [0.50,   0,    -1,    42,   0],
+              [0.60,   0,    -6,    28,   0],
+              [0.75,   0,    -6,    24,   0],
+              [0.82,  -2.5, -25,    30,   1.2],
+              [0.90,  -2.5, -25,    27,   1.2],
+              [1.00,  -6,    -6,    88,   0]];
+  const DIR = new THREE.Vector3(0.8, 1.32, 1).normalize();
+  const target = new THREE.Vector3();
+  function cameraAt(p) {
+    let i = 0; while (i < KF.length - 2 && p > KF[i + 1][0]) i++;
+    const [a, ax, az, ad, ay] = KF[i], [b, bx, bz, bd, by] = KF[i + 1];
+    const t = ease(clamp((p - a) / (b - a)));
+    target.set(ax + (bx - ax) * t, ay + (by - ay) * t, az + (bz - az) * t);
+    return ad + (bd - ad) * t;
+  }
+  const STEP_RANGES = [[0.08, 0.29], [0.29, 0.45], [0.45, 0.63], [0.63, 0.77], [0.77, 1.01]];
+
+  let W = 0, H = 0;
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    renderer.setSize(W, H, false);
+    camera.aspect = W / H; camera.updateProjectionMatrix();
+    if (composer) { composer.setPixelRatio(Math.min(DPR, 1.5)); composer.setSize(W, H); }
+  }
+  resize();
+  addEventListener('resize', resize);
+
+  let active = -1;
+  function apply(p, time) {
+    // camera (portrait screens need more distance to see the same width)
+    const aspect = W / H, distMul = aspect < 1.35 ? Math.min(2.3, 1.42 / aspect) : 1;
+    const dist = cameraAt(p) * distMul;
+    camera.position.copy(target).addScaledVector(DIR, dist);
+    camera.lookAt(target);
+    // keep the subject clear of the step panel on wide screens
+    const heroK = 1 - span(0.02, 0.11, p);
+    const shiftX = (!mobile && aspect > 1.1) ? span(0.06, 0.12, p) * (1 - span(0.93, 1, p)) * 0.13 * W : 0;
+    const shiftY = -heroK * (mobile ? 0.2 : 0.3) * H + (mobile ? -0.14 * H * span(0.06, 0.12, p) : 0);
+    if (Math.abs(shiftX) + Math.abs(shiftY) > 0.5) camera.setViewOffset(W, H, -shiftX, shiftY, W, H); else camera.clearViewOffset();
+    scene.fog.density = (0.0105 + 0.006 * heroK) / distMul;      // thinner fog when the camera pulls back for narrow screens
+
+    // shadows follow the camera
+    sun.position.set(target.x - 16, 46, target.z + 12);
+    sun.target.position.copy(target);
+
+    // story beats
+    const sStep1 = span(0.08, 0.14, p) * (1 - span(0.27, 0.32, p));
+    pulses.forEach(({ m, o }) => {
+      const ph = (time * 0.55 + o) % 1, k = 0.25 + 0.75 * sStep1;
+      m.scale.setScalar(1 + ph * 3.4); m.material.opacity = (1 - ph) * 0.85 * k;
+    });
+    const sStep2 = span(0.3, 0.36, p) * (1 - span(0.45, 0.5, p));
+    beacon.rotation.z = time * 0.35;
+    const bk = 0.45 + 0.55 * sStep2 + 0.08 * Math.sin(time * 2.2);
+    beacon.material.color.copy(GLOW).multiplyScalar(2.6 * bk);
+    beaconHalo.material.opacity = 0.12 + 0.25 * sStep2;
+    beacon.position.y = beaconHalo.position.y = 11.6 + Math.sin(time * 1.2) * 0.18;
+
+    const dDemand = span(0.44, 0.53, p), dSupply = span(0.45, 0.54, p), dDeliver = span(0.76, 0.83, p);
+    P.demand.set(dDemand); P.supply.set(dSupply); P.deliver.set(dDeliver);
+    updateDots([dDemand, dSupply, dDeliver]);
+    sparks.forEach(({ m, k, o }) => {
+      const drawn = k === 'demand' ? dDemand : k === 'supply' ? dSupply : dDeliver;
+      if (drawn < 0.05) { m.visible = false; return; }
+      m.visible = true; curves[k].getPointAt(((time * 0.16 + o) % 1) * drawn * 0.999, m.position); m.position.y = 0.16;
+    });
+
+    const rise = span(0.54, 0.61, p), kill = span(0.65, 0.72, p);
+    optionMeshes.forEach((m, i) => {
+      const win = i === WIN, stagger = clamp(rise * 1.25 - i * 0.12);
+      const h = 0.3 + 2.0 * stagger + (win ? 0.9 * kill : -2.0 * stagger * kill);
+      m.scale.y = Math.max(0.3, h);
+      m.material.emissiveIntensity = (win ? 0.22 + 0.18 * kill : 0.22 * (1 - kill)) * stagger;
+      m.material.color.set(win || kill < 0.5 ? '#c9d9f1' : '#7f95b8');
+    });
+    winRing.material.opacity = kill; winRing.scale.setScalar(1 + 0.06 * Math.sin(time * 2.4));
+
+    const asm = span(0.82, 0.9, p);
+    floors.forEach((m, i) => {
+      const e = ease(clamp(asm * 4.4 - i));
+      m.visible = e > 0.001; m.position.y = m.userData.y + (1 - e) * 7;
+    });
+    roof.visible = asm > 0.96;
+    const meas = span(0.86, 0.92, p);
+    meter.scale.y = Math.max(0.001, meas * 5.2);
+
+    backDots.count = Math.floor(backPts.length * span(0.9, 0.98, p));
+    backDots.material.color.copy(GLOW).multiplyScalar(2.6 + 0.6 * Math.sin(time * 3));
+
+    // overlay
+    const heroV = 1 - span(0.012, 0.055, p);
+    root.style.setProperty('--hero', heroV.toFixed(3));
+    heroCopy.classList.toggle('gone', heroV < 0.02);
+    root.style.setProperty('--steps', span(0.06, 0.1, p).toFixed(3));
+    let a = STEP_RANGES.findIndex(([s, e]) => p >= s && p < e);
+    if (a === -1) a = p < 0.08 ? 0 : 4;
+    if (a !== active) { stepEls.forEach((li, i) => li.classList.toggle('active', i === a)); active = a; }
+    const [s0, e0] = STEP_RANGES[a];
+    stepEls[a].style.setProperty('--sp', clamp((p - s0) / (Math.min(e0, 1) - s0)).toFixed(3));
+  }
+
+  // ---------- loop ----------
+  let pTarget = 0, p = 0, time = 0, last = performance.now(), running = false, visible = true;
+  function measure() {
+    const r = journey.getBoundingClientRect(), total = r.height - H;
+    pTarget = total > 0 ? clamp(-r.top / total) : 0;
+    visible = r.bottom > 0;
+  }
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now; time += dt;
+    measure();
+    p += (pTarget - p) * Math.min(1, dt * 6);
+    if (Math.abs(pTarget - p) < 0.0004) p = pTarget;
+    apply(p, time);
+    if (composer) composer.render(); else renderer.render(scene, camera);
+    if (visible) requestAnimationFrame(frame); else running = false;
+  }
+  function wake() { if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); } }
+  addEventListener('scroll', wake, { passive: true });
+  measure(); p = pTarget; wake();
+
+  // ---------- smooth scroll ----------
+  addEventListener('load', () => {
+    if (!window.Lenis) return;
+    const lenis = new window.Lenis({ duration: 1.15, smoothWheel: true });
+    const raf = t => { lenis.raf(t); requestAnimationFrame(raf); };
+    requestAnimationFrame(raf);
+    document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+      const id = a.getAttribute('href'); const el = id.length > 1 && document.querySelector(id);
+      if (!el) return; e.preventDefault();
+      lenis.scrollTo(id === '#how' ? journey.offsetTop + (journey.offsetHeight - H) * 0.1 : el, { offset: id === '#how' ? 0 : -72 });
+    }));
+  });
+}
+
+try { start(); } catch (err) {
+  // anything goes wrong: return to the static page
+  document.documentElement.classList.remove('webgl');
+  document.querySelector('canvas.world')?.remove();
+  console.error(err);
+}
+</script>
+</body>
+</html>
