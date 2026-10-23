@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<!--
+NOETIC MIND / V3 — THE DECISION SHEET
+Palette: warm paper, navy-tinted charcoal and one orange-red signal.
+The charcoal connects the drafting language to Noetic’s navy identity;
+orange marks action and commitment, not arbitrary decoration.
+Type: Geist Bold for tightly set editorial headlines; Geist Mono for notation.
+Signature: two plotted spines converge into solution options, then test,
+deliver and measure. A dashed evidence loop returns to the tested assumptions.
+Motion: a single, sub-1.6-second drafting pass; masked headline reveals and
+small, once-only scroll sequences. No scroll hijacking or loading screen.
+The static document is complete. Animation starts only after GSAP is verified,
+and reduced-motion users receive the finished sheet without reveals.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#efeee9">
+  <meta name="robots" content="noindex">
+  <meta name="description" content="A managed discovery system for Series A–early B SaaS teams. Installed with you, run by your team, sharpened together. $5,000/month.">
+  <title>Noetic Mind — Know what to build next.</title>
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="icon" type="image/svg+xml" href="../noetic-logo.svg">
+  <link href="https://fonts.bunny.net/css?family=geist:400,500,600,700|geist-mono:400,500" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #efeee9;
+      --ink: #252b35;
+      --muted: #62635f;
+      --rule: #c9c8c2;
+      --wash: #e5e4de;
+      --signal: #e8492a;
+      --mono: "Geist Mono", monospace;
+      --sans: "Geist", Arial, sans-serif;
+      --pad: clamp(22px, 2.65vw, 42px);
+      --header: 81px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: var(--header); }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font: 400 16px/1.55 var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      pointer-events: none;
+      opacity: .045;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23000' filter='url(%23n)' opacity='.7' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
+    }
+    ::selection { background: var(--ink); color: var(--paper); }
+    a { color: inherit; text-decoration: none; }
+    button, input, summary { font: inherit; }
+    img, svg { display: block; max-width: 100%; }
+    p, h1, h2, h3, figure { margin: 0; }
+    ul, ol { margin: 0; padding: 0; }
+    h1, h2, h3 { font-weight: 700; }
+    a, summary { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 2px solid var(--ink); outline-offset: 5px; }
+    section, main { scroll-margin-top: calc(var(--header) + 15px); }
+    .sheet { width: calc(100% - 64px); max-width: 1472px; margin-inline: auto; }
+    .mono, .eyebrow, .button, .section-no {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: .045em;
+    }
+    .muted { color: var(--muted); }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0;
+      margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
+      white-space: nowrap; border: 0;
+    }
+    .skip {
+      position: fixed; top: 12px; left: 12px; z-index: 100;
+      background: var(--ink); color: var(--paper); padding: 14px 20px;
+      transform: translateY(-180%);
+    }
+    .skip:focus { transform: translateY(0); }
+    .button {
+      display: inline-flex;
+      align-items: stretch;
+      justify-content: space-between;
+      min-height: 52px;
+      background: var(--signal);
+      color: #17202d;
+      font-weight: 500;
+      text-align: left;
+      transition: background-color .2s;
+    }
+    .button-label { display: flex; align-items: center; padding: 16px 21px; }
+    .button-arrow {
+      display: flex; align-items: center; justify-content: center;
+      width: 53px; flex: 0 0 53px;
+      border-left: 1px dashed rgba(23,32,45,.5);
+      font: 24px/1 var(--sans);
+    }
+    .button-arrow span { display: inline-block; transition: transform .2s; }
+    .button:hover { background: #f15c3e; }
+    .button:hover .button-arrow span { transform: translateX(4px); }
+    .text-link {
+      display: inline-flex; gap: 20px; align-items: center;
+      min-height: 44px; font: 12px/1.4 var(--mono); text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+    .text-link span:last-child { transition: transform .2s; }
+    .text-link:hover span:last-child { transform: translateY(3px); }
+
+    /* The sheet remains ruled even when motion is unavailable. */
+    .masthead {
+      position: sticky; top: 0; z-index: 20;
+      background: var(--paper); border-bottom: 1px solid var(--rule);
+    }
+    .header-row {
+      position: relative; display: flex; align-items: center;
+      min-height: 80px; border-inline: 1px solid var(--rule);
+    }
+    .brand {
+      display: inline-flex; align-items: center; gap: 11px;
+      min-height: 44px; font-size: 19px; font-weight: 600; letter-spacing: -.045em;
+      white-space: nowrap;
+    }
+    .header-row > .brand { margin-left: 23px; margin-right: auto; }
+    .brand img { width: 30px; height: 30px; }
+    .nav { display: flex; align-items: center; gap: 26px; padding-inline: 26px; }
+    .nav a {
+      display: inline-flex; align-items: center; min-height: 44px;
+      font: 12px/1.3 var(--mono); text-transform: uppercase; letter-spacing: .02em;
+      position: relative;
+    }
+    .nav a::before {
+      content: ""; width: 5px; height: 5px; margin-right: 7px;
+      background: var(--signal); opacity: 0;
+    }
+    .nav a:hover::before, .nav a[aria-current="location"]::before { opacity: 1; }
+    .header-cta { margin-right: 14px; min-height: 48px; }
+    .header-cta .button-label { padding: 13px 17px; }
+    .header-cta .button-arrow { width: 45px; flex-basis: 45px; }
+    .intro-progress {
+      position: absolute; bottom: -1px; left: 0; height: 2px;
+      width: 100%; background: var(--ink); transform: scaleX(0);
+      transform-origin: left; pointer-events: none;
+    }
+    main.sheet { border-inline: 1px solid var(--rule); }
+    .section { position: relative; border-bottom: 1px solid var(--rule); }
+    .cross::before, .cross::after {
+      content: ""; position: absolute; z-index: 3; pointer-events: none;
+      width: 13px; height: 13px; top: -7px;
+      background:
+        linear-gradient(var(--ink),var(--ink)) center/13px 1px no-repeat,
+        linear-gradient(var(--ink),var(--ink)) center/1px 13px no-repeat;
+    }
+    .cross::before { left: -7px; }
+    .cross::after { right: -7px; }
+    .section-head {
+      display: grid; grid-template-columns: 18% 56% 26%;
+      border-bottom: 1px solid var(--rule);
+    }
+    .section-head > * { padding: var(--pad); min-width: 0; }
+    .section-head > * + * { border-left: 1px solid var(--rule); }
+    .section-no { display: flex; flex-direction: column; justify-content: space-between; gap: 30px; }
+    .section-no .number { color: var(--muted); }
+    h2 {
+      font-size: clamp(34px, 3.5vw, 54px);
+      line-height: 1; letter-spacing: -.045em; text-transform: uppercase;
+    }
+    .section-head h2 { padding-block: 48px 50px; }
+    .section-aside { display: flex; flex-direction: column; justify-content: flex-end; gap: 16px; }
+    .section-aside p { max-width: 26ch; font-size: 15px; line-height: 1.5; }
+    .line { display: block; overflow: clip; padding-bottom: .045em; margin-bottom: -.045em; }
+    .line > span { display: block; }
+
+    /* 01 / The convergence sheet */
+    .hero { overflow: clip; }
+    .hero-top {
+      display: grid; grid-template-columns: 55% 45%;
+      border-bottom: 1px solid var(--rule);
+    }
+    .hero-top > div {
+      padding: 16px var(--pad); min-height: 53px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .hero-top > div + div { border-left: 1px solid var(--rule); }
+    .signal-dot { width: 6px; height: 6px; background: var(--signal); flex: 0 0 6px; }
+    .hero-grid { display: grid; grid-template-columns: 55% 45%; }
+    .hero-copy { padding: 46px var(--pad) 0; display: flex; flex-direction: column; min-width: 0; }
+    h1 {
+      font-size: clamp(52px, 5.15vw, 82px);
+      line-height: .965; letter-spacing: -.055em; text-transform: uppercase;
+    }
+    h1 .premise { color: var(--muted); }
+    .hero-sub { max-width: 46ch; margin-top: 29px; font-size: clamp(16px, 1.24vw, 19px); line-height: 1.55; }
+    .hero-offer { margin-top: 27px; color: var(--muted); max-width: 45ch; }
+    .hero-offer strong { color: var(--ink); font-weight: 500; }
+    .hero-action { margin-top: 20px; }
+    .hero-session { margin-top: 13px; max-width: 42ch; font-size: 13px; color: var(--muted); }
+    .hero-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 15px; margin-top: auto; padding-block: 27px 15px;
+    }
+    .hero-bottom .mono { color: var(--muted); }
+    .drawing { border-left: 1px solid var(--rule); min-width: 0; display: flex; flex-direction: column; }
+    .drawing-area {
+      position: relative; flex: 1; display: flex; align-items: center;
+      background-image: radial-gradient(var(--rule) .6px, transparent .6px);
+      background-size: 8px 8px;
+    }
+    .drawing-area::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(90deg, var(--paper), transparent 24%, transparent 76%, var(--paper));
+    }
+    .method-svg { position: relative; width: 100%; height: auto; color: var(--ink); }
+    .method-svg text {
+      fill: var(--ink); font-family: var(--mono); font-size: 15px;
+      letter-spacing: .01em;
+    }
+    .method-svg .annotation { fill: var(--muted); font-size: 14px; }
+    .method-svg .diagram-label { font-weight: 500; }
+    .method-svg .faint { fill: none; stroke: var(--rule); stroke-width: 1; }
+    .method-svg .technical { fill: none; stroke: var(--ink); stroke-width: 1; }
+    .method-svg .spine { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+    .method-svg .paper-fill { fill: var(--paper); }
+    .method-svg .evidence-return { fill: none; stroke: var(--ink); stroke-width: 1; stroke-dasharray: 4 5; }
+    .method-svg .signal-fill { fill: var(--signal); }
+    .drawing-caption { border-top: 1px solid var(--rule); }
+    .caption-label { display: flex; justify-content: space-between; gap: 12px; padding: 15px 21px; border-bottom: 1px solid var(--rule); }
+    .legend { display: grid; grid-template-columns: 1fr 1fr; list-style: none; }
+    .legend li { display: flex; align-items: center; gap: 10px; padding: 11px 21px; min-width: 0; }
+    .legend li:nth-child(even) { border-left: 1px solid var(--rule); }
+    .legend li:nth-child(n+3) { border-top: 1px solid var(--rule); }
+    .state-mark { display: inline-block; width: 9px; height: 9px; flex: 0 0 9px; }
+    .emerging { border: 1px solid var(--ink); border-radius: 50%; }
+    .supported { border: 1px solid var(--ink); border-radius: 50%; background: linear-gradient(90deg,var(--ink) 50%,transparent 50%); }
+    .rejected { position: relative; }
+    .rejected::before, .rejected::after {
+      content: ""; position: absolute; left: 4px; top: -1px;
+      width: 1px; height: 12px; background: var(--ink); transform: rotate(45deg);
+    }
+    .rejected::after { transform: rotate(-45deg); }
+    .committed { background: var(--signal); }
+    .mobile-method { display: none; }
+    .construction-guide { position: absolute; z-index: 5; pointer-events: none; opacity: 0; }
+    .construction-guide.horizontal { left: 0; top: 0; width: 100%; border-top: 1px dashed var(--signal); }
+    .construction-guide.vertical { top: 0; bottom: 0; left: 0; border-left: 1px dashed var(--signal); }
+    .js.intro-active .construction-guide { opacity: .55; }
+    .grid-trace { position: absolute; pointer-events: none; background: var(--ink); opacity: 0; z-index: 4; }
+    .grid-trace.horizontal { top: 53px; left: 0; height: 1px; width: 100%; transform-origin: left; }
+    .grid-trace.vertical { left: 55%; top: 0; width: 1px; height: 100%; transform-origin: top; }
+
+    /* 02 / One request, evidence, a different next move */
+    .record-head {
+      padding: 16px var(--pad); display: flex; justify-content: space-between;
+      gap: 20px; border-bottom: 1px solid var(--rule);
+    }
+    .record-grid { display: grid; grid-template-columns: 29% 38% 33%; }
+    .record-stage { min-width: 0; position: relative; }
+    .record-stage + .record-stage { border-left: 1px solid var(--rule); }
+    .stage-tab {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 15px; min-height: 50px; padding: 13px var(--pad);
+      border-bottom: 1px solid var(--rule);
+    }
+    .stage-body { padding: 29px var(--pad) 36px; }
+    .request-stage { background: var(--wash); }
+    .request-stage h3 { font-size: clamp(24px, 2.2vw, 34px); line-height: 1.12; letter-spacing: -.035em; font-weight: 500; }
+    .request-stage s { text-decoration-thickness: 1px; text-decoration-color: var(--muted); }
+    .request-stage .stage-body > p { font-size: 14px; color: var(--muted); margin-top: 24px; }
+    .record-note { margin-top: 28px; padding-top: 18px; border-top: 1px dashed var(--rule); }
+    .evidence-item + .evidence-item { border-top: 1px dashed var(--rule); margin-top: 24px; padding-top: 24px; }
+    .evidence-state { display: flex; align-items: center; gap: 9px; margin-bottom: 11px; }
+    .evidence-item p { font-size: 16px; line-height: 1.55; }
+    .decision-stage .stage-tab { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .decision-stage h3 { font-size: clamp(25px, 2.35vw, 36px); line-height: 1.1; letter-spacing: -.04em; }
+    .decision-stage .stage-body > p { margin-top: 21px; font-size: 15px; }
+    .decision-stage .record-note p { margin-top: 10px; font-size: 14px; }
+    .record-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px var(--pad); border-top: 1px solid var(--rule); gap: 20px;
+    }
+    .record-foot p { font-size: 14px; color: var(--muted); }
+    .record-foot .mono { white-space: nowrap; }
+
+    /* 03 / Responsibility and rhythm */
+    .engagement-grid { display: grid; grid-template-columns: 68% 32%; }
+    .responsibilities { min-width: 0; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th { text-align: left; font-weight: 400; }
+    th, td { padding: 22px var(--pad); vertical-align: top; }
+    th { border-bottom: 1px solid var(--rule); background: var(--wash); }
+    td { border-bottom: 1px solid var(--rule); font-size: 16px; }
+    th + th, td + td { border-left: 1px solid var(--rule); }
+    tbody tr:last-child td { border-bottom: 0; }
+    .ownership-note { padding: 23px var(--pad); border-top: 1px solid var(--rule); color: var(--muted); font-size: 14px; }
+    .cadence { border-left: 1px solid var(--rule); }
+    .cadence > .eyebrow { padding: 22px var(--pad); border-bottom: 1px solid var(--rule); background: var(--wash); }
+    .cadence ol { list-style: none; }
+    .cadence li { padding: 23px var(--pad); }
+    .cadence li + li { border-top: 1px solid var(--rule); }
+    .cadence h3 { margin-bottom: 10px; font: 500 12px/1.5 var(--mono); text-transform: uppercase; letter-spacing: .04em; }
+    .cadence p { font-size: 15px; }
+
+    /* 04 / One engagement. One price. */
+    .pricing-grid { display: grid; grid-template-columns: 36% 64%; }
+    .price-cell { padding: 35px var(--pad); display: flex; flex-direction: column; align-items: flex-start; }
+    .price { margin-top: 21px; font-size: clamp(62px, 6.2vw, 96px); line-height: 1; letter-spacing: -.07em; font-weight: 600; }
+    .price-period { margin-top: 8px; }
+    .price-description { margin-block: 24px 29px; max-width: 29ch; font-size: 16px; }
+    .price-cell .button { margin-top: auto; width: 100%; max-width: 345px; }
+    .includes { border-left: 1px solid var(--rule); }
+    .includes-header { padding: 20px var(--pad); border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; gap: 15px; }
+    .includes-list { list-style: none; }
+    .includes-list li { display: grid; grid-template-columns: 25% 1fr 58px; border-bottom: 1px solid var(--rule); }
+    .includes-list li > * { padding: 21px 23px; display: flex; align-items: center; }
+    .includes-list li > * + * { border-left: 1px solid var(--rule); }
+    .includes-list .include-name { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+    .include-check { justify-content: center; padding-inline: 10px !important; }
+    .include-check svg { width: 16px; height: 16px; fill: none; stroke: var(--ink); stroke-width: 1.3; }
+    .price-boundary { padding: 22px var(--pad); font-size: 14px; color: var(--muted); }
+    .fit-line { display: grid; grid-template-columns: 18% 1fr; border-top: 1px solid var(--rule); }
+    .fit-line > * { padding: 24px var(--pad); }
+    .fit-line > p { border-left: 1px solid var(--rule); max-width: none; font-size: 15px; }
+
+    /* 05 / A private working session, followed by the practical questions */
+    .close-grid { display: grid; grid-template-columns: 62% 38%; }
+    .close-copy { padding: 39px var(--pad) 48px; }
+    .close-copy h2 { font-size: clamp(38px, 4.45vw, 68px); margin-top: 42px; max-width: 16ch; }
+    .close-copy > p:last-child { margin-top: 27px; max-width: 42ch; color: var(--muted); }
+    .agenda { border-left: 1px solid var(--rule); padding: 39px var(--pad); display: flex; flex-direction: column; align-items: flex-start; }
+    .agenda ol { list-style: none; width: 100%; margin-top: 24px; counter-reset: agenda; }
+    .agenda li { counter-increment: agenda; display: grid; grid-template-columns: 26px 1fr; gap: 15px; padding: 19px 0; border-top: 1px solid var(--rule); font-size: 16px; }
+    .agenda li::before { content: "0" counter(agenda); font: 12px/1.8 var(--mono); color: var(--muted); }
+    .agenda .button { margin-top: 23px; width: 100%; }
+    .agenda-note { margin-top: 12px; color: var(--muted); font-size: 12px; }
+    .faq-title {
+      border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+      padding: 17px var(--pad); display: flex; justify-content: space-between; gap: 15px;
+    }
+    details + details { border-top: 1px solid var(--rule); }
+    summary {
+      display: grid; grid-template-columns: 18% 1fr 80px; align-items: stretch;
+      list-style: none; cursor: pointer;
+    }
+    summary::-webkit-details-marker { display: none; }
+    .faq-index { padding: 29px var(--pad); color: var(--muted); }
+    .faq-question {
+      padding: 26px var(--pad); border-left: 1px solid var(--rule);
+      font-size: clamp(20px, 2vw, 30px); line-height: 1.15;
+      text-transform: uppercase; letter-spacing: -.035em; font-weight: 500;
+      display: flex; align-items: center;
+    }
+    .faq-toggle { border-left: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; }
+    .faq-toggle span { width: 15px; height: 15px; position: relative; }
+    .faq-toggle span::before, .faq-toggle span::after { content: ""; position: absolute; background: var(--ink); }
+    .faq-toggle span::before { width: 15px; height: 1px; left: 0; top: 7px; }
+    .faq-toggle span::after { width: 1px; height: 15px; left: 7px; top: 0; transition: transform .2s; }
+    details[open] .faq-toggle span::after { transform: rotate(90deg); }
+    summary:hover { background: var(--wash); }
+    .faq-answer { margin-left: 18%; border-left: 1px solid var(--rule); padding: 0 var(--pad) 30px; }
+    .faq-answer p { max-width: 66ch; font-size: 16px; }
+    .footer-grid {
+      display: grid; grid-template-columns: 30% 24% 20% 26%;
+      border-inline: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+    }
+    .footer-grid > * { min-width: 0; padding: 25px 23px; display: flex; align-items: center; }
+    .footer-grid > * + * { border-left: 1px solid var(--rule); }
+    .footer-grid .brand { font-size: 18px; }
+    .footer-grid .brand img { width: 25px; height: 25px; }
+    .compare { flex-wrap: wrap; gap: 0 9px; }
+    .compare > span { width: 100%; }
+    .compare a { min-height: 44px; display: inline-flex; align-items: center; text-decoration: underline; text-underline-offset: 4px; }
+    .footer-baseline { padding: 16px 0 28px; display: flex; justify-content: space-between; color: var(--muted); }
+
+    @media (min-width: 1450px) {
+      .hero-copy { padding-top: 56px; }
+      .hero-sub { margin-top: 34px; }
+    }
+    @media (max-width: 1150px) {
+      .nav { gap: 13px; padding-inline: 15px; }
+      .header-row > .brand { margin-left: 18px; }
+      .header-cta .button-label { padding-inline: 12px; }
+      .header-cta { margin-right: 10px; }
+      .section-head { grid-template-columns: 18% 56% 26%; }
+      .legend li { padding-inline: 13px; gap: 8px; }
+      .record-grid { grid-template-columns: 29% 36% 35%; }
+      .includes-list li { grid-template-columns: 24% 1fr 45px; }
+      .includes-list li > * { padding-inline: 16px; }
+      .footer-grid { grid-template-columns: 28% 23% 22% 27%; }
+      .footer-grid > * { padding-inline: 18px; }
+    }
+    @media (max-width: 999px) {
+      :root { --pad: 28px; }
+      .sheet { width: calc(100% - 40px); }
+      .nav .engagement-link { display: none; }
+      .hero-top { grid-template-columns: 1fr; }
+      .hero-top > div + div { display: none; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-copy { padding-top: 40px; }
+      h1 { font-size: clamp(54px, 8.5vw, 80px); }
+      .hero-sub { max-width: 55ch; font-size: 18px; }
+      .hero-offer { max-width: none; }
+      .hero-bottom { margin-top: 20px; }
+      .drawing { border-left: 0; border-top: 1px solid var(--rule); }
+      .drawing-area { justify-content: center; }
+      .method-svg { max-width: 610px; }
+      .legend { grid-template-columns: repeat(4, 1fr); }
+      .legend li { padding: 14px; }
+      .legend li + li { border-left: 1px solid var(--rule); }
+      .legend li:nth-child(n+3) { border-top: 0; }
+      .grid-trace.vertical { display: none; }
+      .section-head { grid-template-columns: 24% 1fr; }
+      .section-head h2 { padding-block: 37px; }
+      .section-aside { grid-column: 2; border-top: 1px solid var(--rule); padding-block: 20px; }
+      .section-aside p { max-width: 48ch; }
+      .section-aside .mono { display: none; }
+      .section-no { grid-row: span 2; }
+      .record-grid { grid-template-columns: 1fr 1fr; }
+      .decision-stage { grid-column: 1 / -1; border-left: 0 !important; border-top: 1px solid var(--rule); }
+      .decision-stage .stage-body { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 32px; }
+      .decision-stage h3 { grid-row: span 2; font-size: 33px; }
+      .decision-stage .stage-body > p, .decision-stage .record-note { margin-top: 0; }
+      .engagement-grid { grid-template-columns: 1fr; }
+      .cadence { border-left: 0; border-top: 1px solid var(--rule); }
+      .cadence ol { display: grid; grid-template-columns: repeat(3,1fr); }
+      .cadence li + li { border-top: 0; border-left: 1px solid var(--rule); }
+      .pricing-grid { grid-template-columns: 40% 60%; }
+      .price { font-size: 65px; }
+      .price-cell .button-label { padding-inline: 12px; }
+      .price-cell .button-arrow { flex-basis: 40px; width: 40px; }
+      .includes-list li { grid-template-columns: 1fr 44px; }
+      .includes-list .include-name { display: none; }
+      .includes-list .include-description { border-left: 0; }
+      .fit-line { grid-template-columns: 24% 1fr; }
+      .close-grid { grid-template-columns: 54% 46%; }
+      .close-copy h2 { font-size: 43px; }
+      .agenda { padding-inline: 23px; }
+      .agenda .button-label { padding-inline: 12px; }
+      .agenda .button-arrow { flex-basis: 40px; width: 40px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .footer-grid > :nth-child(3) { border-left: 0; }
+      .footer-grid > :nth-child(n+3) { border-top: 1px solid var(--rule); }
+      .compare > span { width: auto; }
+    }
+    @media (max-width: 600px) {
+      :root { --pad: 21px; --header: 69px; }
+      .sheet { width: calc(100% - 32px); }
+      .header-row { min-height: 68px; }
+      .header-row > .brand { margin-left: 13px; font-size: 17px; gap: 8px; }
+      .brand img { width: 26px; height: 26px; }
+      .nav { gap: 10px; padding-inline: 11px; }
+      .nav a { font-size: 12px; }
+      .nav a::before { display: none; }
+      .nav a[aria-current="location"] { text-decoration: underline; text-decoration-color: var(--signal); text-underline-offset: 6px; }
+      .header-cta { display: none; }
+      .hero-top > div { padding-block: 14px; min-height: 51px; }
+      .hero-top .eyebrow { font-size: 12px; letter-spacing: 0; }
+      .hero-copy { padding-top: 31px; }
+      h1 { font-size: clamp(36px, 10vw, 58px); letter-spacing: -.05em; line-height: 1.01; }
+      .hero-sub { margin-top: 26px; font-size: 16px; }
+      .hero-offer { margin-top: 23px; max-width: none; line-height: 1.9; }
+      .hero-action .button { width: 100%; }
+      .hero-session { line-height: 1.6; }
+      .hero-bottom { margin-top: 20px; padding-top: 9px; }
+      .hero-bottom > .mono { display: none; }
+      .method-svg { display: none; }
+      .mobile-method { display: block; position: relative; width: 100%; padding: 26px 21px 23px; }
+      .mobile-method > .eyebrow { display: flex; justify-content: space-between; margin-bottom: 21px; }
+      .mobile-sources { list-style: none; border: 1px solid var(--rule); background: var(--paper); }
+      .mobile-sources li { padding: 15px; }
+      .mobile-sources li + li { border-top: 1px solid var(--rule); }
+      .mobile-sources p { margin-top: 5px; font-size: 14px; color: var(--muted); }
+      .mobile-merge { display: flex; justify-content: center; height: 42px; align-items: center; font-size: 23px; }
+      .mobile-steps { list-style: none; position: relative; margin-left: 10px; border-left: 1px solid var(--ink); }
+      .mobile-steps li { position: relative; padding: 0 0 27px 25px; }
+      .mobile-steps li::before {
+        content: ""; position: absolute; left: -5px; top: 5px;
+        width: 9px; height: 9px; border: 1px solid var(--ink);
+        border-radius: 50%; background: var(--paper);
+      }
+      .mobile-steps li:first-child::before { background: var(--signal); border-color: var(--signal); border-radius: 0; }
+      .mobile-steps li:last-child { padding-bottom: 0; }
+      .mobile-return { margin-top: 23px; border: 1px dashed var(--ink); padding: 13px; font-size: 13px; background: var(--paper); }
+      .mobile-return span { margin-right: 7px; }
+      .caption-label { padding: 13px 17px; }
+      .caption-label > span:last-child { display: none; }
+      .legend { grid-template-columns: 1fr 1fr; }
+      .legend li { padding: 13px 15px; font-size: 12px; letter-spacing: 0; }
+      .legend li:nth-child(3) { border-left: 0; }
+      .legend li:nth-child(n+3) { border-top: 1px solid var(--rule); }
+      .section-head { grid-template-columns: 1fr; }
+      .section-head > * + * { border-left: 0; }
+      .section-no { flex-direction: row; grid-row: auto; gap: 15px; border-bottom: 1px solid var(--rule); padding-block: 15px; }
+      .section-no .number { order: 2; }
+      .section-head h2 { padding-block: 31px; font-size: clamp(31px, 8.5vw, 48px); }
+      .section-aside { grid-column: auto; padding-block: 20px; }
+      .section-aside p { max-width: 34ch; }
+      .record-head { flex-direction: column; gap: 6px; padding-block: 15px; }
+      .record-head > span:first-child { color: var(--muted); }
+      .record-grid { grid-template-columns: 1fr; }
+      .record-stage + .record-stage { border-left: 0; border-top: 1px solid var(--rule); }
+      .stage-body { padding-block: 25px 28px; }
+      .request-stage h3 { max-width: 17ch; font-size: 29px; }
+      .request-stage .stage-body > p { margin-top: 18px; }
+      .decision-stage .stage-body { display: block; }
+      .decision-stage h3 { font-size: 31px; }
+      .decision-stage .stage-body > p { margin-top: 20px; }
+      .decision-stage .record-note { margin-top: 25px; }
+      .record-foot { flex-direction: column; align-items: flex-start; gap: 8px; }
+      th, td { padding: 18px 15px; }
+      td { font-size: 14px; line-height: 1.5; }
+      th { font-size: 12px; }
+      .cadence ol { grid-template-columns: 1fr; }
+      .cadence li + li { border-left: 0; border-top: 1px solid var(--rule); }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .price-cell { padding-block: 29px; }
+      .price { font-size: 83px; margin-top: 18px; }
+      .price-description { max-width: 32ch; }
+      .price-cell .button { max-width: none; }
+      .includes { border-left: 0; border-top: 1px solid var(--rule); }
+      .includes-list li > * { padding: 20px; }
+      .includes-list .include-description { font-size: 15px; }
+      .fit-line { grid-template-columns: 1fr; }
+      .fit-line > :first-child { padding-bottom: 0; }
+      .fit-line > p { border-left: 0; padding-top: 11px; }
+      .close-grid { grid-template-columns: 1fr; }
+      .close-copy { padding-block: 28px 32px; }
+      .close-copy h2 { margin-top: 32px; font-size: clamp(36px, 9.3vw, 53px); max-width: 17ch; }
+      .agenda { border-left: 0; border-top: 1px solid var(--rule); padding: 25px var(--pad); }
+      .agenda ol { margin-top: 19px; }
+      .faq-title > span:last-child { display: none; }
+      summary { grid-template-columns: 1fr 51px; }
+      .faq-index { display: none; }
+      .faq-question { border-left: 0; padding: 23px 20px; font-size: 21px; }
+      .faq-answer { margin-left: 0; border-left: 0; padding-inline: 20px; padding-right: 28px; }
+      .faq-answer p { font-size: 15px; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-grid > * { padding: 15px 21px; }
+      .footer-grid > * + * { border-left: 0; border-top: 1px solid var(--rule); }
+      .footer-grid .brand { min-height: 68px; }
+      .footer-baseline { font-size: 12px; }
+      .footer-baseline span:last-child { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+      .construction-guide, .grid-trace, .intro-progress { display: none !important; }
+      .js .line > span, .js .motion-unit { transform: none !important; opacity: 1 !important; }
+      .js .plot-stroke { stroke-dashoffset: 0 !important; }
+      .js .evidence-return { opacity: 1 !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="masthead">
+    <div class="sheet header-row">
+      <a class="brand" href="#top" aria-label="Noetic Mind — home">
+        <img src="../noetic-logo.svg" alt="" width="30" height="30">
+        <span>Noetic Mind</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="#practice">In practice</a>
+        <a class="engagement-link" href="#engagement">Engagement</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+      <a class="button header-cta" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demo%20session">
+        <span class="button-label">Book a demo session</span>
+        <span class="button-arrow" aria-hidden="true"><span>↗</span></span>
+      </a>
+      <span class="intro-progress" aria-hidden="true"></span>
+    </div>
+  </header>
+
+  <main class="sheet" id="main">
+    <section class="section hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-top">
+        <div>
+          <p class="eyebrow">For Series A–B SaaS product teams</p>
+          <span class="signal-dot" aria-hidden="true"></span>
+        </div>
+        <div class="mono"><span>A discovery operating system</span><span class="muted">NM / 01</span></div>
+      </div>
+
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1 id="hero-title">
+            <span class="line premise"><span>You can build</span></span>
+            <span class="line premise"><span>anything.</span></span>
+            <span class="line"><span>Know what to</span></span>
+            <span class="line"><span>build next.</span></span>
+          </h1>
+          <p class="hero-sub">We install a discovery operating system inside your team, train you to run it every week, and coach the hard calls — so customer evidence becomes a clear next decision.</p>
+          <p class="hero-offer mono"><strong>$5,000/month</strong><br>Installation · Training · Coaching</p>
+          <div class="hero-action">
+            <a class="button" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demo%20session">
+              <span class="button-label">Book a demo session</span>
+              <span class="button-arrow" aria-hidden="true"><span>↗</span></span>
+            </a>
+          </div>
+          <p class="hero-session">45-minute private screenshare.<br>A worked example, one live decision, a fit discussion.</p>
+          <div class="hero-bottom">
+            <a class="text-link" href="#practice"><span>See a decision take shape</span><span aria-hidden="true">↓</span></a>
+            <span class="mono" aria-hidden="true">[01—05]</span>
+          </div>
+        </div>
+
+        <figure class="drawing" aria-labelledby="method-caption">
+          <div class="drawing-area">
+            <svg class="method-svg" viewBox="0 0 480 570" role="img" aria-labelledby="diagram-title diagram-desc">
+              <title id="diagram-title">The Noetic convergence method</title>
+              <desc id="diagram-desc">Business outcome and customer progress are two spines. Their assumptions converge on solution options, followed by test, deliver and measure. A dashed return path takes measured evidence back to the assumptions it tested. Evidence is emerging, supported, unresolved or rejected, or committed.</desc>
+              <defs>
+                <marker id="return-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" orient="auto">
+                  <path d="M1 1 L7 4 L1 7" fill="none" stroke="#252b35" stroke-width="1"></path>
+                </marker>
+              </defs>
+
+              <g class="faint" aria-hidden="true">
+                <path d="M20 35H460 M20 530H460 M116 35V219 M354 35V219 M240 221V530" stroke-dasharray="3 5"></path>
+                <path d="M20 47V23H44 M436 23H460V47 M20 518V542H44 M436 542H460V518"></path>
+                <path d="M21 325H211 M269 325H414 M21 455H211 M351 455H415" stroke-dasharray="3 5"></path>
+                <path d="M36 274V494 M31 274H41 M31 494H41"></path>
+              </g>
+              <g class="technical" aria-hidden="true">
+                <path d="M110 35H122 M116 29V41 M348 35H360 M354 29V41 M234 530H246 M240 524V536"></path>
+              </g>
+              <text class="annotation" x="28" y="61">01 / ALIGN</text>
+              <text class="annotation" x="452" y="61" text-anchor="end">[WK 01]</text>
+
+              <text class="diagram-label" x="28" y="92">BUSINESS</text>
+              <text class="diagram-label" x="28" y="111">OUTCOME</text>
+              <text class="diagram-label" x="269" y="92">CUSTOMER</text>
+              <text class="diagram-label" x="269" y="111">PROGRESS</text>
+
+              <g class="spine">
+                <path class="plot-stroke convergence-stroke" d="M116 127V200L240 278"></path>
+                <path class="plot-stroke convergence-stroke" d="M354 127V200L240 278"></path>
+                <path class="plot-stroke delivery-stroke" d="M240 316V492"></path>
+              </g>
+
+              <g class="technical paper-fill">
+                <circle cx="116" cy="127" r="4"></circle>
+                <circle cx="354" cy="127" r="4"></circle>
+                <circle cx="116" cy="179" r="5"></circle>
+                <circle cx="354" cy="179" r="5"></circle>
+              </g>
+              <text class="annotation" x="106" y="163" text-anchor="end">Assumptions</text>
+              <text class="annotation" x="364" y="163">Assumptions</text>
+
+              <path class="evidence-return" d="M247 492H431V179H363" marker-end="url(#return-arrow)"></path>
+              <text class="annotation" transform="translate(455 431) rotate(-90)">MEASURED EVIDENCE RETURNS</text>
+
+              <rect class="convergence-marker signal-fill" x="234" y="272" width="12" height="12"></rect>
+              <text class="diagram-label" x="240" y="305" text-anchor="middle">SOLUTION OPTIONS</text>
+
+              <g class="technical paper-fill">
+                <circle cx="240" cy="363" r="5"></circle>
+                <circle cx="240" cy="427" r="5"></circle>
+                <circle cx="240" cy="492" r="5"></circle>
+              </g>
+              <text class="diagram-label" x="263" y="368">TEST</text>
+              <text class="diagram-label" x="263" y="432">DELIVER</text>
+              <text class="diagram-label" x="263" y="497">MEASURE</text>
+
+              <text class="annotation" x="61" y="368">02 / LEARN</text>
+              <text class="annotation" x="61" y="432">03 / ACT</text>
+              <text class="annotation" x="61" y="497">04 / RETURN</text>
+              <text class="annotation" x="28" y="556">NM—01 / DECISION LINEAGE</text>
+              <text class="annotation" x="400" y="556">REV.03</text>
+            </svg>
+
+            <div class="mobile-method">
+              <p class="eyebrow"><span>The convergence method</span><span class="muted">NM—01</span></p>
+              <ul class="mobile-sources">
+                <li><span class="mono">01 / Business outcome</span><p>What outcome does the team need to move?</p></li>
+                <li><span class="mono">02 / Customer progress</span><p>What is the customer trying to achieve?</p></li>
+              </ul>
+              <div class="mobile-merge" aria-hidden="true">↓</div>
+              <ol class="mobile-steps mono">
+                <li>Solution options</li>
+                <li>Test</li>
+                <li>Deliver</li>
+                <li>Measure</li>
+              </ol>
+              <p class="mobile-return"><span aria-hidden="true">↥</span>Measured evidence returns to the assumptions it tested.</p>
+            </div>
+          </div>
+          <figcaption class="drawing-caption" id="method-caption">
+            <div class="caption-label mono"><span>Evidence, not just opinions.</span><span class="muted">State key ↓</span></div>
+            <ul class="legend mono" aria-label="Evidence states">
+              <li><span class="state-mark emerging" aria-hidden="true"></span>Emerging</li>
+              <li><span class="state-mark supported" aria-hidden="true"></span>Supported</li>
+              <li><span class="state-mark rejected" aria-hidden="true"></span>Unresolved / rejected</li>
+              <li><span class="state-mark committed" aria-hidden="true"></span>Committed</li>
+            </ul>
+          </figcaption>
+        </figure>
+      </div>
+      <span class="construction-guide horizontal" aria-hidden="true"></span>
+      <span class="construction-guide vertical" aria-hidden="true"></span>
+      <span class="grid-trace horizontal" aria-hidden="true"></span>
+      <span class="grid-trace vertical" aria-hidden="true"></span>
+    </section>
+
+    <section class="section cross" id="practice" aria-labelledby="practice-title">
+      <div class="section-head">
+        <div class="section-no"><span>A decision<br>taking shape</span><span class="number">01 / In practice</span></div>
+        <h2 id="practice-title" data-reveal>
+          <span class="line"><span>The fastest-learning</span></span>
+          <span class="line"><span>company wins.</span></span>
+        </h2>
+        <div class="section-aside"><span class="mono muted">From request to next test</span><p>Not more interview notes. A visible chain from customer struggle to a build decision.</p></div>
+      </div>
+
+      <article class="record" aria-label="Illustrative decision record: workspace activation">
+        <div class="record-head mono">
+          <span>Decision record / Workspace activation</span>
+          <span>Illustrative scenario</span>
+        </div>
+        <div class="record-grid" data-sequence>
+          <div class="record-stage request-stage motion-unit">
+            <div class="stage-tab mono"><span>01 / Request</span><span aria-hidden="true">→</span></div>
+            <div class="stage-body">
+              <h3><s>“Build a more powerful project dashboard.”</s></h3>
+              <p>Raised by sales after two enterprise prospects asked for reporting.</p>
+              <div class="record-note">
+                <p class="mono">Parked, not forgotten.</p>
+              </div>
+            </div>
+          </div>
+          <div class="record-stage evidence-stage motion-unit">
+            <div class="stage-tab mono"><span>02 / Evidence</span><span aria-hidden="true">→</span></div>
+            <div class="stage-body">
+              <div class="evidence-item">
+                <div class="evidence-state mono"><span class="state-mark emerging" aria-hidden="true"></span>Emerging</div>
+                <p>New account owners stall before the first client invite, unsure what “ready” means.</p>
+              </div>
+              <div class="evidence-item">
+                <div class="evidence-state mono"><span class="state-mark emerging" aria-hidden="true"></span>Emerging</div>
+                <p>Owners who invited a client early rarely mentioned reporting at all.</p>
+              </div>
+            </div>
+          </div>
+          <div class="record-stage decision-stage motion-unit">
+            <div class="stage-tab mono"><span>03 / Decision</span><span class="state-mark committed" aria-hidden="true"></span></div>
+            <div class="stage-body">
+              <h3>Test setup guidance before committing to dashboard expansion.</h3>
+              <p>The evidence points to setup uncertainty, rather than a need for more reporting.</p>
+              <div class="record-note">
+                <span class="mono">Committed to the next test</span>
+                <p>Guide five new account owners through first-project setup and watch where they stall.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="record-foot">
+          <p>Still open: whether resolving setup uncertainty changes activation.</p>
+          <span class="mono">The next week starts here ↗</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="section cross" id="engagement" aria-labelledby="engagement-title">
+      <div class="section-head">
+        <div class="section-no"><span>The engagement</span><span class="number">02 / Together</span></div>
+        <h2 id="engagement-title" data-reveal>
+          <span class="line"><span>Installed with you.</span></span>
+          <span class="line"><span>Run by your team.</span></span>
+          <span class="line"><span>Sharpened together.</span></span>
+        </h2>
+        <div class="section-aside"><span class="mono muted">Done with. Not done for.</span><p>We bring the system and the coaching. Your team owns the customer relationships, the roadmap, and the work.</p></div>
+      </div>
+      <div class="engagement-grid">
+        <div class="responsibilities">
+          <table>
+            <caption class="sr-only">Shared responsibilities in the Noetic Mind engagement</caption>
+            <thead>
+              <tr><th scope="col" class="mono">Noetic brings</th><th scope="col" class="mono">Your team brings</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>System installation and configuration</td><td>A product outcome worth improving</td></tr>
+              <tr><td>Hands-on training in the weekly practice</td><td>Access to customers and product evidence</td></tr>
+              <tr><td>Coaching on evidence, assumptions and prioritization</td><td>Participation in interviews and tests</td></tr>
+              <tr><td>Support on difficult product decisions</td><td>Ownership of delivery and measurement</td></tr>
+            </tbody>
+          </table>
+          <p class="ownership-note">Not standalone software. Not outsourced research. A practice installed inside your team.</p>
+        </div>
+        <aside class="cadence" aria-labelledby="cadence-title">
+          <h3 class="eyebrow" id="cadence-title">The operating rhythm</h3>
+          <ol>
+            <li><h3>01 / Every week</h3><p>One customer conversation and one decision review, run by your team.</p></li>
+            <li><h3>02 / Every delivery cycle</h3><p>An impact review: what you expected, and what actually happened.</p></li>
+            <li><h3>03 / Every quarter</h3><p>Outcomes agreed again with leadership.</p></li>
+          </ol>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section cross" id="pricing" aria-labelledby="pricing-title">
+      <div class="section-head">
+        <div class="section-no"><span>The investment</span><span class="number">03 / Pricing</span></div>
+        <h2 id="pricing-title" data-reveal>
+          <span class="line"><span>One system.</span></span>
+          <span class="line"><span>A weekly practice.</span></span>
+        </h2>
+        <div class="section-aside"><p>A managed discovery system, installed and coached inside your team.</p></div>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-cell">
+          <span class="eyebrow">Noetic Mind</span>
+          <p class="price">$5,000</p>
+          <p class="price-period mono">Per month</p>
+          <p class="price-description">Installation, team training, and ongoing coaching.</p>
+          <a class="button" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demo%20session">
+            <span class="button-label">Book a demo session</span>
+            <span class="button-arrow" aria-hidden="true"><span>↗</span></span>
+          </a>
+        </div>
+        <div class="includes">
+          <div class="includes-header mono"><span>Included in the engagement</span><span aria-hidden="true">↓</span></div>
+          <ul class="includes-list">
+            <li>
+              <span class="include-name">Install</span>
+              <span class="include-description">System installation and configuration</span>
+              <span class="include-check" aria-hidden="true"><svg viewBox="0 0 18 18"><path d="m3 9 4 4 8-8"></path></svg></span>
+            </li>
+            <li>
+              <span class="include-name">Train</span>
+              <span class="include-description">Hands-on training in the weekly practice</span>
+              <span class="include-check" aria-hidden="true"><svg viewBox="0 0 18 18"><path d="m3 9 4 4 8-8"></path></svg></span>
+            </li>
+            <li>
+              <span class="include-name">Coach</span>
+              <span class="include-description">Coaching on evidence, assumptions and prioritization</span>
+              <span class="include-check" aria-hidden="true"><svg viewBox="0 0 18 18"><path d="m3 9 4 4 8-8"></path></svg></span>
+            </li>
+            <li>
+              <span class="include-name">Support</span>
+              <span class="include-description">Support on difficult product decisions</span>
+              <span class="include-check" aria-hidden="true"><svg viewBox="0 0 18 18"><path d="m3 9 4 4 8-8"></path></svg></span>
+            </li>
+          </ul>
+          <p class="price-boundary">See the system privately and discuss the scope your team would need.</p>
+        </div>
+      </div>
+      <div class="fit-line">
+        <span class="mono">Best suited to</span>
+        <p>Series A–early B SaaS teams with an accountable product owner, access to customers, and capacity to act on what they learn.</p>
+      </div>
+    </section>
+
+    <section class="section cross" id="book" aria-labelledby="book-title">
+      <div class="close-grid">
+        <div class="close-copy">
+          <p class="eyebrow">04 / The next conversation</p>
+          <h2 id="book-title" data-reveal>
+            <span class="line"><span>See how your</span></span>
+            <span class="line"><span>team could decide</span></span>
+            <span class="line"><span>what to build next.</span></span>
+          </h2>
+          <p>A 45-minute private screenshare. Bring one product decision your team is facing.</p>
+        </div>
+        <div class="agenda">
+          <h3 class="eyebrow">On the call</h3>
+          <ol>
+            <li>See how customer evidence connects to a build decision.</li>
+            <li>Examine the assumptions behind one of your live decisions.</li>
+            <li>Review the engagement, team commitment, and fit.</li>
+          </ol>
+          <a class="button" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demo%20session">
+            <span class="button-label">Book a demo session</span>
+            <span class="button-arrow" aria-hidden="true"><span>↗</span></span>
+          </a>
+          <p class="agenda-note">Opens your email app to arrange a time.</p>
+        </div>
+      </div>
+
+      <div class="faq" aria-labelledby="faq-title">
+        <h3 class="faq-title mono" id="faq-title"><span>A few practical questions</span><span class="muted">Notes / 01—03</span></h3>
+        <details>
+          <summary>
+            <span class="faq-index mono" aria-hidden="true">01 / Practice</span>
+            <span class="faq-question">We already talk to customers. What changes?</span>
+            <span class="faq-toggle" aria-hidden="true"><span></span></span>
+          </summary>
+          <div class="faq-answer"><p>The connection between those conversations and product decisions. The system makes clear which outcome you’re pursuing, which opportunity matters, what evidence supports it, and what assumption to test next.</p></div>
+        </details>
+        <details>
+          <summary>
+            <span class="faq-index mono" aria-hidden="true">02 / The system</span>
+            <span class="faq-question">Is this software or consulting?</span>
+            <span class="faq-toggle" aria-hidden="true"><span></span></span>
+          </summary>
+          <div class="faq-answer"><p>It’s a managed operating system installed inside your team, with training and ongoing coaching. You’re not buying a standalone software subscription, and you’re not outsourcing discovery.</p></div>
+        </details>
+        <details>
+          <summary>
+            <span class="faq-index mono" aria-hidden="true">03 / Your team</span>
+            <span class="faq-question">Who takes part, and how often?</span>
+            <span class="faq-toggle" aria-hidden="true"><span></span></span>
+          </summary>
+          <div class="faq-answer"><p>A small cross-functional team — typically product, design, and engineering — runs one customer conversation and one decision review each week. Leadership joins once a quarter to agree the outcomes the team is working toward.</p></div>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="sheet">
+    <div class="footer-grid">
+      <a class="brand" href="#top"><img src="../noetic-logo.svg" alt="" width="25" height="25"><span>Noetic Mind</span></a>
+      <p class="mono">© Noetic Digital</p>
+      <p class="mono">Led by George Reed</p>
+      <div class="compare mono"><span>Compare versions:</span><a href="../">v1</a><span aria-hidden="true" style="width:auto">·</span><a href="../Astra/">v2</a></div>
+    </div>
+    <div class="footer-baseline mono"><span>Customer evidence → Clearer decisions</span><span>End of sheet / NM—03</span></div>
+  </footer>
+
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+  <script>
+    (() => {
+      "use strict";
+
+      const root = document.documentElement;
+      const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const animations = [];
+      const triggers = [];
+      let introTimer;
+      let intro;
+      let initialized = false;
+
+      function finishIntro() {
+        root.classList.remove("intro-active");
+        document.querySelectorAll(".plot-stroke").forEach(path => {
+          path.style.strokeDasharray = "";
+          path.style.strokeDashoffset = "";
+        });
+        document.querySelectorAll(
+          "#hero-title .line > span, .convergence-marker, .evidence-return, " +
+          ".construction-guide, .grid-trace, .intro-progress"
+        ).forEach(element => element.removeAttribute("style"));
+      }
+
+      function staticState() {
+        clearTimeout(introTimer);
+        animations.forEach(animation => animation.kill());
+        triggers.forEach(trigger => trigger.kill());
+        if (intro) intro.kill();
+        finishIntro();
+        document.querySelectorAll("[data-reveal] .line > span, .motion-unit").forEach(element => {
+          element.style.removeProperty("transform");
+          element.style.removeProperty("opacity");
+          element.style.removeProperty("visibility");
+        });
+      }
+
+      function initializeMotion() {
+        if (initialized || preference.matches || !window.gsap) return;
+        initialized = true;
+        const gsap = window.gsap;
+
+        try {
+          // A visible document first: hidden states are applied only by a live timeline.
+          // The independent cleanup also handles an interrupted/backgrounded intro.
+          if (window.scrollY < 60) {
+            root.classList.add("intro-active");
+            introTimer = window.setTimeout(() => {
+              if (intro) intro.progress(1);
+              finishIntro();
+            }, 1550);
+
+            const plottedPaths = Array.from(document.querySelectorAll(".plot-stroke"));
+            plottedPaths.forEach(path => {
+              const length = path.getTotalLength();
+              path.style.strokeDasharray = length;
+              path.style.strokeDashoffset = length;
+            });
+
+            intro = gsap.timeline({
+              defaults: { ease: "power2.out" },
+              onComplete: () => {
+                clearTimeout(introTimer);
+                finishIntro();
+              }
+            });
+
+            intro
+              .fromTo(".intro-progress", { scaleX: 0, opacity: 1 },
+                { scaleX: 1, duration: .8 }, 0)
+              .to(".intro-progress", { opacity: 0, duration: .2 }, .8)
+              .fromTo(".grid-trace.horizontal", { scaleX: 0, opacity: .45 },
+                { scaleX: 1, duration: .65 }, 0)
+              .fromTo(".grid-trace.vertical", { scaleY: 0, opacity: .45 },
+                { scaleY: 1, duration: .65 }, .1)
+              .fromTo(".construction-guide.horizontal", { y: 45 },
+                { y: document.querySelector(".hero").offsetHeight - 30, duration: 1.05, ease: "power1.inOut" }, 0)
+              .fromTo(".construction-guide.vertical", { x: 20 },
+                { x: document.querySelector(".hero").offsetWidth - 20, duration: 1.05, ease: "power1.inOut" }, .06)
+              .to(".convergence-stroke", { strokeDashoffset: 0, duration: .65, ease: "power1.inOut" }, .1)
+              .to(".delivery-stroke", { strokeDashoffset: 0, duration: .5, ease: "none" }, .64)
+              .fromTo(".evidence-return", { opacity: 0, strokeDashoffset: 35 },
+                { opacity: 1, strokeDashoffset: 0, duration: .45, ease: "power1.out" }, .9)
+              .fromTo(".convergence-marker", { scale: 0, transformOrigin: "50% 50%" },
+                { scale: 1, duration: .25 }, .65)
+              .fromTo("#hero-title .line > span", { yPercent: 106 },
+                { yPercent: 0, duration: .6, stagger: .065, ease: "power3.out" }, .22)
+              .to(".construction-guide, .grid-trace", { opacity: 0, duration: .2 }, 1.12);
+          }
+
+          // Scroll enhancement is independent of the intro and optional plugin.
+          if (!window.ScrollTrigger) return;
+          gsap.registerPlugin(window.ScrollTrigger);
+
+          document.querySelectorAll("[data-reveal]").forEach(heading => {
+            const lines = heading.querySelectorAll(".line > span");
+            triggers.push(ScrollTrigger.create({
+              trigger: heading,
+              start: "top 94%",
+              once: true,
+              onEnter: () => {
+                if (preference.matches) return;
+                animations.push(gsap.fromTo(lines,
+                  { yPercent: 103 },
+                  { yPercent: 0, duration: .7, stagger: .075, ease: "power3.out", clearProps: "transform" }
+                ));
+              }
+            }));
+          });
+
+          document.querySelectorAll("[data-sequence]").forEach(sequence => {
+            triggers.push(ScrollTrigger.create({
+              trigger: sequence,
+              start: "top 91%",
+              once: true,
+              onEnter: () => {
+                if (preference.matches) return;
+                animations.push(gsap.fromTo(sequence.querySelectorAll(".motion-unit"),
+                  { y: 16, opacity: .35 },
+                  { y: 0, opacity: 1, duration: .65, stagger: .13, ease: "power2.out", clearProps: "transform,opacity" }
+                ));
+              }
+            }));
+          });
+
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => {
+              if (!preference.matches && window.ScrollTrigger) ScrollTrigger.refresh();
+            }).catch(() => {});
+          }
+        } catch (error) {
+          staticState();
+        }
+      }
+
+      function initializeNavigation() {
+        if (!("IntersectionObserver" in window)) return;
+        const links = Array.from(document.querySelectorAll(".nav a"));
+        const sections = Array.from(document.querySelectorAll("main > section"));
+        const visible = new Map();
+
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) visible.set(entry.target, entry.boundingClientRect.top);
+            else visible.delete(entry.target);
+          });
+
+          const current = Array.from(visible.keys()).sort((a, b) =>
+            Math.abs(a.getBoundingClientRect().top - 90) -
+            Math.abs(b.getBoundingClientRect().top - 90)
+          )[0];
+
+          links.forEach(link => {
+            if (current && link.getAttribute("href") === "#" + current.id) {
+              link.setAttribute("aria-current", "location");
+            } else {
+              link.removeAttribute("aria-current");
+            }
+          });
+        }, { rootMargin: "-85px 0px -45% 0px", threshold: 0 });
+
+        sections.forEach(section => observer.observe(section));
+      }
+
+      function start() {
+        initializeNavigation();
+        initializeMotion();
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", start, { once: true });
+      } else {
+        start();
+      }
+
+      const handlePreference = event => {
+        if (event.matches) staticState();
+        // Do not replay the intro if the preference changes back.
+      };
+      if (preference.addEventListener) preference.addEventListener("change", handlePreference);
+      else if (preference.addListener) preference.addListener(handlePreference);
+    })();
+  </script>
+</body>
+</html>
