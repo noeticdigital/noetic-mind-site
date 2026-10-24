@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#061a38" />
+<title>Experiment · customer interviews in 3D</title>
+<!--
+  NOETIC MIND / V13 — experiment page. Four candidate 3D treatments for "customer interviews",
+  in the V13 world (navy, pale-blue forms, glowing paths, bloom). Each loops on its own; drag to orbit.
+    A  Waveforms feed the tree   B  The switch track   C  Beacons across a field   D  Conversation pairs
+-->
+<link rel="icon" type="image/svg+xml" href="../../noetic-logo.svg" />
+<link rel="preconnect" href="https://fonts.bunny.net" />
+<link href="https://fonts.bunny.net/css?family=geist:400,500,600,700|geist-mono:400,500" rel="stylesheet" />
+<style>
+  :root{--navy:#061a38;--line:rgba(143,182,230,.18);--white:#fff;--text:#e7eef8;--muted:#a9b8d0;--blue:#5e95d8;--blue-2:#8fb6e6;
+    --f:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--f);background:var(--navy);color:var(--text);overflow:hidden;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  canvas.world{position:fixed;inset:0;width:100vw;height:100vh;display:block;touch-action:none}
+  .bar{position:fixed;inset:0 0 auto 0;z-index:5;display:flex;align-items:center;gap:20px;height:72px;padding:0 28px;
+    background:linear-gradient(rgba(6,26,56,.9),rgba(6,26,56,0))}
+  .brand{display:flex;align-items:center;gap:10px;font:600 17px var(--f);text-decoration:none;color:var(--white)}
+  .brand img{width:28px;height:28px;border-radius:7px;box-shadow:0 0 0 1px rgba(255,255,255,.22)}
+  .bar .back{margin-left:auto;font-size:14px;color:var(--muted);text-decoration:none}
+  .bar .back:hover{color:var(--white)}
+  .panel{position:fixed;left:24px;bottom:24px;z-index:5;width:min(440px,calc(100vw - 48px));padding:20px 22px 18px;border-radius:18px;
+    background:rgba(6,26,56,.78);box-shadow:inset 0 0 0 1px var(--line);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  .eyebrow{font:500 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--blue-2)}
+  .panel h1{margin-top:8px;font-size:22px;font-weight:600;letter-spacing:-.02em;color:var(--white)}
+  .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px}
+  .tabs button{min-height:44px;border:0;border-radius:10px;background:rgba(143,182,230,.08);color:var(--muted);font:500 13px var(--f);cursor:pointer;
+    box-shadow:inset 0 0 0 1px var(--line);transition:background-color .2s,color .2s}
+  .tabs button:hover{color:var(--white)}
+  .tabs button[aria-selected="true"]{background:var(--white);color:var(--navy);box-shadow:none}
+  .tabs button b{display:block;font:500 11px var(--mono);letter-spacing:.1em}
+  .desc{margin-top:14px;font-size:15px;line-height:1.5;color:var(--text)}
+  .desc strong{color:var(--white)}
+  .hint{margin-top:10px;font:400 12px var(--mono);color:var(--muted)}
+  .tag{position:fixed;left:0;top:0;z-index:4;pointer-events:none;white-space:nowrap;opacity:0;
+    font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:6px 10px;border-radius:999px;
+    background:rgba(6,26,56,.82);color:var(--blue-2);box-shadow:inset 0 0 0 1px rgba(143,182,230,.4)}
+  .tag.hot{background:var(--white);color:var(--navy);box-shadow:0 0 20px rgba(143,182,230,.5)}
+  .nogl{position:fixed;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted)}
+  @media (max-width:700px){ .bar{padding:0 16px} .panel{left:12px;right:12px;bottom:12px;width:auto;padding:16px} .desc{font-size:14px} }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="../"><img src="../../noetic-logo.svg" alt="" width="28" height="28" />Noetic Mind</a>
+  <a class="back" href="../">Back to V13</a>
+</header>
+
+<div class="panel">
+  <p class="eyebrow">Experiment · customer interviews in 3D</p>
+  <h1 id="title">Waveforms feed the tree</h1>
+  <div class="tabs" role="tablist" aria-label="Concepts">
+    <button role="tab" aria-selected="true" data-k="0"><b>A</b>Waveforms</button>
+    <button role="tab" aria-selected="false" data-k="1"><b>B</b>Switch</button>
+    <button role="tab" aria-selected="false" data-k="2"><b>C</b>Beacons</button>
+    <button role="tab" aria-selected="false" data-k="3"><b>D</b>Pairs</button>
+  </div>
+  <p class="desc" id="desc"></p>
+  <p class="hint">Plays on a loop · drag to orbit · scroll to zoom</p>
+</div>
+<div id="tags"></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+const mobile = matchMedia('(max-width: 760px)').matches;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = t => t * t * t * (t * (t * 6 - 15) + 10);
+const span = (a, b, x) => ease(clamp((x - a) / (b - a)));
+const lerp = (a, b, t) => a + (b - a) * t;
+
+const CONCEPTS = [
+  { title: 'Waveforms feed the tree', desc: '<strong>Each interview is a recording.</strong> A playhead sweeps through each waveform; the key moments lift off as sparks and travel into the Progress-to-Outcome Tree, lighting its nodes. Where the spines meet, a decision lights up.',
+    cam: [3, 0.5, -1, 32, 22, 44] },
+  { title: 'The switch track', desc: '<strong>Interviews reconstruct how a customer switched.</strong> The sphere is one customer travelling from first thought to using: push and pull drive it forward, anxiety and habit drag it back, until it crosses the line.',
+    cam: [0, 0.5, 0, 28, 12, 42] },
+  { title: 'Beacons across a field', desc: '<strong>Each interview is a column of light.</strong> They light up one by one across the field, and their glow gathers along the ground into one bright point: what you now know.',
+    cam: [0, 1.5, 0, 34, 24, 26] },
+  { title: 'Conversation pairs', desc: '<strong>Each interview is two voices.</strong> Interviewer and customer face each other while a wave of sound passes between them. When a conversation ends, it sends its evidence onward.',
+    cam: [0, 1.2, 0, 26, 32, 22] },
+];
+
+function start() {
+  const canvas = document.createElement('canvas'); canvas.className = 'world';
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); } catch (e) { return false; }
+  if (!renderer.getContext()) return false;
+  document.body.prepend(canvas);
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mobile ? 1.5 : 1.75));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const BG = new THREE.Color('#061a38');
+  const scene = new THREE.Scene(); scene.background = BG; scene.fog = new THREE.FogExp2(BG, 0.014);
+  const camera = new THREE.PerspectiveCamera(34, 1, 0.3, 400);
+  scene.add(new THREE.HemisphereLight(0xc6dcff, 0x0a1d3d, 1.25));
+  const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(-14, 30, 16); sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -25, right: 25, top: 25, bottom: -25, near: 1, far: 80 });
+  sun.shadow.normalBias = 0.03; scene.add(sun);
+  const fill = new THREE.DirectionalLight(0x6f9cff, 0.6); fill.position.set(30, 18, -20); scene.add(fill);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshStandardMaterial({ color: '#0c2549', roughness: 1 }));
+  ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+  const grid = new THREE.GridHelper(300, 150, 0x1e4479, 0x1e4479); grid.material.transparent = true; grid.material.opacity = 0.2; grid.position.y = 0.012; scene.add(grid);
+
+  const PALE = '#e6eefa', PALE2 = '#b9cbe6';
+  const mPale = new THREE.MeshStandardMaterial({ color: PALE, roughness: 0.8 });
+  const mPale2 = new THREE.MeshStandardMaterial({ color: PALE2, roughness: 0.85 });
+  const GLOW = new THREE.Color(0.52, 0.8, 1.0);
+  const glow = (k = 2.2, opacity = 1, additive = false) => new THREE.MeshBasicMaterial({
+    color: GLOW.clone().multiplyScalar(k), toneMapped: false, transparent: additive || opacity < 1, opacity,
+    blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending, depthWrite: !additive });
+  const sparkGeo = new THREE.SphereGeometry(0.14, 12, 10);
+  function tube(points, r = 0.06, k = 2.4, closed = false) {
+    const curve = new THREE.CatmullRomCurve3(points, closed);
+    const core = new THREE.Mesh(new THREE.TubeGeometry(curve, 160, r, 8, closed), glow(k));
+    const halo = new THREE.Mesh(new THREE.TubeGeometry(curve, 160, r * 3.4, 8, closed), glow(0.8, 0.2, true));
+    const g = new THREE.Group(); g.add(core, halo);
+    return { g, curve, set(f) { const n = Math.floor(160 * clamp(f)) * 48; core.geometry.setDrawRange(0, n); halo.geometry.setDrawRange(0, n); g.visible = f > 0.002; } };
+  }
+  let seed = 3;
+  const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const rr = (a, b) => a + (b - a) * rnd();
+
+  // ---------- labels ----------
+  const tagLayer = document.getElementById('tags');
+  const tagsFor = [[], [], [], []];
+  function addTag(k, text, pos, hot = false) {
+    const el = document.createElement('span'); el.className = 'tag' + (hot ? ' hot' : ''); el.textContent = text;
+    tagLayer.appendChild(el); const t = { el, pos, vis: 1 }; tagsFor[k].push(t); return t;
+  }
+  const proj = new THREE.Vector3();
+  function drawTags(k, W, H) {
+    tagsFor.forEach((list, i) => list.forEach(t => {
+      if (i !== k || t.vis < 0.02) { t.el.style.opacity = 0; return; }
+      proj.copy(t.pos).project(camera);
+      if (proj.z > 1) { t.el.style.opacity = 0; return; }
+      const half = t.el.offsetWidth / 2 + 8;
+      const x = clamp((proj.x * 0.5 + 0.5) * W, half, W - half), y = (-proj.y * 0.5 + 0.5) * H - 26;
+      t.el.style.opacity = t.vis.toFixed(2);
+      t.el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-50%)`;
+    }));
+  }
+
+  const groups = [], updaters = [];
+
+  // =========================================================
+  // A. Waveforms feed the tree
+  // =========================================================
+  (() => {
+    const g = new THREE.Group(); scene.add(g); groups.push(g);
+    const N = { fr: [-5.5, -6], oc: [-5.5, -2], jb: [1.5, -7], tf: [1.5, -4.5], op: [1.5, -2], cs: [-2, 1], so: [-2, 3.6], ex: [-2, 6.2] };
+    const V = (p, y = 0.06) => new THREE.Vector3(p[0], y, p[1]);
+    const edges = [['fr', 'oc'], ['jb', 'tf'], ['tf', 'op'], ['oc', 'cs'], ['op', 'cs'], ['cs', 'so'], ['so', 'ex']];
+    const etubes = edges.map(([a, b]) => { const t = tube([V(N[a]), V(N[a]).lerp(V(N[b]), 0.5), V(N[b])], 0.05, 2.0); g.add(t.g); return t; });
+    const nodes = {};
+    Object.entries(N).forEach(([k, p]) => {
+      const h = k === 'cs' ? 1.4 : 0.8;
+      const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, h, 32).translate(0, h / 2, 0), mPale);
+      pillar.position.set(p[0], 0, p[1]); pillar.castShadow = pillar.receiveShadow = true; g.add(pillar);
+      const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.33, 0.06, 32), glow(0.6)); cap.position.set(p[0], h + 0.03, p[1]); g.add(cap);
+      nodes[k] = { pillar, cap, h, hit: 0 };
+    });
+    // three interviews as waveforms, to the right of the tree
+    const WAVES = 3, BARS = 34, waves = [];
+    for (let w = 0; w < WAVES; w++) {
+      const z = -8.2 + w * 3.6, x0 = 6, bars = [];
+      for (let i = 0; i < BARS; i++) {
+        const env = Math.sin(Math.PI * (i / (BARS - 1))) ** 0.6;
+        const h = 0.25 + env * (0.4 + 1.8 * Math.abs(Math.sin(i * 1.7 + w * 2.1) * Math.cos(i * 0.53 + w)));
+        const m = new THREE.Mesh(new RoundedBoxGeometry(0.16, 1, 0.42, 2, 0.04).translate(0, 0.5, 0), new THREE.MeshStandardMaterial({ color: PALE2, roughness: 0.7, emissive: GLOW, emissiveIntensity: 0 }));
+        m.position.set(x0 + i * 0.26, 0, z); m.scale.y = h; m.castShadow = true; g.add(m);
+        bars.push({ m, h, key: [8, 17, 26].includes(i) });
+      }
+      const head = new THREE.Mesh(new THREE.BoxGeometry(0.05, 3.2, 0.7).translate(0, 1.6, 0), glow(3));
+      head.position.set(x0, 0, z); g.add(head);
+      const target = ['jb', 'tf', 'op'][w];
+      const sparks = [0, 1, 2].map(() => { const m = new THREE.Mesh(sparkGeo, glow(4.2)); m.visible = false; g.add(m); return m; });
+      waves.push({ z, x0, bars, head, target, sparks, delay: w * 1.6 });
+    }
+    const path = tube([V(N.ex), V([-1.4, 8.5]), V([-2.6, 11]), V([-2, 13.5])], 0.07, 2.6); g.add(path.g);
+    const decision = new THREE.Mesh(new THREE.TorusGeometry(0.75, 0.06, 12, 64), glow(2.6)); decision.rotation.x = Math.PI / 2; decision.position.set(N.cs[0], 1.9, N.cs[1]); g.add(decision);
+    addTag(0, 'Interview 1', new THREE.Vector3(6 - 0.9, 0.4, -8.2));
+    addTag(0, 'Interview 2', new THREE.Vector3(6 - 0.9, 0.4, -4.6));
+    addTag(0, 'Interview 3', new THREE.Vector3(6 - 0.9, 0.4, -1.0));
+    const tTree = addTag(0, 'Progress-to-Outcome Tree', new THREE.Vector3(-2, 0.5, -7.6));
+    const tDec = addTag(0, 'Decision', new THREE.Vector3(N.cs[0], 2.4, N.cs[1]), true);
+    const LOOP = 11;
+    updaters.push(time => {
+      const t = reduce ? 9 : time % LOOP;
+      const draw = span(0.2, 2.0, t);
+      etubes.forEach((et, i) => et.set(clamp(draw * 1.4 - i * 0.06)));
+      Object.values(nodes).forEach(n => { n.pillar.scale.y = Math.max(0.02, span(0.2, 1.6, t)); n.cap.position.y = n.h * n.pillar.scale.y + 0.03; n.hit = Math.max(0, n.hit - 0.02); n.cap.material.color.copy(GLOW).multiplyScalar(0.6 + 2.8 * n.hit); });
+      waves.forEach(w => {
+        const ph = clamp((t - 2.2 - w.delay) / 3.4);
+        const hx = w.x0 + ph * (BARS - 1) * 0.26;
+        w.head.position.x = hx; w.head.visible = ph > 0 && ph < 1;
+        w.bars.forEach((b, i) => {
+          const d = Math.abs(b.m.position.x - hx);
+          const near = ph > 0 && ph < 1 ? Math.max(0, 1 - d / 0.8) : 0;
+          const played = ph * (BARS - 1) >= i ? 1 : 0;
+          b.m.scale.y = b.h * (1 + 0.5 * near * Math.sin(time * 18 + i));
+          b.m.material.emissiveIntensity = 0.12 * played + 0.9 * near + (b.key && played ? 0.5 : 0);
+        });
+        // key moments lift off and fly into the tree
+        w.sparks.forEach((s, si) => {
+          const kb = w.bars.filter(b => b.key)[si];
+          const startT = 2.2 + w.delay + 3.4 * ((kb.m.position.x - w.x0) / ((BARS - 1) * 0.26));
+          const f = clamp((t - startT) / 1.3);
+          s.visible = f > 0 && f < 1;
+          if (s.visible) {
+            const a = kb.m.position, b = nodes[w.target].cap.position;
+            const mid = new THREE.Vector3((a.x + b.x) / 2, 4.2, (a.z + b.z) / 2), u = 1 - f;
+            s.position.set(u * u * a.x + 2 * u * f * mid.x + f * f * b.x, u * u * (kb.h + 0.3) + 2 * u * f * mid.y + f * f * b.y, u * u * a.z + 2 * u * f * mid.z + f * f * b.z);
+          }
+          if (f >= 1 && f < 1.05) nodes[w.target].hit = 1;
+        });
+      });
+      const dec = span(8.4, 9.2, t);
+      decision.visible = dec > 0.01; decision.scale.setScalar(0.3 + 0.7 * dec); decision.rotation.z = time * 0.6;
+      nodes.cs.cap.material.color.copy(GLOW).multiplyScalar(0.6 + 2.6 * dec);
+      path.set(span(9.0, 10.2, t));
+      tTree.vis = span(1, 2, t) * (1 - span(3, 4, t)); tDec.vis = dec;
+    });
+  })();
+
+  // =========================================================
+  // B. The switch track
+  // =========================================================
+  (() => {
+    const g = new THREE.Group(); scene.add(g); groups.push(g);
+    const pts = [[-11, 3], [-6, 0.5], [-1, 1.5], [3, -0.5], [7, 0.8], [11.5, -1.5]].map(([x, z]) => new THREE.Vector3(x, 0.06, z));
+    const curve = new THREE.CatmullRomCurve3(pts);
+    const track = new THREE.Mesh(new THREE.TubeGeometry(curve, 200, 0.12, 10, false), mPale2); track.receiveShadow = true; g.add(track);
+    const lit = tube(pts, 0.07, 2.4); g.add(lit.g);
+    const stops = [0.02, 0.32, 0.62, 0.95], names = ['First thought', 'Looking', 'Deciding', 'Using'];
+    stops.forEach((u, i) => {
+      const p = curve.getPointAt(u);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.9, 0.05, 10, 64), i === 3 ? glow(2.4) : mPale); ring.rotation.x = Math.PI / 2; ring.position.set(p.x, 0.1, p.z); g.add(ring);
+      addTag(1, names[i], new THREE.Vector3(p.x, 0.4, p.z), i === 3);
+    });
+    const line = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.05, 4), glow(2.6)); const lp = curve.getPointAt(0.8); line.position.set(lp.x, 0.05, lp.z); g.add(line);
+    addTag(1, 'The switch', new THREE.Vector3(lp.x, 0.3, lp.z - 2.2));
+    const ball = new THREE.Mesh(new THREE.SphereGeometry(0.6, 32, 24), mPale); ball.castShadow = true; g.add(ball);
+    const ballGlow = new THREE.Mesh(new THREE.SphereGeometry(0.62, 32, 24), glow(1.2, 0.0, true)); g.add(ballGlow);
+    function arrow(color, k) {
+      const a = new THREE.Group();
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 1.6, 12).rotateZ(Math.PI / 2).translate(0.8, 0, 0), color);
+      const head = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.5, 16).rotateZ(-Math.PI / 2).translate(1.85, 0, 0), color);
+      a.add(shaft, head); g.add(a); return a;
+    }
+    const push = arrow(glow(2.6), 1), pull = arrow(glow(2.6), 1), anx = arrow(mPale2, 0), hab = arrow(mPale2, 0);
+    const tPush = addTag(1, 'Push', new THREE.Vector3(), false), tPull = addTag(1, 'Pull', new THREE.Vector3(), false);
+    const tAnx = addTag(1, 'Anxiety', new THREE.Vector3(), false), tHab = addTag(1, 'Habit', new THREE.Vector3(), false);
+    const LOOP = 10, tan = new THREE.Vector3();
+    updaters.push(time => {
+      const t = reduce ? 9 : time % LOOP;
+      // progress: steady, hesitates before the switch, then crosses
+      let u = t < 6.2 ? 0.02 + 0.66 * span(0.4, 5.6, t) : 0.68 + 0.27 * span(6.6, 8.6, t);
+      const wobble = t > 5 && t < 6.8 ? Math.sin(time * 9) * 0.006 : 0;
+      u = clamp(u + wobble, 0, 1);
+      const p = curve.getPointAt(u); curve.getTangentAt(u, tan);
+      ball.position.set(p.x, 0.66, p.z); ballGlow.position.copy(ball.position);
+      ballGlow.material.opacity = 0.6 * span(8.2, 8.8, t);
+      const ang = Math.atan2(-tan.z, tan.x);
+      const tx = Math.cos(ang), tz = -Math.sin(ang), nx = Math.sin(ang), nz = Math.cos(ang);
+      const place = (a, along, side, dir) => {
+        a.position.set(p.x + tx * along + nx * side, 0.66, p.z + tz * along + nz * side);
+        a.rotation.y = ang + (dir < 0 ? Math.PI : 0);
+      };
+      const forward = 1 - span(8.4, 9, t);
+      place(push, -3.2, 1.5, 1); place(pull, 0.6, 1.5, 1);
+      place(anx, 2.6, -1.5, -1); place(hab, -1.2, -1.5, -1);
+      [push, pull].forEach(a => a.scale.setScalar(Math.max(0.01, forward * (0.9 + 0.15 * Math.sin(time * 4)))));
+      [anx, hab].forEach(a => a.scale.setScalar(Math.max(0.01, forward * (t > 4.6 && t < 7 ? 1.25 : 0.8))));
+      lit.set(u);
+      tPush.pos.set(push.position.x + tx * 1, 1.3, push.position.z + tz * 1); tPull.pos.set(pull.position.x + tx * 1, 1.3, pull.position.z + tz * 1);
+      tAnx.pos.set(anx.position.x - tx * 1, 1.3, anx.position.z - tz * 1); tHab.pos.set(hab.position.x - tx * 1, 1.3, hab.position.z - tz * 1);
+      [tPush, tPull, tAnx, tHab].forEach(tg => tg.vis = forward);
+    });
+  })();
+
+  // =========================================================
+  // C. Beacons across a field
+  // =========================================================
+  (() => {
+    const g = new THREE.Group(); scene.add(g); groups.push(g);
+    const NB = 14, beacons = [];
+    const centre = new THREE.Vector3(0, 0, 0);
+    for (let i = 0; i < NB; i++) {
+      const a = i * 2.39996, r = 5 + Math.sqrt(i / NB) * 10;
+      const x = Math.cos(a) * r, z = Math.sin(a) * r * 0.8;
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.45, 0.35, 24), mPale); base.position.set(x, 0.175, z); base.castShadow = true; g.add(base);
+      const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.12, 5, 16).translate(0, 2.5, 0), glow(0.9, 1, true)); beam.position.set(x, 0.35, z); g.add(beam);
+      const halo = new THREE.Mesh(new THREE.RingGeometry(0.5, 0.62, 48), glow(2.2, 1, true)); halo.rotation.x = -Math.PI / 2; halo.position.set(x, 0.04, z); g.add(halo);
+      const trail = tube([new THREE.Vector3(x, 0.06, z), new THREE.Vector3(x * 0.5 + rr(-1, 1), 0.06, z * 0.5 + rr(-1, 1)), new THREE.Vector3(0, 0.06, 0)], 0.035, 1.3); g.add(trail.g);
+      beacons.push({ beam, halo, trail, at: 0.8 + i * 0.42 });
+    }
+    const orb = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 24), glow(1)); orb.position.set(0, 1.2, 0); g.add(orb);
+    const orbHalo = new THREE.Mesh(new THREE.SphereGeometry(1.3, 32, 24), glow(0.8, 0.15, true)); orbHalo.position.copy(orb.position); g.add(orbHalo);
+    const tOrb = addTag(2, 'What you now know', new THREE.Vector3(0, 2.4, 0), true);
+    addTag(2, 'One interview', new THREE.Vector3(5, 5.6, 0));
+    const LOOP = 10;
+    updaters.push(time => {
+      const t = reduce ? 9.5 : time % LOOP;
+      let litN = 0;
+      beacons.forEach(b => {
+        const on = span(b.at, b.at + 0.35, t), flash = Math.max(0, 1 - Math.abs(t - b.at - 0.2) / 0.4);
+        b.beam.material.opacity = 0.05 + 0.45 * on + 0.35 * flash; b.beam.scale.set(1 + flash * 0.5, Math.max(0.02, on), 1 + flash * 0.5);
+        b.halo.material.opacity = on; b.halo.scale.setScalar(1 + flash * 1.8);
+        b.trail.set(span(b.at + 0.25, b.at + 1.1, t)); litN += on;
+      });
+      const k = litN / NB;
+      orb.material.color.copy(GLOW).multiplyScalar(0.4 + 1.6 * k); orb.scale.setScalar(0.5 + 0.7 * k);
+      orbHalo.material.opacity = 0.05 + 0.25 * k; orbHalo.scale.setScalar(0.6 + 0.8 * k + 0.04 * Math.sin(time * 2));
+      tOrb.vis = span(6.5, 7.5, t);
+    });
+  })();
+
+  // =========================================================
+  // D. Conversation pairs
+  // =========================================================
+  (() => {
+    const g = new THREE.Group(); scene.add(g); groups.push(g);
+    const NP = 4, pairs = [];
+    const dest = new THREE.Vector3(0, 0.8, 8);
+    const pillarGeo = new RoundedBoxGeometry(0.9, 2.6, 0.9, 3, 0.18).translate(0, 1.3, 0);
+    for (let i = 0; i < NP; i++) {
+      const x = -9 + i * 6, z = -1.5;
+      const a = new THREE.Mesh(pillarGeo, mPale), b = new THREE.Mesh(pillarGeo, mPale2);
+      a.position.set(x - 1.15, 0, z); b.position.set(x + 1.15, 0, z); a.castShadow = b.castShadow = true; g.add(a, b);
+      const capA = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.05, 0.9), glow(0.6)); capA.position.set(x - 1.15, 2.63, z); g.add(capA);
+      const capB = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.05, 0.9), glow(0.6)); capB.position.set(x + 1.15, 2.63, z); g.add(capB);
+      const dots = [];
+      for (let j = 0; j < 22; j++) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), glow(3)); m.position.set(x - 0.63 + j * 0.06, 1.5, z); g.add(m); dots.push(m); }
+      const trail = tube([new THREE.Vector3(x, 0.06, z + 0.8), new THREE.Vector3(x * 0.6, 0.06, z + 4.5), new THREE.Vector3(dest.x, 0.06, dest.z)], 0.045, 2.0); g.add(trail.g);
+      const spark = new THREE.Mesh(sparkGeo, glow(4.2)); spark.visible = false; g.add(spark);
+      pairs.push({ x, z, capA, capB, dots, trail, spark, at: 0.6 + i * 1.9 });
+      if (i === 0) { addTag(3, 'Interviewer', new THREE.Vector3(x - 1.15, 3.3, z)); addTag(3, 'Customer', new THREE.Vector3(x + 1.15, 3.9, z)); }
+    }
+    const hub = new THREE.Mesh(new THREE.TorusGeometry(0.9, 0.07, 12, 64), glow(2.2)); hub.rotation.x = Math.PI / 2; hub.position.copy(dest); g.add(hub);
+    const tHub = addTag(3, 'Evidence', dest.clone().add(new THREE.Vector3(0, 0.8, 0)), true);
+    const LOOP = 10.5;
+    updaters.push(time => {
+      const t = reduce ? 10 : time % LOOP;
+      let done = 0;
+      pairs.forEach(pr => {
+        const talk = t > pr.at && t < pr.at + 1.6 ? 1 : 0, ph = (t - pr.at) / 1.6;
+        // who is speaking alternates: the wave travels one way, then back
+        const dir = Math.floor(ph * 4) % 2 === 0 ? 1 : -1;
+        pr.dots.forEach((d, j) => {
+          const u = j / (pr.dots.length - 1), env = Math.sin(Math.PI * u);
+          d.position.y = 1.5 + (talk ? env * 0.45 * Math.sin(u * 14 - dir * time * 12) : 0);
+          d.visible = talk > 0;
+        });
+        pr.capA.material.color.copy(GLOW).multiplyScalar(0.6 + (talk && dir > 0 ? 2.4 : 0));
+        pr.capB.material.color.copy(GLOW).multiplyScalar(0.6 + (talk && dir < 0 ? 2.4 : 0));
+        const f = clamp((t - pr.at - 1.6) / 1.2);
+        pr.trail.set(span(pr.at + 1.6, pr.at + 2.6, t));
+        pr.spark.visible = f > 0 && f < 1;
+        if (pr.spark.visible) { pr.trail.curve.getPointAt(f, pr.spark.position); pr.spark.position.y = 0.2; }
+        if (f >= 1) done++;
+      });
+      const k = done / NP;
+      hub.material.color.copy(GLOW).multiplyScalar(0.8 + 2.2 * k); hub.scale.setScalar(0.7 + 0.5 * k); hub.rotation.z = time * 0.5;
+      tHub.vis = 0.4 + 0.6 * k;
+    });
+  })();
+
+  // ---------- post + controls ----------
+  let composer = null;
+  if (!mobile) {
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    composer.addPass(new UnrealBloomPass(new THREE.Vector2(1, 1), 0.8, 0.55, 0.92));
+    composer.addPass(new OutputPass());
+  }
+  const controls = new OrbitControls(camera, canvas);
+  controls.enableDamping = true; controls.dampingFactor = 0.08; controls.maxPolarAngle = Math.PI * 0.47; controls.minDistance = 10; controls.maxDistance = 70;
+  controls.autoRotate = !reduce; controls.autoRotateSpeed = 0.35;
+
+  let W = 0, H = 0;
+  function resize() { W = innerWidth; H = innerHeight; renderer.setSize(W, H, false); camera.aspect = W / H; camera.updateProjectionMatrix(); if (composer) composer.setSize(W, H); }
+  resize(); addEventListener('resize', resize);
+
+  let current = 0, t0 = performance.now();
+  const title = document.getElementById('title'), desc = document.getElementById('desc');
+  function show(k) {
+    current = k; t0 = performance.now();
+    groups.forEach((g, i) => g.visible = i === k);
+    const c = CONCEPTS[k]; title.textContent = c.title; desc.innerHTML = c.desc;
+    const [tx, ty, tz, d, yaw, pitch] = c.cam, mul = W / H < 1 ? 1.6 : 1;
+    controls.target.set(tx, ty, tz);
+    const y = yaw * Math.PI / 180, p = pitch * Math.PI / 180;
+    camera.position.set(tx + Math.sin(y) * Math.cos(p) * d * mul, ty + Math.sin(p) * d * mul, tz + Math.cos(y) * Math.cos(p) * d * mul);
+    controls.update();
+    document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', String(+b.dataset.k === k)));
+  }
+  document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => show(+b.dataset.k)));
+  const fromHash = 'ABCD'.indexOf((location.hash || '#A').slice(1).toUpperCase());
+  show(fromHash >= 0 ? fromHash : 0);
+
+  function frame(now) {
+    const time = (now - t0) / 1000;
+    updaters[current](time);
+    controls.update();
+    drawTags(current, W, H);
+    if (composer) composer.render(); else renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  return true;
+}
+
+let ok = false;
+try { ok = start(); } catch (e) { console.error(e); }
+if (!ok) {
+  document.querySelector('canvas.world')?.remove();
+  const d = document.createElement('div'); d.className = 'nogl';
+  d.textContent = 'This experiment needs WebGL. Open it in a recent desktop browser.';
+  document.body.appendChild(d);
+}
+</script>
+</body>
+</html>
