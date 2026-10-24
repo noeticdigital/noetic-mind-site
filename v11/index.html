@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+  Noetic Mind — V11 landing. Sells the outcome, not the method: the pain a founder or PM recognises,
+  the promise, what changes, three plain beats, an illustrative decision, the founder and the offer.
+  The full walkthrough lives on how-it-works/ (V10's content). One field of dots: restless noise in the
+  hero and pain sections, then everything flows into one answer, "what to build next", then quiet.
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Noetic Mind · Know what to build next</title>
+<meta name="description" content="Any company can build things. The hard part is knowing what to build. Noetic Mind gives Series A–B SaaS teams certainty about what to build next, and why.">
+<link rel="icon" href="../noetic-logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=newsreader:300,400,400i|hanken-grotesk:400,500,600|ibm-plex-mono:400,500" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+:root{
+  --paper:#f6f5f1;
+  --paper-0:rgba(246,245,241,0);
+  --ink:#121417;
+  --ink-2:#4b5058;
+  --ink-3:#6b7078;
+  --ink-4:#a3a6ab;
+  --rule:#e0ddd5;
+  --blue:#184c84;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --sans:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --gutter:clamp(20px,5.5vw,88px);
+  --col:min(440px,36vw);
+  --head:64px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+@media (prefers-reduced-motion:no-preference){html:not(.lenis){scroll-behavior:smooth}}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.6 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit}
+p{margin:0}
+h1,h2,h3{margin:0;font-weight:400}
+ol,ul{margin:0;padding:0;list-style:none}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:2px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+section[id]{scroll-margin-top:var(--head)}
+
+/* ---------- the field ---------- */
+#field{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:none}
+.viz #field{display:block}
+main,footer{position:relative;z-index:1}
+
+/* ---------- header ---------- */
+.top{position:fixed;top:0;left:0;right:0;z-index:10;height:var(--head);display:flex;align-items:center;justify-content:space-between;gap:24px;padding:0 var(--gutter);background:rgba(246,245,241,.86);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid transparent;transition:border-color .4s}
+.top.scrolled{border-bottom-color:var(--rule)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:500 15px/1 var(--sans);letter-spacing:-.005em}
+.brand img{width:26px;height:26px;display:block}
+.top nav{display:flex;align-items:center;gap:30px}
+.top nav a.nl{font:400 14px/1 var(--sans);color:var(--ink-2);text-decoration:none;padding:14px 0}
+.top nav a.nl:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:12px;min-height:46px;padding:0 22px;background:var(--ink);color:var(--paper);text-decoration:none;font:500 15px/1 var(--sans);border-radius:999px;transition:background .25s}
+.btn:hover{background:var(--blue)}
+.btn .ar{display:inline-block;transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.btn:hover .ar{transform:translateX(3px)}
+.btn.sm{min-height:40px;padding:0 18px;font-size:14px}
+.tlink{display:inline-flex;align-items:center;gap:10px;min-height:46px;font:500 15px/1 var(--sans);text-decoration:none;color:var(--ink);border-bottom:1px solid transparent}
+.tlink span{border-bottom:1px solid var(--ink-4);padding-bottom:3px;transition:border-color .25s}
+.tlink:hover span{border-color:var(--ink)}
+
+/* ---------- type ---------- */
+.label{font:500 12px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.wrap{padding:0 var(--gutter)}
+
+/* ---------- hero ---------- */
+.hero{min-height:100vh;min-height:100svh;display:flex;align-items:flex-end;padding:calc(var(--head) + 48px) 0 clamp(48px,9vh,96px)}
+.hero .wrap{width:100%}
+.eyebrow{display:flex;flex-wrap:wrap;gap:6px 22px;font:500 12px/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:clamp(28px,4.5vh,48px)}
+.eyebrow span:first-child{color:var(--ink)}
+h1{font:300 clamp(52px,7.4vw,118px)/.94 var(--serif);letter-spacing:-.035em;max-width:8.2ch}
+h1 em{font-style:italic;font-weight:400}
+.lede{max-width:min(34em,40vw);margin-top:clamp(28px,4vh,40px);font-size:clamp(17px,1.25vw,19px);line-height:1.6;color:var(--ink-2)}
+.lede b{font-weight:500;color:var(--ink)}
+.hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px;margin-top:36px}
+.triad{display:flex;align-items:center;gap:16px;margin-top:clamp(40px,7vh,72px);font:500 12px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3)}
+.triad i{width:28px;height:1px;background:var(--ink-4)}
+.triad span:first-child{color:var(--ink)}
+
+/* ---------- chapters (sticky copy over the field) ---------- */
+.chapter{position:relative}
+.pin{display:flex;align-items:center;padding:calc(var(--head) + 56px) 0 72px}
+.copy{width:var(--col)}
+.copy h2{font:300 clamp(36px,3.6vw,56px)/1.02 var(--serif);letter-spacing:-.028em;margin-top:18px}
+.copy h2 em{font-style:italic;font-weight:400}
+.copy > p.body{margin-top:22px;color:var(--ink-2)}
+
+.note{margin-top:24px;font:400 12px/1.5 var(--mono);letter-spacing:.04em;color:var(--ink-3)}
+.note b{font-weight:500;color:var(--ink-2)}
+
+
+/* ---------- process ---------- */
+.rail{display:none}
+.kicker{margin-top:14px;font-size:15px;line-height:1.5;color:var(--ink-3);max-width:30em}
+.psteps{margin-top:26px}
+.psteps li{padding:22px 0;border-top:1px solid var(--rule)}
+.chip{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font:500 12px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.chip b{font-weight:500;color:var(--ink)}
+.chip span{padding:3px 8px;border:1px solid var(--rule);border-radius:999px;letter-spacing:.08em}
+.chip span.human{border-color:var(--blue);color:var(--blue)}
+.psteps h3{margin-top:14px;font:300 clamp(32px,3.1vw,48px)/1.05 var(--serif);letter-spacing:-.026em}
+.psteps h3 em{font-style:italic;font-weight:400}
+.psteps li > p:last-child{margin-top:16px;color:var(--ink-2);font-size:16.5px;line-height:1.6}
+.viz .rail{display:flex;gap:6px;margin-top:22px}
+.viz .rail li{flex:1;font:500 12px/1 var(--mono);letter-spacing:.06em;color:var(--ink-4);padding-top:10px;border-top:2px solid var(--rule);transition:color .4s,border-color .4s}
+.viz .rail li.done{border-top-color:var(--ink-3)}
+.viz .rail li.on{color:var(--ink);border-top-color:var(--ink)}
+.viz .psteps{display:grid;margin-top:8px}
+.viz .psteps li{grid-area:1/1;border-top:0;opacity:0;transform:translateY(10px);transition:opacity .5s,transform .6s cubic-bezier(.2,.7,.2,1);pointer-events:none}
+.viz .psteps li.on{opacity:1;transform:none;pointer-events:auto}
+
+/* ---------- roles ---------- */
+.roles{padding:clamp(120px,18vh,200px) 0 0}
+.roles h2{font:300 clamp(36px,3.6vw,56px)/1.04 var(--serif);letter-spacing:-.028em;margin-top:18px;max-width:16em}
+.roles h2 em{font-style:italic;font-weight:400}
+.role-grid{margin-top:clamp(40px,6vh,64px);display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:28px clamp(24px,4vw,64px)}
+.role{background:var(--paper)}
+.role-h{font:400 26px/1.1 var(--serif);letter-spacing:-.015em;padding-bottom:14px;border-bottom:1px solid var(--ink)}
+.role-h.mind{color:var(--blue);border-bottom-color:var(--blue)}
+.role li{padding:12px 0;border-bottom:1px solid var(--rule);font-size:15.5px;line-height:1.45;color:var(--ink-2)}
+
+/* ---------- pain ---------- */
+.pain{padding:clamp(120px,20vh,220px) 0 clamp(60px,10vh,120px)}
+.pain h2{font:300 clamp(40px,4.6vw,72px)/1.02 var(--serif);letter-spacing:-.032em;margin-top:22px;max-width:min(12em,56vw)}
+.pain h2 em{font-style:italic;font-weight:400}
+.pains{margin-top:clamp(40px,6vh,64px);max-width:min(760px,56vw);border-top:1px solid var(--rule)}
+.pains li{font:300 clamp(22px,1.9vw,30px)/1.3 var(--serif);letter-spacing:-.012em;padding:20px 0 20px 36px;border-bottom:1px solid var(--rule);position:relative}
+.pains li::before{content:"";position:absolute;left:4px;top:50%;width:16px;height:1px;background:var(--ink-3)}
+.pain-foot{margin-top:28px;font-size:17px;color:var(--ink);font-weight:500;max-width:36em}
+.promise .lessmore{margin-top:28px}
+.promise .lessmore li{grid-template-columns:52px 1fr 52px 1fr;font-size:15.5px;padding:13px 0}
+
+/* ---------- at a glance ---------- */
+.glance{padding:clamp(110px,16vh,180px) 0 0}
+.glance h2{font:300 clamp(36px,3.6vw,56px)/1.04 var(--serif);letter-spacing:-.028em;margin-top:18px;max-width:18em}
+.glance h2 em{font-style:italic;font-weight:400}
+.beats{margin-top:clamp(40px,6vh,64px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px clamp(24px,4vw,64px)}
+.beats li{border-top:1px solid var(--ink);padding-top:22px;background:var(--paper)}
+.beats .n{font:500 12px/1 var(--mono);letter-spacing:.14em;color:var(--ink-3)}
+.beats h3{margin-top:14px;font:400 clamp(24px,2vw,30px)/1.12 var(--serif);letter-spacing:-.015em}
+.beats p{margin-top:12px;font-size:15.5px;line-height:1.55;color:var(--ink-2)}
+.glance-link{margin-top:36px}
+
+/* ---------- stance ---------- */
+.hero-price{margin-top:22px;font:500 12px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.stance{padding:clamp(120px,20vh,220px) 0 clamp(60px,10vh,120px)}
+.stance h2{font:300 clamp(34px,3.7vw,58px)/1.08 var(--serif);letter-spacing:-.028em;margin-top:22px;max-width:min(17em,52vw)}
+.stance h2 em{font-style:italic;font-weight:400}
+.stance .lede{max-width:min(34em,48vw)}
+.lessmore{margin-top:clamp(48px,7vh,72px);max-width:880px;border-top:1px solid var(--rule)}
+.lessmore li{display:grid;grid-template-columns:64px 1fr 64px 1fr;align-items:baseline;gap:8px 16px;padding:18px 0;border-bottom:1px solid var(--rule);font-size:17px}
+.lessmore span{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.lessmore b{font-weight:400;color:var(--ink-3)}
+.lessmore b:last-child{color:var(--ink);font-weight:500}
+
+/* ---------- keeps ---------- */
+.keeps{padding:clamp(120px,18vh,200px) 0 0}
+.keeps h2{font:300 clamp(36px,3.6vw,56px)/1.02 var(--serif);letter-spacing:-.028em;margin-top:18px}
+.keeps h2 em{font-style:italic;font-weight:400}
+.artefacts{margin-top:clamp(40px,6vh,64px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--rule)}
+.artefacts li{padding:28px 32px 32px 0;border-bottom:1px solid var(--rule);background:var(--paper)}
+.artefacts h3{font:400 clamp(22px,1.8vw,27px)/1.15 var(--serif);letter-spacing:-.015em}
+.artefacts h3 em{font-style:italic;color:var(--blue)}
+.artefacts p{margin-top:10px;font-size:15.5px;line-height:1.55;color:var(--ink-2);max-width:30em}
+
+/* ---------- thinking ---------- */
+.thinking{padding:clamp(100px,16vh,180px) 0 0}
+.think-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(260px,1fr);gap:56px clamp(40px,7vw,120px);align-items:start}
+.beliefs{margin-top:24px}
+.beliefs li{font:300 clamp(28px,2.9vw,44px)/1.15 var(--serif);letter-spacing:-.024em;padding:18px 0;border-bottom:1px solid var(--rule)}
+.beliefs li:first-child{border-top:1px solid var(--rule)}
+.beliefs em{font-style:italic;font-weight:400}
+.founder{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:28px}
+.mono-mark{width:56px;height:56px;border-radius:50%;background:#0a1a38;color:#fff;display:grid;place-items:center;font:400 20px/1 var(--serif);letter-spacing:.02em;margin-bottom:20px}
+.f-name{margin-top:10px;font:400 26px/1.1 var(--serif);letter-spacing:-.015em}
+.f-role{margin-top:4px;font-size:15px;color:var(--ink-3)}
+.f-bio{margin-top:16px;font-size:15.5px;line-height:1.6;color:var(--ink-2)}
+
+/* ---------- fit ---------- */
+.fit{margin-top:clamp(64px,10vh,100px);display:grid;grid-template-columns:1fr 1fr;gap:32px clamp(32px,6vw,96px);max-width:1100px}
+.fit ul{margin-top:14px;border-top:1px solid var(--rule)}
+.fit li{padding:12px 0 12px 26px;border-bottom:1px solid var(--rule);position:relative;font-size:16px}
+.fit li::before{content:"";position:absolute;left:2px;top:21px;width:9px;height:9px;border-radius:50%;background:var(--ink)}
+.fit .no li{color:var(--ink-2)}
+.fit .no li::before{background:none;border:1px solid var(--ink-3);top:20px}
+.fit .no li::after{content:"";position:absolute;left:0;top:25px;width:15px;height:1px;background:var(--ink-3);transform:rotate(-45deg)}
+
+/* ---------- example ---------- */
+.example{padding:clamp(120px,18vh,200px) 0 clamp(80px,12vh,140px)}
+.ex-grid{display:grid;grid-template-columns:minmax(180px,1fr) minmax(0,2.6fr);gap:40px clamp(32px,5vw,80px)}
+.ex-head h2{font:300 clamp(36px,3.6vw,56px)/1.02 var(--serif);letter-spacing:-.028em;margin-top:18px;max-width:10ch}
+.ex-head h2 em{font-style:italic;font-weight:400}
+.ex-body{max-width:820px}
+.ex-row{display:grid;grid-template-columns:150px 1fr;gap:12px 32px;padding:34px 0;border-top:1px solid var(--rule)}
+.ex-row:last-of-type{border-bottom:1px solid var(--rule)}
+.ex-row .label{padding-top:10px}
+.request{position:relative;display:inline;font:300 clamp(28px,2.8vw,42px)/1.18 var(--serif);letter-spacing:-.02em;color:var(--ink-3)}
+.strike{background:linear-gradient(var(--ink),var(--ink)) no-repeat 0 58%/100% 1.5px;transition:background-size 1.4s cubic-bezier(.65,0,.25,1) .25s}
+.js .ex-row:not(.in) .strike{background-size:0% 1.5px}
+.evidence li{font-size:clamp(17px,1.35vw,20px);line-height:1.5;color:var(--ink);padding:0 0 0 22px;position:relative}
+.evidence li + li{margin-top:16px}
+.evidence li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--ink)}
+.decision{font:400 clamp(30px,3vw,46px)/1.12 var(--serif);letter-spacing:-.022em;color:var(--blue)}
+.ex-foot{margin-top:28px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 32px;color:var(--ink-2);font-size:16px}
+.ex-foot em{font-family:var(--serif);font-size:20px;color:var(--ink)}
+
+/* ---------- close ---------- */
+.close{padding:clamp(100px,16vh,180px) 0 clamp(80px,12vh,120px)}
+.close h2{font:300 clamp(46px,6.2vw,100px)/.96 var(--serif);letter-spacing:-.035em;max-width:11ch}
+.close h2 em{font-style:italic;font-weight:400}
+.close .lede{max-width:36em}
+@media (max-width:860px){.lede{max-width:34em}}
+.close .hero-actions{margin-top:40px}
+.terms{margin-top:clamp(72px,11vh,120px);display:grid;grid-template-columns:auto 1fr;gap:20px clamp(32px,6vw,96px);align-items:baseline;padding-top:32px;border-top:1px solid var(--rule);max-width:1100px}
+.price{font:300 clamp(40px,4vw,60px)/1 var(--serif);letter-spacing:-.03em;white-space:nowrap}
+.price small{font:400 16px/1 var(--sans);letter-spacing:0;color:var(--ink-2);margin-left:6px}
+.terms p{color:var(--ink-2);max-width:40em}
+.terms p b{font-weight:500;color:var(--ink)}
+.terms p + p{margin-top:10px;font-size:15px}
+
+footer{border-top:1px solid var(--rule);padding:28px var(--gutter) 36px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 32px;font-size:14px;color:var(--ink-3);background:var(--paper)}
+footer nav{display:flex;flex-wrap:wrap;gap:4px 14px}
+footer a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--rule);padding:6px 0}
+footer a:hover{color:var(--ink);border-color:var(--ink)}
+
+/* ---------- motion (only once the field is running) ---------- */
+.viz .promise{height:210vh}
+.viz .pin{position:sticky;top:0;height:100vh;height:100svh;padding-top:var(--head);padding-bottom:0}
+
+.js .rv{opacity:0;transform:translateY(18px);transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1)}
+.js .rv.in{opacity:1;transform:none}
+.js .rv.d1{transition-delay:.12s}.js .rv.d2{transition-delay:.24s}.js .rv.d3{transition-delay:.36s}.js .rv.d4{transition-delay:.48s}
+
+@media (prefers-reduced-motion:reduce){
+  .js .rv{opacity:1;transform:none;transition:none}
+  .strike,.psteps li,.rail li{transition:none}
+  .js .ex-row:not(.in) .strike{background-size:100% 1.5px}
+}
+
+/* ---------- narrow screens: field on top, copy below ---------- */
+@media (max-width:1100px) and (min-width:861px){
+  .artefacts{grid-template-columns:1fr 1fr}
+}
+@media (max-width:860px){
+  :root{--col:100%;--head:58px}
+  body{font-size:16px}
+  .top nav a.nl{display:none}
+  .top nav{gap:0}
+  h1{font-size:clamp(46px,13vw,64px);max-width:none}
+  .hero{align-items:flex-start;padding-top:calc(var(--head) + 40px)}
+  .lede{font-size:17px}
+  .ex-grid{grid-template-columns:1fr;gap:28px}
+  .ex-row{grid-template-columns:1fr;gap:10px;padding:26px 0}
+  .ex-row .label{padding-top:0}
+  .terms{grid-template-columns:1fr}
+  .stance h2,.stance .lede{max-width:none}
+  .stance h2{font-size:clamp(30px,8.4vw,40px)}
+  .lessmore li{grid-template-columns:48px 1fr;font-size:16px}
+  .artefacts{grid-template-columns:1fr}
+  .artefacts li{padding:22px 0}
+  .think-grid,.fit,.role-grid,.beats{grid-template-columns:1fr}
+  .pain h2,.pains{max-width:none}
+  .pains li{font-size:clamp(20px,5.6vw,24px);padding:16px 0 16px 30px}
+  .viz .promise{height:190vh}
+  .viz .promise .lessmore{display:none}
+  .viz .psteps h3{font-size:clamp(28px,7.6vw,34px);margin-top:10px}
+  .viz .psteps li > p:last-child{margin-top:10px;font-size:15px;line-height:1.5}
+  .viz .rail{margin-top:0}
+  .viz .kicker,.viz .process .copy > .label{display:none}
+  .viz .process .note{margin-top:10px}
+  .beliefs li{font-size:clamp(26px,7.4vw,34px)}
+  .viz .pin{align-items:flex-end;padding-bottom:20px}
+  .viz .copy{padding-top:44px;background:linear-gradient(to bottom,var(--paper-0),var(--paper) 40px)}
+  .viz .copy h2{font-size:clamp(30px,8.4vw,38px);margin-top:12px}
+  .viz .copy > p.body{margin-top:14px;font-size:15.5px;line-height:1.55}
+  .viz .note{margin-top:14px}
+}
+@media (max-width:420px){
+  .btn{padding:0 18px}
+  .top .btn.sm{padding:0 14px;font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<header class="top" id="top-bar">
+  <a class="brand" href="#top" aria-label="Noetic Mind, back to top"><img src="../noetic-logo.svg" alt="" width="26" height="26">Noetic Mind</a>
+  <nav aria-label="Primary">
+    <a class="nl" href="how-it-works/">How it works</a>
+    <a class="nl" href="#example">Example</a>
+    <a class="nl" href="#book">Pricing</a>
+    <a class="btn sm" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demo%20session">Book a demo session</a>
+  </nav>
+</header>
+
+<canvas id="field" aria-hidden="true"></canvas>
+
+<main>
+  <section class="hero" id="top" data-keys="0:0">
+    <div class="wrap">
+      <p class="eyebrow rv"><span>Noetic Mind</span><span>For Series A–B SaaS product teams</span></p>
+      <h1 class="rv d1">Know what to build <em>next.</em></h1>
+      <p class="lede rv d2"><b>Any company can build things. The hard part is knowing what to build.</b> Noetic Mind gives your team certainty about what’s worth building, and why, from what your customers actually do.</p>
+      <div class="hero-actions rv d3">
+        <a class="btn" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demo%20session">Book a demo session <span class="ar" aria-hidden="true">→</span></a>
+        <a class="tlink" href="how-it-works/"><span>See how it works</span></a>
+      </div>
+      <p class="hero-price rv d4">$5,000 / month · the system, training and coaching</p>
+    </div>
+  </section>
+
+  <section class="pain" id="pain" data-keys="0:0" data-dim=".18" aria-labelledby="pain-h">
+    <div class="wrap">
+      <p class="label rv">Sound familiar?</p>
+      <h2 id="pain-h" class="rv d1">You can build anything. <em>That’s the problem.</em></h2>
+      <ul class="pains">
+        <li class="rv">The roadmap is whoever asked loudest last week.</li>
+        <li class="rv d1">You shipped it on time. Nobody’s behaviour changed.</li>
+        <li class="rv d2">Customer interviews happen, then vanish into a doc nobody reads.</li>
+        <li class="rv d3">The board asks “why this, why now?” and the honest answer is a hunch.</li>
+      </ul>
+      <p class="pain-foot rv">Every sprint spent on the wrong thing is runway you don’t get back.</p>
+    </div>
+  </section>
+
+  <section class="chapter promise" id="promise" data-keys="0:0 0.35:1" aria-labelledby="promise-h">
+    <div class="pin"><div class="wrap"><div class="copy">
+      <p class="label">With Noetic Mind</p>
+      <h2 id="promise-h">One clear answer to what to build next, <em>and the evidence behind it.</em></h2>
+      <p class="body">Your customers’ real stories go in. Noetic Mind turns them into decisions your team can defend, and keeps them current as new evidence arrives, so the next sprint starts from what you know, not what you hope.</p>
+      <ul class="lessmore">
+        <li><span>Less</span><b>roadmap by loudest voice.</b><span>More</span><b>decisions you can defend.</b></li>
+        <li><span>Less</span><b>building to find out.</b><span>More</span><b>testing before you commit.</b></li>
+        <li><span>Less</span><b>research that sits in a deck.</b><span>More</span><b>evidence behind every call.</b></li>
+      </ul>
+    </div></div></div>
+  </section>
+
+  <section class="keeps" id="get" data-keys="0:1 0.25:2" data-dim=".4" aria-labelledby="get-h">
+    <div class="wrap">
+      <p class="label rv">What changes</p>
+      <h2 id="get-h" class="rv d1">What your team <em>walks away with.</em></h2>
+      <ul class="artefacts">
+        <li class="rv"><h3>Certainty, not opinions</h3><p>Every belief about your product shows how sure you are: assumption, emerging, validated or disproven.</p></li>
+        <li class="rv d1"><h3>A next best action, always</h3><p>The single step that would most reduce your uncertainty, on screen at all times.</p></li>
+        <li class="rv d2"><h3>Bad ideas killed early</h3><p>Weak bets are tested and dropped before they cost you a sprint.</p></li>
+        <li class="rv"><h3>A story for your board</h3><p>The reasoning from evidence to decision, ready to put in front of your CEO or investors.</p></li>
+        <li class="rv d1"><h3>Understanding that compounds</h3><p>Every conversation adds to what you know, so no quarter starts from a blank page.</p></li>
+        <li class="rv d2"><h3>Fewer arguments</h3><p>Debates settled by evidence, not by seniority or volume.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="glance" id="glance" data-keys="0:2" aria-labelledby="glance-h">
+    <div class="wrap">
+      <p class="label rv">At a glance</p>
+      <h2 id="glance-h" class="rv d1">Three things happen. <em>The Mind does the heavy lifting.</em></h2>
+      <ol class="beats">
+        <li class="rv"><span class="n">1</span><h3>We set it up with you</h3><p>Your brief, your customers, the number you need to move. Installed and configured in your team, with training.</p></li>
+        <li class="rv d1"><span class="n">2</span><h3>Your customers tell their real stories</h3><p>Short interviews about real decisions they made, guided live by our Copilot. This is the only part that needs people.</p></li>
+        <li class="rv d2"><span class="n">3</span><h3>The Mind turns them into decisions</h3><p>What to build, what to test first, what to drop, and why. You approve every change, and we coach the hard calls.</p></li>
+      </ol>
+      <p class="glance-link rv"><a class="tlink" href="how-it-works/"><span>See how it works in detail</span> <span aria-hidden="true">→</span></a></p>
+    </div>
+  </section>
+
+  <section class="example" id="example" data-keys="0:2" aria-labelledby="ex-h">
+    <div class="wrap ex-grid">
+      <div class="ex-head">
+        <p class="label rv">Illustrative scenario</p>
+        <h2 id="ex-h" class="rv d1">One decision, <em>worked through.</em></h2>
+      </div>
+      <div class="ex-body">
+        <div class="ex-row rv">
+          <p class="label">The request</p>
+          <p><span class="request"><span class="strike">Build a more powerful project dashboard.</span></span></p>
+        </div>
+        <div class="ex-row rv">
+          <p class="label">What customers showed</p>
+          <ul class="evidence">
+            <li>New account owners stall before the first client invite, unsure what “ready” means.</li>
+            <li>Owners who invited a client early rarely mentioned reporting.</li>
+          </ul>
+        </div>
+        <div class="ex-row rv">
+          <p class="label">The decision</p>
+          <p class="decision">Test setup guidance before committing to dashboard expansion.</p>
+        </div>
+        <div class="ex-foot rv">
+          <em>The dashboard waits. A sharper, cheaper bet goes first.</em>
+          <span class="label">A composite B2B SaaS example</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="thinking" id="thinking" data-keys="0:2" data-dim=".4" aria-labelledby="think-h">
+    <div class="wrap think-grid">
+      <div>
+        <p class="label rv">What we believe</p>
+        <h2 id="think-h" class="sr-only">What we believe</h2>
+        <ul class="beliefs">
+          <li class="rv">Feature requests are clues, <em>not instructions.</em></li>
+          <li class="rv d1">Confidence is <em>not evidence.</em></li>
+          <li class="rv d2">Killing a bad idea early <em>is a win.</em></li>
+        </ul>
+      </div>
+      <aside class="founder rv" aria-label="Who you work with">
+        <div class="mono-mark" aria-hidden="true">GR</div>
+        <p class="label">Who you work with</p>
+        <p class="f-name">George Reed</p>
+        <p class="f-role">Founder, Noetic Digital</p>
+        <p class="f-bio">George runs Jobs-to-be-Done customer interviews and trains product teams to run them themselves, including the product team of a personal-finance fintech. You work with him directly.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="close" id="book" data-keys="0:2" aria-labelledby="cl-h">
+    <div class="wrap">
+      <p class="label rv">A private session</p>
+      <h2 id="cl-h" class="rv d1">Bring us one decision <em>you’re weighing.</em></h2>
+      <p class="lede rv d2">In 45 minutes, we walk through the system on a worked example, look at one of your live product decisions, and talk honestly about fit.</p>
+      <div class="hero-actions rv d3">
+        <a class="btn" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demo%20session">Book a demo session <span class="ar" aria-hidden="true">→</span></a>
+      </div>
+      <div class="fit">
+        <div class="rv">
+          <p class="label">A good fit if</p>
+          <ul>
+            <li>You’re a Series A–early B SaaS team</li>
+            <li>One person owns the product outcome</li>
+            <li>You can reach your customers</li>
+            <li>You have capacity to act on what you learn</li>
+          </ul>
+        </div>
+        <div class="rv d1">
+          <p class="label">We can’t help if</p>
+          <ul class="no">
+            <li>You want a research report, not a way to decide</li>
+            <li>The roadmap is decided and you need it validated</li>
+            <li>Nobody owns the outcome the product should move</li>
+          </ul>
+        </div>
+      </div>
+      <div class="terms rv">
+        <p class="price">$5,000<small>/ month</small></p>
+        <div>
+          <p><b>The system, training and coaching</b>, installed inside your team.</p>
+          <p>One price covers Noetic Mind, installation, training your team to work with it, and coaching on the hard calls.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>Noetic Mind · © Noetic Digital · Led by George Reed</span>
+  <nav aria-label="Compare versions">
+    <span>Compare:</span>
+    <a href="../">v1</a><a href="../Astra/">v2</a><a href="../v3/">v3</a><a href="../v4/">v4</a><a href="../v5/">v5</a><a href="../v6/">v6</a><a href="../v7/">v7</a><a href="../v8/">v8</a><a href="../v9/">v9</a><a href="../v10/">v10</a>
+  </nav>
+</footer>
+
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js" defer></script>
+<script>
+(function(){
+  'use strict';
+  var doc = document.documentElement;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- reveals ---------- */
+  var rv = [].slice.call(document.querySelectorAll('.rv, .ex-row'));
+  if ('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {rootMargin:'0px 0px -12% 0px'});
+    rv.forEach(function(el){ io.observe(el); });
+  } else { rv.forEach(function(el){ el.classList.add('in'); }); }
+
+  var bar = document.getElementById('top-bar');
+
+  /* ---------- the field ---------- */
+  var cv = document.getElementById('field');
+  var ctx = cv && cv.getContext && cv.getContext('2d');
+  if (!ctx){ window.addEventListener('scroll', function(){ bar.classList.toggle('scrolled', scrollY > 8); }, {passive:true}); return; }
+  doc.classList.add('viz');
+
+  /*
+    The landing page shows only the promise, not the method:
+      0 noise     scattered, restless signals: requests, hunches, half-remembered interviews
+      1 decision  everything flows into one clear answer: what to build next
+      2 quiet     a faint field behind the rest of the page
+  */
+  var LAST = 2;
+  var INK = [18,20,23], BLUE = [24,76,132], GREY = [75,80,88], PAPER = [246,245,241];
+  var dims = [], bookTop = 1e9, W = 0, H = 0, DPR = 1, narrow = false, N = 0, P = [], sections = [];
+
+  function rnd(seed){ var x = Math.sin(seed * 9301.17 + 49297.3) * 233280.5; return x - Math.floor(x); }
+  function clamp(v, a, b){ return v < a ? a : v > b ? b : v; }
+  function smooth(t){ return t * t * (3 - 2 * t); }
+  function ease(t){ return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function lerp(a, b, t){ return a + (b - a) * t; }
+
+  function D(){ return narrow ? [0, 0] : [0.7, 0]; }
+
+  function build(){
+    N = narrow ? 128 : 168;
+    P = [];
+    for (var i = 0; i < N; i++){
+      var s = i + 1, v = rnd(s * 3.1), w = rnd(s * 7.7);
+      var a1 = i * 2.39996, r1 = Math.sqrt((i + .5) / N);
+      var a2 = i * 2.39996 + 1.7, r2 = Math.sqrt(rnd(s * 5.9));
+      P.push({
+        sx: Math.cos(a1) * r1 * 1.3 + (v - .5) * .14, sy: Math.sin(a1) * r1 * 1.12 + (w - .5) * .14,
+        qx: Math.cos(a2) * r2 * 1.5, qy: Math.sin(a2) * r2 * 1.15,
+        t: rnd(s * 13.7), j: rnd(s * 17.3) - .5,
+        d: rnd(s * 23.3) * .32,
+        r: (narrow ? 1.7 : 2.1) + rnd(s * 29.9) * (narrow ? .9 : 1.2),
+        a: .5 + rnd(s * 31.1) * .45,
+        ph: rnd(s * 37.7) * 6.2832,
+        born: rnd(s * 41.3)
+      });
+    }
+  }
+
+  function layout(){
+    var w = innerWidth, h = innerHeight;
+    var wasNarrow = narrow;
+    narrow = w <= 860;
+    DPR = Math.min(2, window.devicePixelRatio || 1);
+    W = w; H = h;
+    cv.width = Math.round(w * DPR); cv.height = Math.round(h * DPR);
+    if (!P.length || wasNarrow !== narrow) build();
+    dims = [].slice.call(document.querySelectorAll('[data-dim]')).map(function(el){
+      var r = el.getBoundingClientRect();
+      return {top: r.top + scrollY, h: r.height, v: +el.getAttribute('data-dim')};
+    });
+    var bk = document.getElementById('book');
+    bookTop = bk.getBoundingClientRect().top + scrollY;
+    sections = [].slice.call(document.querySelectorAll('[data-keys]')).map(function(el){
+      var r = el.getBoundingClientRect();
+      return {
+        el: el, top: r.top + scrollY, h: r.height,
+        keys: el.getAttribute('data-keys').split(/\s+/).map(function(k){ var p = k.split(':'); return [+p[0], +p[1]]; })
+      };
+    });
+  }
+
+  function stateAt(y){
+    var probe = y + H * .5, s = 0;
+    for (var i = 0; i < sections.length; i++){
+      var sec = sections[i];
+      if (probe < sec.top) break;
+      var p = (probe - sec.top) / sec.h, k = sec.keys;
+      if (p <= k[0][0]) { s = k[0][1]; continue; }
+      s = k[k.length - 1][1];
+      for (var j = 0; j < k.length - 1; j++){
+        if (p >= k[j][0] && p <= k[j + 1][0]){
+          s = lerp(k[j][1], k[j + 1][1], smooth((p - k[j][0]) / (k[j + 1][0] - k[j][0])));
+          break;
+        }
+      }
+    }
+    return s;
+  }
+
+  function st(p, k, Tm, out){
+    var x, y, al = p.a, hl = 0;
+    if (k === 0){
+      var wob = .045;
+      x = p.sx + Math.sin(Tm * .5 + p.ph) * wob; y = p.sy + Math.cos(Tm * .41 + p.ph * 1.3) * wob;
+    } else if (k === 1){
+      var d = D(), tt = (p.t + Tm * .045) % 1, fr = 1 - (1 - tt) * (1 - tt);
+      // each signal travels from where it started into the one answer, gathering as it arrives
+      var x0 = narrow ? p.sx : p.sx * .85 - .45, y0 = p.sy * .95;
+      x = lerp(x0, d[0], fr); y = lerp(y0, d[1], fr);
+      al = (.25 + .7 * fr) * smooth(clamp(tt / .1, 0, 1)) * (1 - smooth(clamp((tt - .9) / .1, 0, 1)) * .9);
+      hl = smooth(clamp((fr - .45) / .45, 0, 1));
+    } else {
+      x = p.qx + Math.sin(Tm * .3 + p.ph) * .03; y = p.qy + Math.cos(Tm * .27 + p.ph) * .03; al = p.a * (narrow ? .09 : .15);
+    }
+    out[0] = x; out[1] = y; out[2] = al; out[3] = hl;
+  }
+
+  var pings = [], lastPing = 0, t0 = performance.now(), A = [0,0,0,0], B = [0,0,0,0];
+  function col(rgb, a){ return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + Math.max(0, a).toFixed(3) + ')'; }
+  function mix(t){ return [Math.round(lerp(INK[0], BLUE[0], t)), Math.round(lerp(INK[1], BLUE[1], t)), Math.round(lerp(INK[2], BLUE[2], t))]; }
+  function wgt(s, k){ return smooth(clamp(1 - Math.abs(s - k) * 1.8, 0, 1)); }
+  function spaced(t){ return t.toUpperCase().split('').join(String.fromCharCode(8202)); }
+  function tag(text, x, y, align, colr, a, font){
+    if (a < .01) return;
+    ctx.font = font || '500 12px "IBM Plex Mono", monospace';
+    var t = font ? text : spaced(text), tw = ctx.measureText(t).width;
+    var x0 = align === 'left' ? x : align === 'right' ? x - tw : x - tw / 2;
+    ctx.fillStyle = col(PAPER, .9 * a); ctx.fillRect(x0 - 8, y - 13, tw + 16, 26);
+    ctx.textAlign = align; ctx.fillStyle = col(colr, a); ctx.fillText(t, x, y);
+  }
+
+  function frame(now){
+    var Tm = reduce ? 4 : (now - t0) / 1000;
+    var y = scrollY;
+    var s = stateAt(y);
+    if (reduce) s = Math.round(s);
+    bar.classList.toggle('scrolled', y > 8);
+
+    var heroK = 1 - smooth(clamp(y / (H * .7), 0, 1));
+    var cx, cy, U;
+    if (narrow){
+      U = Math.min(W * .33, H * .17);
+      cx = W * .5;
+      cy = lerp(Math.max(58 + U * 1.32, H * .3), H * .9, heroK);
+    } else {
+      U = Math.min(W * .18, H * .3);
+      cx = W * lerp(.67, .71, heroK); cy = H * .53;
+    }
+    var gA = (narrow ? lerp(1, .45, heroK) : 1) * (1 - smooth(clamp((y + H * .55 - bookTop) / (H * .45), 0, 1)));
+    for (var i = 0; i < dims.length; i++){
+      var dm = dims[i], cover = clamp(Math.min(y + H, dm.top + dm.h) - Math.max(y, dm.top), 0, H) / H;
+      gA *= 1 - (1 - dm.v * (narrow ? .4 : 1)) * smooth(clamp(cover * 1.6, 0, 1));
+    }
+    var intro = reduce ? 1 : clamp((Tm - .15) / 1.9, 0, 1);
+
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    ctx.textBaseline = 'middle';
+
+    var k0 = Math.floor(s), k1 = Math.min(LAST, k0 + 1), f = s - k0;
+    var w = []; for (i = 0; i <= LAST; i++) w.push(wgt(s, i) * gA);
+
+    if (!reduce && w[0] > .05 && now - lastPing > 600){
+      lastPing = now; pings.push({i: Math.floor(Math.random() * N), t: now});
+    }
+
+    for (i = 0; i < N; i++){
+      var p = P[i];
+      st(p, k0, Tm, A); st(p, k1, Tm, B);
+      var e = ease(clamp((f - p.d) / .68, 0, 1));
+      var x = cx + lerp(A[0], B[0], e) * U, yy = cy + lerp(A[1], B[1], e) * U;
+      var al = lerp(A[2], B[2], e) * gA * clamp((intro - p.born * .6) / .4, 0, 1);
+      p._x = x; p._y = yy;
+      if (al < .01) continue;
+      ctx.fillStyle = col(mix(lerp(A[3], B[3], e)), al);
+      ctx.beginPath(); ctx.arc(x, yy, p.r, 0, 6.2832); ctx.fill();
+    }
+    for (i = pings.length - 1; i >= 0; i--){
+      var pg = pings[i], age = (now - pg.t) / 1500;
+      if (age > 1){ pings.splice(i, 1); continue; }
+      var qq = P[pg.i]; if (!qq || qq._x === undefined) continue;
+      ctx.strokeStyle = col(INK, (1 - age) * .4 * w[0]); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(qq._x, qq._y, qq.r + age * 16, 0, 6.2832); ctx.stroke();
+    }
+
+    if (w[1] > .01){
+      var d = D(), dx = cx + d[0] * U, dy = cy + d[1] * U, pulse = reduce ? .5 : (Math.sin(Tm * 2) + 1) / 2;
+      ctx.strokeStyle = col(BLUE, (.18 + .22 * pulse) * w[1]); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(dx, dy, 18 + pulse * 6, 0, 6.2832); ctx.stroke();
+      ctx.fillStyle = col(BLUE, w[1]);
+      ctx.beginPath(); ctx.arc(dx, dy, 8, 0, 6.2832); ctx.fill();
+      tag('What to build next', dx, dy - 46, 'center', BLUE, w[1]);
+      if (!narrow) tag('and why', dx, dy + 46, 'center', GREY, w[1], 'italic 400 20px "Newsreader", Georgia, serif');
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  layout();
+  var rt;
+  window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(layout, 120); });
+  window.addEventListener('load', layout);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
+  requestAnimationFrame(frame);
+
+  /* ---------- smooth scroll ---------- */
+  function startLenis(){
+    if (reduce || !window.Lenis) return;
+    var lenis = new Lenis({lerp: .09, smoothWheel: true});
+    function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    document.querySelectorAll('a[href^="#"]').forEach(function(a){
+      a.addEventListener('click', function(ev){
+        var id = a.getAttribute('href'), el = id.length > 1 && document.querySelector(id);
+        if (id === '#top'){ ev.preventDefault(); lenis.scrollTo(0); return; }
+        if (!el) return;
+        ev.preventDefault();
+        lenis.scrollTo(el);
+      });
+    });
+  }
+  if (document.readyState === 'complete') startLenis(); else window.addEventListener('load', startLenis);
+})();
+</script>
+</body>
+</html>
