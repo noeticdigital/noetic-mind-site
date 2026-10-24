@@ -8,9 +8,12 @@
 <title>How Noetic Mind works</title>
 <meta name="description" content="Any company can build things. The hard part is knowing what to build. Noetic Mind gives Series A–B SaaS teams certainty about what to build next, and why." />
 <!--
-  NOETIC MIND / V13 — How it works. Same navy world and type as the V13 landing page.
-  The walkthrough (Define, five loops, the Progress-to-Outcome Tree) is one field of glowing
-  dots fixed behind the page; scrolling moves it from stage to stage. Static page without JS.
+  NOETIC MIND / V13 — How it works, as a 3D world in the same style as the V13 landing page.
+  One station per stage: Define (the brief and its outside context) -> Progress (the switch track and
+  the four forces) -> Outcome (three altitudes) -> Opportunity (struggles on the timeline, one target)
+  -> Causal Learning (the chain mapped backwards; noise set apart) -> Delivery & Impact (solutions, a
+  pass-mark gate, one disproven, the four-level impact ladder) -> the Progress-to-Outcome Tree.
+  No JS / no WebGL / reduced motion -> a static navy page with every word present.
 -->
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" type="image/svg+xml" href="../../noetic-logo.svg" />
@@ -205,22 +208,21 @@
     .webgl .scroll-hint{display:none}
     .foot .compare{margin-left:0}
   }
-
-  /* ---------- how it works ---------- */
-  #field{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:none}
-  .viz #field{display:block}
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<style>  /* ---------- how it works ---------- */
   main,.foot{position:relative;z-index:1}
   .intro{padding:170px 0 60px;text-align:center}
   .intro h1{font-size:clamp(42px,6vw,84px);font-weight:600;letter-spacing:-.045em;line-height:.98;color:var(--white);margin-top:18px}
   .intro h1 span{display:block}
   .intro h1 .dim{color:#8ea3c4}
   .intro .hero-sub{max-width:640px}
-  .chapter{position:relative}
-  .process .wrap{max-width:none;margin:0;padding:0}
-  .pin{display:flex;align-items:center;padding:40px 0}
-  .copy{width:min(470px,calc(100vw - 48px));margin-left:clamp(24px,4vw,56px);padding:24px 26px 20px;border-radius:18px;
     background:rgba(6,26,56,.74);box-shadow:inset 0 0 0 1px var(--line);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-  .copy .kicker{margin-top:8px;font-size:15px;color:var(--muted)}
   .rail{display:none}
   .psteps{margin-top:14px}
   .psteps li{padding:16px 0;border-top:1px solid var(--line)}
@@ -232,15 +234,6 @@
   .psteps li > p:last-child{margin-top:10px;color:var(--muted);font-size:15.5px}
   .note{margin-top:12px;font:400 12px var(--mono);color:var(--muted)}
   .note b{font-weight:500;color:var(--blue-2)}
-  .viz .process{height:800vh}
-  .viz .pin{position:sticky;top:0;height:100vh;height:100svh;padding:72px 0 0}
-  .viz .rail{display:flex;gap:6px;margin-top:16px}
-  .viz .rail li{flex:1;padding-top:9px;border-top:2px solid var(--line);font:500 12px var(--mono);color:#5d7397;transition:color .4s,border-color .4s}
-  .viz .rail li.done{border-top-color:rgba(143,182,230,.45)}
-  .viz .rail li.on{color:var(--white);border-top-color:var(--blue-2)}
-  .viz .psteps{display:grid}
-  .viz .psteps li{grid-area:1/1;opacity:0;transform:translateY(10px);transition:opacity .5s,transform .6s var(--ease);pointer-events:none}
-  .viz .psteps li.on{opacity:1;transform:none;pointer-events:auto}
   .role-grid{margin-top:56px;display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:28px 48px}
   .role-h{font-size:22px;font-weight:600;color:var(--white);padding-bottom:12px;border-bottom:2px solid var(--line)}
   .role-h.mind{color:var(--blue-2);border-bottom-color:var(--blue)}
@@ -253,13 +246,32 @@
   .content-t .sec{background:rgba(6,26,56,.55)}
   @media (max-width:900px){ .role-grid,.artefacts{grid-template-columns:1fr} .artefacts li{padding:22px 0} }
   @media (max-width:860px){
-    .viz .pin{align-items:flex-end;padding-bottom:12px}
-    .copy{margin:0 12px;width:auto;padding:18px 18px 14px}
-    .viz .copy .kicker,.viz .copy > .label{display:none}
-    .viz .rail{margin-top:0}
     .psteps h3{font-size:clamp(22px,6.4vw,28px)}
     .psteps li > p:last-child{font-size:14.5px}
-    .viz .process{height:800vh}
+  }
+
+  /* ---------- 3D how-it-works ---------- */
+  .p-steps{max-width:640px}
+  .p-steps .kicker{margin-top:8px;font-size:15px;color:var(--muted)}
+  .webgl .journey{height:1350vh}
+  .webgl .p-steps{left:clamp(24px,4vw,56px);top:50%;translate:0 -50%;width:min(470px,calc(100vw - 48px));max-width:none;
+    padding:24px 26px 20px;border-radius:18px;background:rgba(6,26,56,.74);box-shadow:inset 0 0 0 1px var(--line);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  .webgl .rail{display:flex;gap:6px;margin-top:16px}
+  .webgl .rail li{flex:1;padding-top:9px;border-top:2px solid var(--line);font:500 12px var(--mono);color:#5d7397;transition:color .4s,border-color .4s}
+  .webgl .rail li.done{border-top-color:rgba(143,182,230,.45)}
+  .webgl .rail li.on{color:var(--white);border-top-color:var(--blue-2)}
+  .webgl .psteps{display:grid}
+  .webgl .psteps li{grid-area:1/1;opacity:0;transform:translateY(10px);transition:opacity .5s,transform .6s var(--ease);pointer-events:none;border-top:0}
+  .webgl .psteps li.on{opacity:1;transform:none;pointer-events:auto}
+  #tags{position:absolute;inset:0;pointer-events:none}
+  @media (max-width:860px){
+    .webgl .journey{height:1200vh}
+    .webgl .p-steps{left:12px;right:12px;width:auto;top:auto;bottom:12px;translate:none;padding:16px 16px 12px}
+    .webgl .p-steps > .label,.webgl .p-steps .kicker,.webgl .p-steps .note{display:none}
+    .webgl .rail{margin-top:0}
+    .webgl .psteps h3{font-size:clamp(21px,6vw,26px)}
+    .webgl .psteps li > p:last-child{font-size:14px}
   }
 </style>
 </head>
@@ -277,28 +289,24 @@
   </div>
 </header>
 
-<canvas id="field" aria-hidden="true"></canvas>
-
 <main>
-  <section class="intro" id="top" data-keys="0:1" data-dim=".22">
-    <div class="wrap">
-      <p class="eyebrow">How it works</p>
-      <h1><span class="dim">From a fresh brief</span><span>to what to build next.</span></h1>
-      <p class="hero-sub"><b>Jobs to be Done, the demand engine, unified with continuous discovery, the operating system.</b> One full lap, from a fresh brief to shipping something and learning whether it worked. Then you go again.</p>
-      <div class="hero-cta">
-        <a class="btn" href="#how">Start the walkthrough</a>
-        <a class="btn btn-ghost" href="../">Back to the overview</a>
+  <section class="journey" id="how" aria-label="How Noetic Mind works">
+    <div class="stage">
+      <div class="panel p-hero">
+        <p class="eyebrow">How it works</p>
+        <h1><span class="dim">From a fresh brief</span><span>to what to build next.</span></h1>
+        <p class="hero-sub"><b>Jobs to be Done, the demand engine, unified with continuous discovery, the operating system.</b> One full lap, from a fresh brief to shipping something and learning whether it worked. Then you go again.</p>
+        <div class="hero-cta">
+          <a class="btn" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demo%20session">Book a demo session</a>
+          <a class="btn btn-ghost" href="../">Back to the overview</a>
+        </div>
+        <p class="scroll-hint" aria-hidden="true"><i></i>Scroll</p>
       </div>
-    </div>
-  </section>
-
-  <section class="chapter process" id="how" data-keys="0:1 0.06:0 0.17:0 0.205:1 0.235:1 0.265:2 0.295:2 0.33:3 0.42:3 0.455:4 0.545:4 0.58:5 0.67:5 0.705:6 0.735:6 0.765:7 0.795:7 0.83:8" aria-labelledby="how-h">
-    <div class="pin"><div class="wrap"><div class="copy">
-      <p class="label">How Noetic Mind works</p>
-      <h2 id="how-h" class="sr-only">How Noetic Mind works: Define, five loops and the tree</h2>
-      <p class="kicker">One full lap: Define, five loops, and the tree they all update.</p>
-      <ol class="rail" aria-hidden="true"><li>Def</li><li>01</li><li>02</li><li>03</li><li>04</li><li>05</li><li>↻</li></ol>
-      <ol class="psteps">
+      <div class="panel p-steps">
+        <p class="label">How Noetic Mind works</p>
+        <p class="kicker">One full lap: Define, five loops, and the tree they all update.</p>
+        <ol class="rail" aria-hidden="true"><li>Def</li><li>01</li><li>02</li><li>03</li><li>04</li><li>05</li><li>↻</li></ol>
+        <ol class="psteps">
         <li data-step="0">
           <p class="chip"><b>Define</b><span>You + the Mind</span></p>
           <h3>Start from your brief, <em>held as a guess.</em></h3>
@@ -335,12 +343,14 @@
           <p>Our evolution of the Opportunity Solution Tree: a supply spine and a demand spine that converge at the causal system. Every belief carries its evidence state, from assumption to emerging, validated or disproven, and validated demand can even challenge the outcome. Then you re-prioritise and go again.</p>
         </li>
       </ol>
-      <p class="note"><b>Illustrative.</b> Each dot is one piece of evidence.</p>
-    </div></div></div>
+        <p class="note"><b>Illustrative.</b> A model of the method, not client data.</p>
+      </div>
+      <div id="tags" aria-hidden="true"></div>
+    </div>
   </section>
 
-  <div class="content-t">
-    <section class="sec" id="roles" data-keys="0:8 0.15:9" data-dim=".35" aria-labelledby="roles-h">
+  <div class="content">
+    <section class="sec" id="roles" aria-labelledby="roles-h">
       <div class="wrap">
         <p class="label rv">Who does what</p>
         <h2 id="roles-h" class="rv">The Mind does the heavy lifting. <em>People make the calls.</em></h2>
@@ -377,7 +387,7 @@
       </div>
     </section>
 
-    <section class="sec" id="keeps" data-keys="0:9" aria-labelledby="keeps-h">
+    <section class="sec" id="keeps" aria-labelledby="keeps-h">
       <div class="wrap">
         <p class="label rv">What you see in the app</p>
         <h2 id="keeps-h" class="rv">One place for the evidence <em>and the reasoning.</em></h2>
@@ -392,7 +402,7 @@
       </div>
     </section>
 
-    <section class="sec close" id="book" data-keys="0:9" aria-labelledby="cl-h">
+    <section class="sec close" id="book" aria-labelledby="cl-h">
       <div class="wrap">
         <p class="label rv">A private session</p>
         <h2 id="cl-h" class="rv">See it run on <em>one of your decisions.</em></h2>
@@ -410,502 +420,441 @@
   </div>
 </footer>
 
-<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js" defer></script>
 <script>
 (function(){
-  'use strict';
-  var doc = document.documentElement;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* ---------- reveals ---------- */
-  var rv = [].slice.call(document.querySelectorAll('.rv, .ex-row'));
+  var rv = [].slice.call(document.querySelectorAll('.rv'));
   if ('IntersectionObserver' in window && !reduce){
-    var io = new IntersectionObserver(function(es){
-      es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-    }, {rootMargin:'0px 0px -12% 0px'});
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {rootMargin:'0px 0px -10% 0px'});
     rv.forEach(function(el){ io.observe(el); });
   } else { rv.forEach(function(el){ el.classList.add('in'); }); }
-
-  var bar = document.getElementById('top-bar') || document.body;
-
-  /* ---------- the field ---------- */
-  var cv = document.getElementById('field');
-  var ctx = cv && cv.getContext && cv.getContext('2d');
-  if (!ctx){ window.addEventListener('scroll', function(){ bar.classList.toggle('scrolled', scrollY > 8); }, {passive:true}); return; }
-  doc.classList.add('viz');
-
-  /*
-    One field of dots, walking the Noetic Mind process as it appears in the app's "How it works":
-      0 define       the client's brief at the centre; external context circling it, a weak signal
-      1 stories      moments from real past decisions (hero, and the start of the Progress loop)
-      2 forces       push and pull towards the switch; anxiety and habit holding people back
-      3 outcome      three altitudes; the product outcome is the one you steer by
-      4 opportunity  struggles grouped by moment on the timeline; one target, the rest parked
-      5 causal       the system mapped backwards from the outcome; lead vs lag, control vs noise
-      6 test         materially different solutions; the riskiest belief tested against a bar set first
-      7 impact       four levels: behaviour, relief, product outcome, business outcome
-      8 tree         the Progress-to-Outcome Tree: supply and demand spines converging
-      9 quiet        a faint field behind the rest of the page
-  */
-  var LAST = 9;
-  var INK = [222,233,249], BLUE = [125,184,255], GREY = [169,184,208], PAPER = [6,26,56];
-  var dims = [], bookTop = 1e9, W = 0, H = 0, DPR = 1, narrow = false, N = 0, P = [];
-  var sections = [], howSec = null;
-  var steps = [].slice.call(document.querySelectorAll('.psteps li'));
-  var rail = [].slice.call(document.querySelectorAll('.rail li'));
-  var howEl = document.getElementById('how');
-  var STEP0 = .0625, STEPW = .125, NSTEPS = 7;
-
-  function rnd(seed){ var x = Math.sin(seed * 9301.17 + 49297.3) * 233280.5; return x - Math.floor(x); }
-  function gauss(a, b){ return Math.sqrt(-2 * Math.log(Math.max(1e-6, a))) * Math.cos(6.2832 * b); }
-  function clamp(v, a, b){ return v < a ? a : v > b ? b : v; }
-  function smooth(t){ return t * t * (3 - 2 * t); }
-  function ease(t){ return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
-  function lerp(a, b, t){ return a + (b - a) * t; }
-  function quad(a, c, b, t){ var m = 1 - t; return [m * m * a[0] + 2 * m * t * c[0] + t * t * b[0], m * m * a[1] + 2 * m * t * c[1] + t * t * b[1]]; }
-
-  // forces: rows, direction (+1 towards the new way, -1 back to the old)
-  var FR = [-0.6, -0.22, 0.22, 0.6], FDIR = [1, 1, -1, -1];
-  // outcome altitudes (top to bottom): business, product, traction
-  var AY = [-0.62, 0, 0.62];
-  // opportunity clusters along the customer timeline; index 2 is the target
-  var OC = [[-1.02,-0.12],[-0.34,-0.3],[0.34,-0.12],[1.02,-0.3]], OTARGET = 2;
-  // causal chain
-  var CH = [[-1.2,-0.1],[-0.4,-0.1],[0.4,-0.1],[1.2,-0.1]];
-  var CHL = ['Inputs','Process','Outputs','Outcome'];
-  // solutions: one start, three materially different paths
-  var DS = [-1.2, 0.05], DE = [[1.15,-0.6],[1.15,0.05],[1.15,0.7]];
-  // impact ladder fills, bottom (behaviour) to top (business)
-  var IY = [0.78, 0.26, -0.26, -0.78], IF = [.92, .76, .58, .3];
-  // the Progress-to-Outcome Tree
-  var T = {
-    fr: [-0.75,-1.0], oc: [-0.75,-0.38],            // supply: framing assumptions -> desired outcome
-    jb: [0.75,-1.0], tf: [0.75,-0.69], op: [0.75,-0.38], // demand: jobs -> timeline & forces -> opportunities
-    cs: [0,0.0], so: [0,0.34], ex: [0,0.66], ii: [0,0.98] // converge: causal -> solutions -> experiments -> increment & impact
-  };
-  var TE = [[T.fr,T.oc],[T.jb,T.tf],[T.tf,T.op],[T.oc,T.cs],[T.op,T.cs],[T.cs,T.so],[T.so,T.ex],[T.ex,T.ii]];
-
-  function build(){
-    N = narrow ? 128 : 168;
-    P = [];
-    var briefCount = 0;
-    for (var i = 0; i < N; i++){
-      var s = i + 1, u = rnd(s), v = rnd(s * 3.1), w = rnd(s * 7.7), q = rnd(s * 11.3);
-      var a1 = i * 2.39996, r1 = Math.sqrt((i + .5) / N);
-      var a2 = i * 2.39996 + 1.7, r2 = Math.sqrt(rnd(s * 5.9));
-      var brief = rnd(s * 43.1) < .3;
-      P.push({
-        sx: Math.cos(a1) * r1 * 1.3 + (v - .5) * .14, sy: Math.sin(a1) * r1 * 1.12 + (w - .5) * .14,
-        qx: Math.cos(a2) * r2 * 1.5, qy: Math.sin(a2) * r2 * 1.15,
-        c: i % 4, ox: gauss(v, w) * .13, oy: gauss(w, q) * .11,
-        t: rnd(s * 13.7), j: rnd(s * 17.3) - .5,
-        br: q < .34 ? 0 : q < .67 ? 1 : 2, bt: rnd(s * 19.1),
-        brief: brief, bi: brief ? briefCount++ : -1,
-        ra: rnd(s * 53.3) * 6.2832, rr: 1.28 + rnd(s * 59.1) * .32,
-        nx: (rnd(s * 61.7) - .5) * 2.3, ny: .42 + rnd(s * 67.3) * .48,
-        e: i % TE.length, et: rnd(s * 71.9),
-        d: rnd(s * 23.3) * .32,
-        r: (narrow ? 1.7 : 2.1) + rnd(s * 29.9) * (narrow ? .9 : 1.2),
-        a: .5 + rnd(s * 31.1) * .45,
-        ph: rnd(s * 37.7) * 6.2832,
-        born: rnd(s * 41.3)
-      });
-    }
-    var cols = 10, rows = Math.ceil(briefCount / cols);
-    var per3 = Math.ceil(N / 3), per4 = Math.ceil(N / 4);
-    P.forEach(function(p, i){
-      if (p.brief){
-        var cc = p.bi % cols, rr = Math.floor(p.bi / cols);
-        p.gx = lerp(-0.5, 0.5, cc / (cols - 1)); p.gy = lerp(-0.2, 0.22, rows > 1 ? rr / (rows - 1) : .5);
-      }
-      // altitudes: three bands of two rows
-      p.band = i % 3; var k3 = Math.floor(i / 3), c3 = Math.floor(k3 / 2), n3 = Math.ceil(per3 / 2);
-      p.ax = lerp(-1.1, 1.1, c3 / Math.max(1, n3 - 1)); p.ay = AY[p.band] + (k3 % 2 ? .05 : -.05);
-      // impact ladder: four levels of two rows
-      p.lv = i % 4; var k4 = Math.floor(i / 4), c4 = Math.floor(k4 / 2), n4 = Math.ceil(per4 / 2);
-      p.lf = c4 / Math.max(1, n4 - 1); p.lx = lerp(-0.9, 0.9, p.lf); p.ly = IY[p.lv] + (k4 % 2 ? .045 : -.045);
-    });
-  }
-
-  function layout(){
-    var w = innerWidth, h = innerHeight;
-    var wasNarrow = narrow;
-    narrow = w <= 860;
-    DPR = Math.min(2, window.devicePixelRatio || 1);
-    W = w; H = h;
-    cv.width = Math.round(w * DPR); cv.height = Math.round(h * DPR);
-    if (!P.length || wasNarrow !== narrow) build();
-    dims = [].slice.call(document.querySelectorAll('[data-dim]')).map(function(el){
-      var r = el.getBoundingClientRect();
-      return {top: r.top + scrollY, h: r.height, v: +el.getAttribute('data-dim')};
-    });
-    var bk = document.getElementById('book');
-    bookTop = bk.getBoundingClientRect().top + scrollY;
-    sections = [].slice.call(document.querySelectorAll('[data-keys]')).map(function(el){
-      var r = el.getBoundingClientRect();
-      return {
-        el: el, top: r.top + scrollY, h: r.height,
-        keys: el.getAttribute('data-keys').split(/\s+/).map(function(k){ var p = k.split(':'); return [+p[0], +p[1]]; })
-      };
-    });
-    howSec = sections.filter(function(sc){ return sc.el === howEl; })[0];
-  }
-
-  function stateAt(y){
-    var probe = y + H * .5, s = 0;
-    for (var i = 0; i < sections.length; i++){
-      var sec = sections[i];
-      if (probe < sec.top) break;
-      var p = (probe - sec.top) / sec.h, k = sec.keys;
-      if (p <= k[0][0]) { s = k[0][1]; continue; }
-      s = k[k.length - 1][1];
-      for (var j = 0; j < k.length - 1; j++){
-        if (p >= k[j][0] && p <= k[j + 1][0]){
-          s = lerp(k[j][1], k[j + 1][1], smooth((p - k[j][0]) / (k[j + 1][0] - k[j][0])));
-          break;
-        }
-      }
-    }
-    return s;
-  }
-
-  // Position, alpha and highlight of particle p in state k
-  function st(p, k, Tm, out){
-    var x, y, al = p.a, hl = 0, tt, q, fade;
-    switch (k){
-      case 0:
-        if (p.brief){ x = p.gx + Math.sin(Tm * .6 + p.ph) * .004; y = p.gy + Math.cos(Tm * .6 + p.ph) * .004; al = .9; }
-        else {
-          var ang = p.ra + Tm * .045, rad = p.rr + Math.sin(Tm * .5 + p.ph) * .05;
-          x = Math.cos(ang) * rad * 1.08; y = Math.sin(ang) * rad * .86; al = .26;
-        }
-        break;
-      case 1:
-        x = p.sx + Math.sin(Tm * .35 + p.ph) * .035; y = p.sy + Math.cos(Tm * .29 + p.ph * 1.3) * .035; break;
-      case 2:
-        tt = (p.t + Tm * .05) % 1;
-        x = FDIR[p.c] > 0 ? lerp(-1.15, 1.15, tt) : lerp(1.15, -1.15, tt);
-        y = FR[p.c] + p.j * .07;
-        fade = smooth(clamp(tt / .1, 0, 1)) * (1 - smooth(clamp((tt - .88) / .12, 0, 1)));
-        al = (p.c < 2 ? .9 : .55) * fade; hl = p.c < 2 ? 1 : 0; break;
-      case 3:
-        x = p.ax; y = p.ay + Math.sin(Tm * .5 + p.ph) * .006;
-        al = p.band === 1 ? .95 : .22; hl = p.band === 1 ? 1 : 0; break;
-      case 4:
-        x = OC[p.c][0] + p.ox + Math.sin(Tm * .5 + p.ph) * .01; y = OC[p.c][1] + p.oy + Math.cos(Tm * .45 + p.ph) * .01;
-        al = p.c === OTARGET ? .95 : .4; hl = p.c === OTARGET ? 1 : 0; break;
-      case 5:
-        if (p.c === OTARGET || p.c === 0){
-          tt = (p.t + Tm * .05) % 1;
-          var seg = Math.min(2, Math.floor(tt * 3)), lt = tt * 3 - seg;
-          x = lerp(CH[seg][0], CH[seg + 1][0], lt); y = CH[0][1] + p.j * .06;
-          al = .9 * smooth(clamp(tt / .08, 0, 1)) * (1 - smooth(clamp((tt - .92) / .08, 0, 1)) * .8);
-        } else {
-          x = p.nx + Math.sin(Tm * .4 + p.ph) * .04; y = p.ny + Math.cos(Tm * .33 + p.ph) * .04; al = .2;
-        }
-        break;
-      case 6:
-        tt = (p.bt + Tm * .045) % 1;
-        var end = DE[p.br], reach = p.br === 2 ? .62 : 1;
-        q = quad(DS, [-0.2, end[1]], end, tt * reach);
-        q[1] += p.j * .04 * tt;
-        fade = smooth(clamp(tt / .1, 0, 1)) * (1 - smooth(clamp((tt - .88) / .12, 0, 1)));
-        al = (p.br === 1 ? .92 : p.br === 0 ? .4 : .2) * fade; hl = p.br === 1 ? 1 : 0;
-        x = q[0]; y = q[1]; break;
-      case 7: {
-        var filled = p.lf <= IF[p.lv];
-        x = p.lx; y = p.ly + Math.sin(Tm * .5 + p.ph) * .004;
-        al = filled ? .9 : .08; hl = filled && p.lv >= 2 ? 1 : 0; break;
-      }
-      case 8: {
-        var ed = TE[p.e];
-        tt = (p.et + Tm * .04) % 1;
-        x = lerp(ed[0][0], ed[1][0], tt) + p.j * .025; y = lerp(ed[0][1], ed[1][1], tt);
-        var demand = p.e === 1 || p.e === 2 || p.e === 4, converge = p.e >= 5;
-        al = (p.e === 0 ? .35 : .85) * (1 - smooth(clamp((tt - .9) / .1, 0, 1)) * .6);
-        hl = demand ? 1 : converge ? .55 : 0; break;
-      }
-      default:
-        x = p.qx + Math.sin(Tm * .3 + p.ph) * .03; y = p.qy + Math.cos(Tm * .27 + p.ph) * .03; al = p.a * (narrow ? .09 : .16);
-    }
-    out[0] = x; out[1] = y; out[2] = al; out[3] = hl;
-  }
-
-  var pings = [], lastPing = 0, t0 = performance.now(), A = [0,0,0,0], B = [0,0,0,0];
-
-  function col(rgb, a){ return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + Math.max(0, a).toFixed(3) + ')'; }
-  function mix(t){ return [Math.round(lerp(INK[0], BLUE[0], t)), Math.round(lerp(INK[1], BLUE[1], t)), Math.round(lerp(INK[2], BLUE[2], t))]; }
-  function wgt(s, k){ return smooth(clamp(1 - Math.abs(s - k) * 1.8, 0, 1)); }
-  function spaced(t){ return t.toUpperCase().split('').join(String.fromCharCode(8202)); }
-  function mono(){ ctx.font = '500 12px "Geist Mono", monospace'; }
-  // a small label with a paper backing so lines and dots never cut through it
-  function tag(text, x, y, align, colr, a){
-    if (a < .01) return;
-    mono();
-    var t = spaced(text), tw = ctx.measureText(t).width;
-    var x0 = align === 'left' ? x : align === 'right' ? x - tw : x - tw / 2;
-    ctx.fillStyle = col(PAPER, .88 * a); ctx.fillRect(x0 - 6, y - 10, tw + 12, 20);
-    ctx.textAlign = align; ctx.fillStyle = col(colr, a); ctx.fillText(t, x, y);
-  }
-  function roundRect(x, y, w, h, r){
-    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
-    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
-  }
-  function node(x, y, r, fill, stroke, a){
-    ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832);
-    ctx.fillStyle = col(fill, a); ctx.fill();
-    ctx.lineWidth = 1.5; ctx.strokeStyle = col(stroke, a); ctx.stroke();
-  }
-  function arrow(x0, y0, x1, y1, colr, a, w){
-    ctx.strokeStyle = col(colr, a); ctx.lineWidth = w || 1;
-    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
-    var an = Math.atan2(y1 - y0, x1 - x0);
-    ctx.beginPath(); ctx.moveTo(x1 - 7 * Math.cos(an - .45), y1 - 7 * Math.sin(an - .45)); ctx.lineTo(x1, y1);
-    ctx.lineTo(x1 - 7 * Math.cos(an + .45), y1 - 7 * Math.sin(an + .45)); ctx.stroke();
-  }
-
-  function frame(now){
-    var Tm = reduce ? 4 : (now - t0) / 1000;
-    var y = scrollY;
-    var s = stateAt(y);
-    if (reduce) s = Math.round(s);
-    bar.classList.toggle('scrolled', y > 8);
-
-    // which step of the process is showing (from scroll position)
-    if (howSec){
-      var hp = (y + H * .5 - howSec.top) / howSec.h;
-      var on = clamp(Math.floor((hp - STEP0) / STEPW), 0, NSTEPS - 1);
-      for (var i = 0; i < steps.length; i++){ steps[i].classList.toggle('on', i === on); }
-      for (i = 0; i < rail.length; i++){ rail[i].classList.toggle('on', i === on); rail[i].classList.toggle('done', i < on); }
-    }
-
-    // where the field sits on screen
-    var heroK = 1 - smooth(clamp(y / (H * .7), 0, 1));
-    var cx, cy, U;
-    if (narrow){
-      U = Math.min(W * .33, H * .155);
-      cx = W * .5;
-      cy = lerp(Math.max(58 + U * 1.42, H * .29), H * .9, heroK);
-    } else {
-      U = Math.min(W * .18, H * .3);
-      cx = W * lerp(.67, .71, heroK); cy = H * .53;
-    }
-    var gA = (narrow ? lerp(1, .45, heroK) : 1) * (1 - smooth(clamp((y + H * .55 - bookTop) / (H * .45), 0, 1)));
-    for (i = 0; i < dims.length; i++){
-      var dm = dims[i], cover = clamp(Math.min(y + H, dm.top + dm.h) - Math.max(y, dm.top), 0, H) / H;
-      gA *= 1 - (1 - dm.v * (narrow ? .4 : 1)) * smooth(clamp(cover * 1.6, 0, 1));
-    }
-    var intro = reduce ? 1 : clamp((Tm - .15) / 1.9, 0, 1);
-
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    ctx.clearRect(0, 0, W, H);
-    ctx.textBaseline = 'middle';
-
-    var k0 = Math.floor(s), k1 = Math.min(LAST, k0 + 1), f = s - k0;
-    var w = []; for (i = 0; i <= LAST; i++) w.push(wgt(s, i) * gA);
-    var X = function(v){ return cx + v * U; }, Y = function(v){ return cy + v * U; };
-    var p, e;
-
-    // ---------- under-layer guides ----------
-    if (w[0] > .01){
-      ctx.strokeStyle = col(INK, .3 * w[0]); ctx.lineWidth = 1;
-      roundRect(X(-0.66), Y(-0.36), 1.32 * U, 0.74 * U, 10); ctx.stroke();
-      ctx.setLineDash([2, 6]); ctx.strokeStyle = col(INK, .12 * w[0]);
-      ctx.beginPath(); ctx.ellipse(cx, cy, 1.45 * 1.08 * U, 1.45 * .86 * U, 0, 0, 6.2832); ctx.stroke(); ctx.setLineDash([]);
-    }
-    if (w[2] > .01){
-      ctx.setLineDash([3, 5]); ctx.strokeStyle = col(INK, .3 * w[2]); ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(cx, Y(-0.9)); ctx.lineTo(cx, Y(0.9)); ctx.stroke(); ctx.setLineDash([]);
-      for (i = 0; i < 4; i++){
-        var dir = FDIR[i], xa = X(dir > 0 ? 0.7 : -0.7), xb = X(dir > 0 ? 1.3 : -1.3);
-        arrow(xa, Y(FR[i]), xb, Y(FR[i]), i < 2 ? BLUE : GREY, .6 * w[2], 1.2);
-      }
-    }
-    if (w[3] > .01){
-      ctx.lineWidth = 1;
-      for (i = 0; i < 3; i++){
-        ctx.strokeStyle = col(i === 1 ? BLUE : INK, (i === 1 ? .45 : .14) * w[3]);
-        roundRect(X(-1.2), Y(AY[i] - .16), 2.4 * U, .32 * U, 8); ctx.stroke();
-      }
-      arrow(X(1.32), Y(0.12), X(1.32), Y(-0.5), GREY, .5 * w[3]);
-    }
-    if (w[4] > .01){
-      ctx.strokeStyle = col(INK, .3 * w[4]); ctx.lineWidth = 1;
-      arrow(X(-1.3), Y(0.42), X(1.32), Y(0.42), INK, .3 * w[4]);
-      for (i = 0; i < 4; i++){
-        ctx.beginPath(); ctx.moveTo(X(OC[i][0]), Y(0.37)); ctx.lineTo(X(OC[i][0]), Y(0.47)); ctx.stroke();
-      }
-      var pr = reduce ? .5 : (Math.sin(Tm * 2) + 1) / 2;
-      ctx.strokeStyle = col(BLUE, (.3 + .25 * pr) * w[4]); ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.arc(X(OC[OTARGET][0]), Y(OC[OTARGET][1]), .33 * U + pr * 4, 0, 6.2832); ctx.stroke();
-    }
-    if (w[5] > .01){
-      ctx.strokeStyle = col(INK, .3 * w[5]); ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(X(CH[0][0]), Y(CH[0][1])); ctx.lineTo(X(CH[3][0]), Y(CH[3][1])); ctx.stroke();
-      arrow(X(1.0), Y(-0.55), X(-1.0), Y(-0.55), BLUE, .55 * w[5]);
-      ctx.setLineDash([2, 5]); ctx.strokeStyle = col(INK, .16 * w[5]);
-      ctx.beginPath(); ctx.moveTo(X(-1.3), Y(0.3)); ctx.lineTo(X(1.3), Y(0.3)); ctx.stroke(); ctx.setLineDash([]);
-    }
-    if (w[6] > .01){
-      ctx.lineWidth = 1;
-      for (i = 0; i < 3; i++){
-        ctx.strokeStyle = col(i === 1 ? BLUE : INK, (i === 1 ? .4 : .16) * w[6]);
-        if (i === 2) ctx.setLineDash([3, 5]);
-        ctx.beginPath(); ctx.moveTo(X(DS[0]), Y(DS[1])); ctx.quadraticCurveTo(X(-0.2), Y(DE[i][1]), X(DE[i][0]), Y(DE[i][1])); ctx.stroke();
-        ctx.setLineDash([]);
-      }
-      ctx.strokeStyle = col(BLUE, .9 * w[6]); ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(X(0.55), Y(DE[1][1]) - 14); ctx.lineTo(X(0.55), Y(DE[1][1]) + 14); ctx.stroke();
-      // the disproven path, struck through
-      ctx.strokeStyle = col(GREY, .7 * w[6]); ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(X(DE[2][0]) - 10, Y(DE[2][1]) - 10); ctx.lineTo(X(DE[2][0]) + 10, Y(DE[2][1]) + 10); ctx.stroke();
-    }
-    if (w[7] > .01){
-      ctx.lineWidth = 1;
-      for (i = 0; i < 4; i++){
-        ctx.strokeStyle = col(INK, .14 * w[7]);
-        ctx.beginPath(); ctx.moveTo(X(-0.95), Y(IY[i] + .12)); ctx.lineTo(X(0.95), Y(IY[i] + .12)); ctx.stroke();
-      }
-      arrow(X(1.12), Y(0.85), X(1.12), Y(-0.85), BLUE, .5 * w[7]);
-    }
-    if (w[8] > .01){
-      ctx.lineWidth = 1;
-      TE.forEach(function(ed, ei){
-        ctx.strokeStyle = col(ei === 0 ? INK : (ei === 1 || ei === 2 || ei === 4) ? BLUE : INK, (ei === 0 ? .2 : .35) * w[8]);
-        if (ei === 0) ctx.setLineDash([3, 5]);
-        ctx.beginPath(); ctx.moveTo(X(ed[0][0]), Y(ed[0][1])); ctx.lineTo(X(ed[1][0]), Y(ed[1][1])); ctx.stroke();
-        ctx.setLineDash([]);
-      });
-      // validated demand can challenge the outcome
-      ctx.setLineDash([4, 5]);
-      arrow(X(T.op[0]) - 10, Y(T.op[1]), X(T.oc[0]) + 12, Y(T.oc[1]), BLUE, .55 * w[8]);
-      ctx.setLineDash([]);
-      // re-prioritise: the loop closes and reopens
-      ctx.setLineDash([3, 5]); ctx.strokeStyle = col(INK, .25 * w[8]);
-      ctx.beginPath(); ctx.moveTo(X(T.ii[0]) + 10, Y(T.ii[1]));
-      ctx.bezierCurveTo(X(1.45), Y(1.05), X(1.45), Y(-0.38), X(T.op[0]) + 12, Y(T.op[1]) + 4); ctx.stroke(); ctx.setLineDash([]);
-    }
-
-    // ---------- interviews arriving ----------
-    if (!reduce && w[1] > .05 && now - lastPing > 650){
-      lastPing = now; pings.push({i: Math.floor(Math.random() * N), t: now});
-    }
-
-    // ---------- the dots ----------
-    for (i = 0; i < N; i++){
-      p = P[i];
-      st(p, k0, Tm, A); st(p, k1, Tm, B);
-      e = ease(clamp((f - p.d) / .68, 0, 1));
-      var x = X(lerp(A[0], B[0], e)), yy = Y(lerp(A[1], B[1], e));
-      var al = lerp(A[2], B[2], e) * gA * clamp((intro - p.born * .6) / .4, 0, 1);
-      var hl = lerp(A[3], B[3], e);
-      p._x = x; p._y = yy;
-      if (al < .01) continue;
-      ctx.fillStyle = col(mix(hl), al);
-      ctx.beginPath(); ctx.arc(x, yy, p.r, 0, 6.2832); ctx.fill();
-    }
-    for (i = pings.length - 1; i >= 0; i--){
-      var pg = pings[i], age = (now - pg.t) / 1500;
-      if (age > 1){ pings.splice(i, 1); continue; }
-      var qq = P[pg.i]; if (!qq || qq._x === undefined) continue;
-      ctx.strokeStyle = col(INK, (1 - age) * .4 * w[1]); ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.arc(qq._x, qq._y, qq.r + age * 16, 0, 6.2832); ctx.stroke();
-    }
-
-    // ---------- nodes and labels ----------
-    if (w[0] > .01){
-      tag(narrow ? 'Your brief' : 'Your brief · set with the Mind', cx, Y(-0.36), 'center', INK, w[0]);
-      tag(narrow ? 'External context · weak signal' : 'Docs · web · social · a weak signal, not evidence', cx, Y(-1.45 * .86) - 2, 'center', GREY, w[0]);
-    }
-    if (w[2] > .01){
-      var FL = narrow ? ['Push','Pull','Anxiety','Habit'] : ['Push of the situation','Pull of the new','Anxiety of the new','Habit of the present'];
-      for (i = 0; i < 4; i++) tag(FL[i], X(-1.15), Y(FR[i]) - 18, 'left', i < 2 ? BLUE : GREY, w[2]);
-      tag('The switch', cx, Y(-0.98), 'center', INK, w[2]);
-    }
-    if (w[3] > .01){
-      var AL = narrow ? ['Business outcome','Product outcome · steer by this','Traction metric']
-                      : ['Business outcome · leadership negotiates','Product outcome · the one you steer by','Traction metric · real, but too narrow'];
-      for (i = 0; i < 3; i++) tag(AL[i], X(-1.2) + 4, Y(AY[i] - .16), 'left', i === 1 ? BLUE : GREY, w[3]);
-    }
-    if (w[4] > .01){
-      var OL = ['First thought','Looking','Onboarding','Ongoing use'];
-      for (i = 0; i < 4; i++) tag(OL[i], X(OC[i][0]), Y(0.42) + (narrow && i % 2 ? 40 : 22), 'center', i === OTARGET ? BLUE : GREY, w[4]);
-      tag('Target opportunity', X(OC[OTARGET][0]), Y(OC[OTARGET][1] - .33) - 14, 'center', BLUE, w[4]);
-      if (!narrow) tag('Parked', X(OC[0][0]), Y(OC[0][1] - .3) - 10, 'center', GREY, w[4]);
-    }
-    if (w[5] > .01){
-      for (i = 0; i < 4; i++){
-        node(X(CH[i][0]), Y(CH[i][1]), i === 3 ? 7 : 6, i === 3 ? BLUE : PAPER, i === 3 ? BLUE : INK, w[5]);
-        tag(CHL[i], X(CH[i][0]), Y(CH[i][1]) + 26, 'center', i === 3 ? BLUE : INK, w[5]);
-      }
-      tag(narrow ? 'Mapped backwards' : 'Mapped backwards from the outcome', cx, Y(-0.55) - 16, 'center', BLUE, w[5]);
-      tag('Lead', X(CH[2][0]), Y(CH[2][1]) - 24, 'center', GREY, w[5]);
-      tag('Lag', X(CH[3][0]), Y(CH[3][1]) - 24, 'center', GREY, w[5]);
-      tag(narrow ? 'Noise' : 'Noise · what you can’t control', narrow ? cx : X(-1.3), Y(0.98), narrow ? 'center' : 'left', GREY, w[5]);
-    }
-    if (w[6] > .01){
-      node(X(DS[0]), Y(DS[1]), 6, PAPER, INK, w[6]);
-      node(X(DE[0][0]), Y(DE[0][1]), 5, PAPER, INK, w[6]);
-      node(X(DE[1][0]), Y(DE[1][1]), 5, BLUE, BLUE, w[6]);
-      tag(narrow ? 'Bar set first' : 'Bar set before results', X(0.55), Y(DE[1][1]) + 30, 'center', BLUE, w[6]);
-      tag(narrow ? 'Riskiest belief' : 'Riskiest belief · tested', X(-0.35), Y(DE[1][1]) - 18, 'center', BLUE, w[6]);
-      var DL = ['Feature','Service','Automation'];
-      if (!narrow){
-        for (i = 0; i < 3; i++) tag(DL[i], X(DE[i][0]) + 16, Y(DE[i][1]), 'left', i === 1 ? BLUE : GREY, w[6]);
-        tag('Disproven · killed cheaply', X(DE[2][0]) - 6, Y(DE[2][1]) + 26, 'right', GREY, w[6]);
-      } else {
-        tag('Disproven', X(DE[2][0]), Y(DE[2][1]) + 24, 'right', GREY, w[6]);
-      }
-    }
-    if (w[7] > .01){
-      var IL = narrow ? ['Behaviour','Relief','Product outcome','Business outcome']
-                      : ['1 · Assumption behaviour','2 · Opportunity relief','3 · Product outcome','4 · Business outcome'];
-      for (i = 0; i < 4; i++) tag(IL[i], X(-0.95), Y(IY[i] - .15) - 2, 'left', i >= 2 ? BLUE : INK, w[7]);
-      if (!narrow) tag('Smallest coherent increment · shipped', cx, Y(1.1), 'center', GREY, w[7]);
-    }
-    if (w[8] > .01){
-      var TN = [[T.fr,'Framing',0],[T.oc,'Desired outcome',1],[T.jb,'Jobs to be Done',2],[T.tf,'Timeline & forces',2],[T.op,'Opportunities',2],
-                [T.cs,'Causal system',3],[T.so,'Solutions',3],[T.ex,'Experiments',3],[T.ii,'Increment & impact',3]];
-      TN.forEach(function(n){
-        var demand = n[2] === 2, conv = n[2] === 3, colr = demand ? BLUE : INK;
-        node(X(n[0][0]), Y(n[0][1]), conv ? 5 : 6, n[2] === 0 ? PAPER : demand ? BLUE : PAPER, n[2] === 0 ? GREY : colr, w[8]);
-        if (conv) tag(n[1], X(n[0][0]) + 14, Y(n[0][1]), 'left', INK, w[8]);
-        else if (narrow) tag(n[1], X(n[0][0]), Y(n[0][1]) - 18, 'center', demand ? BLUE : INK, w[8]);
-        else tag(n[1], X(n[0][0]) + (demand ? 14 : -14), Y(n[0][1]), demand ? 'left' : 'right', demand ? BLUE : INK, w[8]);
-      });
-      tag('Supply', X(T.fr[0]), Y(-1.3), 'center', GREY, w[8]);
-      tag('Demand', X(T.jb[0]), Y(-1.3), 'center', BLUE, w[8]);
-      if (!narrow) tag('Demand can challenge the outcome', cx, Y(-0.38) - 18, 'center', BLUE, w[8]);
-    }
-
-    requestAnimationFrame(frame);
-  }
-
-  layout();
-  var rt;
-  window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(layout, 120); });
-  window.addEventListener('load', layout);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
-  requestAnimationFrame(frame);
-
-  /* ---------- smooth scroll ---------- */
-  function startLenis(){
-    if (reduce || !window.Lenis) return;
-    var lenis = new Lenis({lerp: .09, smoothWheel: true});
-    function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
-    requestAnimationFrame(raf);
-    document.querySelectorAll('a[href^="#"]').forEach(function(a){
-      a.addEventListener('click', function(ev){
-        var id = a.getAttribute('href'), el = id.length > 1 && document.querySelector(id);
-        if (id === '#top'){ ev.preventDefault(); lenis.scrollTo(0); return; }
-        if (!el) return;
-        ev.preventDefault();
-        lenis.scrollTo(el, {offset: el === howEl ? innerHeight * .1 : 0});
-      });
-    });
-  }
-  if (document.readyState === 'complete') startLenis(); else window.addEventListener('load', startLenis);
 })();
+</script>
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js" defer></script>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+const root = document.documentElement;
+const journey = document.getElementById('how');
+const heroPanel = document.querySelector('.p-hero');
+const stepPanel = document.querySelector('.p-steps');
+const steps = Array.from(document.querySelectorAll('.psteps > li'));
+const rail = Array.from(document.querySelectorAll('.rail > li'));
+const tagLayer = document.getElementById('tags');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const mobile = matchMedia('(max-width: 860px)').matches;
+
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = t => t * t * t * (t * (t * 6 - 15) + 10);
+const span = (a, b, x) => ease(clamp((x - a) / (b - a)));
+const lerp = (a, b, t) => a + (b - a) * t;
+
+// the journey: an intro, then seven steps of equal length
+const S0 = 0.05, SW = 0.135, NSTEP = 7;
+const stepStart = k => S0 + k * SW;
+const local = (k, p) => clamp((p - stepStart(k)) / SW);
+
+function start() {
+  if (reduce || !journey) return;
+  const canvas = document.createElement('canvas'); canvas.className = 'world'; canvas.setAttribute('aria-hidden', 'true');
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); } catch (e) { return; }
+  if (!renderer.getContext()) return;
+  document.body.prepend(canvas);
+  root.classList.add('webgl');
+  const DPR = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 1.75);
+  renderer.setPixelRatio(DPR);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const BG = new THREE.Color('#061a38');
+  const scene = new THREE.Scene(); scene.background = BG; scene.fog = new THREE.FogExp2(BG, 0.012);
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.3, 700);
+  scene.add(new THREE.HemisphereLight(0xc6dcff, 0x0a1d3d, 1.25));
+  const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.castShadow = true;
+  sun.shadow.mapSize.set(mobile ? 1024 : 2048, mobile ? 1024 : 2048);
+  Object.assign(sun.shadow.camera, { left: -28, right: 28, top: 28, bottom: -28, near: 1, far: 140 });
+  sun.shadow.normalBias = 0.03; scene.add(sun, sun.target);
+  const fill = new THREE.DirectionalLight(0x6f9cff, 0.6); fill.position.set(40, 22, -30); scene.add(fill);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(800, 800), new THREE.MeshStandardMaterial({ color: '#0c2549', roughness: 1 }));
+  ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+  const grid = new THREE.GridHelper(800, 400, 0x1e4479, 0x1e4479); grid.material.transparent = true; grid.material.opacity = 0.2; grid.position.y = 0.012; scene.add(grid);
+
+  const mPale = new THREE.MeshStandardMaterial({ color: '#e6eefa', roughness: 0.8 });
+  const mPale2 = new THREE.MeshStandardMaterial({ color: '#b9cbe6', roughness: 0.85 });
+  const mDim = new THREE.MeshStandardMaterial({ color: '#2a4572', roughness: 0.9 });
+  const GLOW = new THREE.Color(0.52, 0.8, 1.0);
+  const glow = (k = 2.2, opacity = 1, additive = false) => new THREE.MeshBasicMaterial({
+    color: GLOW.clone().multiplyScalar(k), toneMapped: false, transparent: additive || opacity < 1, opacity,
+    blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending, depthWrite: !additive });
+  const sparkGeo = new THREE.SphereGeometry(0.14, 12, 10);
+  function tube(points, r = 0.06, k = 1.7) {
+    const curve = new THREE.CatmullRomCurve3(points);
+    const core = new THREE.Mesh(new THREE.TubeGeometry(curve, 160, r, 8, false), glow(k));
+    const halo = new THREE.Mesh(new THREE.TubeGeometry(curve, 160, r * 3.0, 8, false), glow(0.7, 0.12, true));
+    const g = new THREE.Group(); g.add(core, halo); scene.add(g);
+    return { g, curve, core, set(f, rev = false) {
+      const n = Math.floor(160 * clamp(f)) * 48, total = 160 * 48;
+      [core, halo].forEach(m => m.geometry.setDrawRange(rev ? total - n : 0, n));
+      g.visible = f > 0.002; } };
+  }
+  let seed = 5;
+  const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const rr = (a, b) => a + (b - a) * rnd();
+
+  // ---------- labels that follow the world ----------
+  const tags = [];
+  function tag(text, pos, step, hot = false, dy = -28) {
+    const el = document.createElement('span'); el.className = 'tag3d' + (hot ? ' t-hot' : ''); el.textContent = text;
+    tagLayer.appendChild(el); const t = { el, pos, step, vis: 1, dy, hot }; tags.push(t); return t;
+  }
+  const proj = new THREE.Vector3();
+
+  // ---------- stations ----------
+  const ST = [[0, 0], [5, -32], [-3, -64], [4, -96], [-4, -128], [3, -160], [0, -196]].map(([x, z]) => new THREE.Vector3(x, 0, z));
+  const upd = [];
+
+  // 0 · DEFINE — the brief, held as an assumption; outside context circling it, a weak signal
+  (() => {
+    const c = ST[0];
+    const brief = new THREE.Mesh(new RoundedBoxGeometry(4.2, 0.26, 2.9, 3, 0.08), mPale);
+    brief.position.set(c.x, 1.2, c.z); brief.castShadow = true; scene.add(brief);
+    const lines = [0, 1, 2, 3, 4].map(i => {
+      const m = new THREE.Mesh(new THREE.BoxGeometry(1, 0.03, 0.12).translate(0.5, 0, 0), new THREE.MeshBasicMaterial({ color: '#5e95d8' }));
+      m.position.set(c.x - 1.6, 1.36, c.z - 1 + i * 0.5); m.userData.w = i === 4 ? 1.6 : rr(2.2, 3.2); scene.add(m); return m;
+    });
+    const ringPts = []; for (let i = 0; i <= 96; i++) { const a = i / 96 * Math.PI * 2; ringPts.push(new THREE.Vector3(c.x + Math.cos(a) * 5.4, 1.2, c.z + Math.sin(a) * 4.2)); }
+    const ring = new THREE.Line(new THREE.BufferGeometry().setFromPoints(ringPts), new THREE.LineDashedMaterial({ color: 0x8fb6e6, dashSize: 0.3, gapSize: 0.35, transparent: true, opacity: 0.45 }));
+    ring.computeLineDistances(); scene.add(ring);
+    const orbs = ['Docs', 'Web', 'Social'].map((n, i) => {
+      const m = new THREE.Mesh(new THREE.SphereGeometry(0.42, 24, 18), mPale2); m.castShadow = true; scene.add(m);
+      const t = tag(n, m.position, 0, false, -26); return { m, a0: i * 2.09, t };
+    });
+    const tBrief = tag('Your brief · an assumption', new THREE.Vector3(c.x, 1.6, c.z), 0, true, -30);
+    upd.push((p, time) => {
+      const lp = local(0, p);
+      lines.forEach((m, i) => { m.scale.x = Math.max(0.001, m.userData.w * span(0.08 + i * 0.07, 0.22 + i * 0.07, lp)); });
+      orbs.forEach(o => { const a = o.a0 + time * 0.25; o.m.position.set(c.x + Math.cos(a) * 5.4, 1.2 + Math.sin(time + o.a0) * 0.15, c.z + Math.sin(a) * 4.2); });
+      ring.material.opacity = 0.45;
+    });
+  })();
+
+  // 1 · PROGRESS — the switch: one customer's move, pushed and pulled, held back by anxiety and habit
+  (() => {
+    const c = ST[1];
+    const pts = [[-10, 3], [-5.5, 0.6], [-1, 1.6], [3, -0.4], [7, 0.8], [10.5, -1.4]].map(([x, z]) => new THREE.Vector3(c.x + x, 0.06, c.z + z));
+    const curve = new THREE.CatmullRomCurve3(pts);
+    const track = new THREE.Mesh(new THREE.TubeGeometry(curve, 200, 0.12, 10, false), mPale2); track.receiveShadow = true; scene.add(track);
+    const lit = tube(pts, 0.07, 2.4);
+    const stopsU = [0.02, 0.32, 0.62, 0.95], names = ['First thought', 'Looking', 'Deciding', 'Using'];
+    stopsU.forEach((u, i) => {
+      const p = curve.getPointAt(u);
+      const r = new THREE.Mesh(new THREE.TorusGeometry(0.9, 0.05, 10, 64), i === 3 ? glow(2.2) : mPale); r.rotation.x = Math.PI / 2; r.position.set(p.x, 0.1, p.z); scene.add(r);
+      tag(names[i], new THREE.Vector3(p.x, 0.2, p.z + 1.4), 1, i === 3, 0);
+    });
+    const lp8 = curve.getPointAt(0.8);
+    const line = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.05, 4), glow(2.6)); line.position.set(lp8.x, 0.05, lp8.z); scene.add(line);
+    const ball = new THREE.Mesh(new THREE.SphereGeometry(0.6, 32, 24), mPale); ball.castShadow = true; scene.add(ball);
+    function arrow(mat) {
+      const a = new THREE.Group();
+      a.add(new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 1.6, 12).rotateZ(Math.PI / 2).translate(0.8, 0, 0), mat));
+      a.add(new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.5, 16).rotateZ(-Math.PI / 2).translate(1.85, 0, 0), mat));
+      scene.add(a); return a;
+    }
+    const push = arrow(glow(2.4)), pull = arrow(glow(2.4)), anx = arrow(mPale2), hab = arrow(mPale2);
+    const tg = ['Push', 'Pull', 'Anxiety', 'Habit'].map((n, i) => tag(n, new THREE.Vector3(), 1, false, -18));
+    const tan = new THREE.Vector3();
+    upd.push((p, time) => {
+      const lp = local(1, p);
+      let u = lp < 0.62 ? 0.02 + 0.6 * span(0.06, 0.55, lp) : 0.62 + 0.33 * span(0.66, 0.9, lp);
+      if (lp > 0.5 && lp < 0.68) u += Math.sin(time * 9) * 0.005;
+      u = clamp(u);
+      const q = curve.getPointAt(u); curve.getTangentAt(u, tan);
+      ball.position.set(q.x, 0.66, q.z); lit.set(u);
+      const ang = Math.atan2(-tan.z, tan.x), tx = Math.cos(ang), tz = -Math.sin(ang), nx = Math.sin(ang), nz = Math.cos(ang);
+      const place = (a, along, side, dir) => { a.position.set(q.x + tx * along + nx * side, 0.66, q.z + tz * along + nz * side); a.rotation.y = ang + (dir < 0 ? Math.PI : 0); };
+      place(push, -3.2, 1.5, 1); place(pull, 0.6, 1.5, 1); place(anx, 2.6, -1.5, -1); place(hab, -1.2, -1.5, -1);
+      const on = 1 - span(0.86, 0.94, lp), hold = lp > 0.45 && lp < 0.68 ? 1.25 : 0.85;
+      push.scale.setScalar(Math.max(0.01, on)); pull.scale.setScalar(Math.max(0.01, on));
+      anx.scale.setScalar(Math.max(0.01, on * hold)); hab.scale.setScalar(Math.max(0.01, on * hold));
+      [push, pull, anx, hab].forEach((a, i) => { const dir = i < 2 ? 1 : -1; tg[i].pos.set(a.position.x + tx * dir, 1.3, a.position.z + tz * dir); tg[i].vis = on; });
+    });
+  })();
+
+  // 2 · OUTCOME — three altitudes; the product outcome is the one you steer by
+  (() => {
+    const c = ST[2];
+    const ys = [1.0, 3.0, 5.0], names = ['Traction metric', 'Product outcome · steer by this', 'Business outcome'];
+    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 6, 12).translate(0, 3, 0), glow(1.8)); rod.position.set(c.x, 0, c.z); scene.add(rod);
+    const discs = ys.map((y, i) => {
+      const mat = i === 1 ? mPale : new THREE.MeshStandardMaterial({ color: '#b9cbe6', roughness: 0.85, transparent: true, opacity: 0.55 });
+      const m = new THREE.Mesh(new THREE.CylinderGeometry(i === 1 ? 3.1 : 2.6, i === 1 ? 3.1 : 2.6, 0.14, 72), mat);
+      m.position.set(c.x, y, c.z); m.castShadow = true; scene.add(m);
+      const rim = new THREE.Mesh(new THREE.TorusGeometry(i === 1 ? 3.15 : 2.65, 0.04, 8, 96), i === 1 ? glow(2.4) : glow(0.7));
+      rim.rotation.x = Math.PI / 2; rim.position.set(c.x, y, c.z); scene.add(rim);
+      tag(names[i], new THREE.Vector3(c.x + (i === 1 ? 3.1 : 2.6), y, c.z), 2, i === 1, -16);
+      return { m, rim, y, i };
+    });
+    const guards = [-1, 1].map(s => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.16, 1.6, 0.16).translate(0, 0.8, 0), mPale2); m.position.set(c.x + s * 2.2, 3.07, c.z + 1.4); scene.add(m); return m; });
+    tag('Guardrails', new THREE.Vector3(c.x + 2.2, 4.8, c.z + 1.4), 2, false, -10);
+    upd.push((p, time) => {
+      const lp = local(2, p);
+      discs.forEach(d => {
+        const k = span(0.06 + d.i * 0.08, 0.3 + d.i * 0.08, lp);
+        d.m.position.y = d.rim.position.y = d.y * k + 0.07;
+        d.m.scale.setScalar(Math.max(0.01, 0.4 + 0.6 * k));
+        d.rim.scale.setScalar(Math.max(0.01, 0.4 + 0.6 * k));
+      });
+      discs[1].rim.material.color.copy(GLOW).multiplyScalar(0.8 + 1.8 * span(0.45, 0.6, lp));
+      rod.scale.y = Math.max(0.01, span(0.05, 0.4, lp));
+      guards.forEach(g => g.scale.y = Math.max(0.01, span(0.6, 0.75, lp)));
+    });
+  })();
+
+  // 3 · OPPORTUNITY — struggles grouped along the timeline; one target, the rest parked
+  (() => {
+    const c = ST[3];
+    const xs = [-6.3, -2.1, 2.1, 6.3], names = ['First thought', 'Looking', 'Onboarding', 'Ongoing use'], TGT = 2;
+    tube([new THREE.Vector3(c.x - 8.5, 0.06, c.z + 3), new THREE.Vector3(c.x, 0.06, c.z + 3), new THREE.Vector3(c.x + 8.5, 0.06, c.z + 3)], 0.05, 1.6);
+    const cubeGeo = new RoundedBoxGeometry(0.42, 0.42, 0.42, 2, 0.06);
+    const clusters = xs.map((x, ci) => {
+      const tick = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.04, 8, 32), ci === TGT ? glow(2.2) : mPale2); tick.rotation.x = Math.PI / 2; tick.position.set(c.x + x, 0.08, c.z + 3); scene.add(tick);
+      tag(names[ci], new THREE.Vector3(c.x + x, 0.1, c.z + 4.3), 3, ci === TGT, 0);
+      const cubes = [];
+      for (let i = 0; i < 11; i++) {
+        const m = new THREE.Mesh(cubeGeo, ci === TGT ? new THREE.MeshStandardMaterial({ color: '#e6eefa', roughness: 0.7, emissive: GLOW, emissiveIntensity: 0 }) : mPale2.clone());
+        m.castShadow = true; scene.add(m);
+        cubes.push({ m, off: new THREE.Vector3(rr(-0.95, 0.95), rr(-0.6, 0.7), rr(-0.8, 0.8)), r0: new THREE.Euler(rr(0, 6), rr(0, 6), rr(0, 6)), fall: new THREE.Vector3(rr(-1, 1), 0.21, rr(-1, 1)) });
+      }
+      return { x, cubes, ci };
+    });
+    const halo = new THREE.Mesh(new THREE.TorusGeometry(1.6, 0.05, 10, 72), glow(2.4)); halo.rotation.x = Math.PI / 2; scene.add(halo);
+    const tT = tag('Target opportunity', new THREE.Vector3(c.x + xs[TGT], 4.6, c.z), 3, true, -10);
+    const tP = tag('Parked', new THREE.Vector3(c.x + xs[0], 0.8, c.z), 3, false, -10);
+    upd.push((p, time) => {
+      const lp = local(3, p), pick = span(0.5, 0.72, lp), appear = span(0.04, 0.3, lp);
+      clusters.forEach(cl => cl.cubes.forEach((q, i) => {
+        const tgt = cl.ci === TGT;
+        const bx = c.x + cl.x + q.off.x, bz = c.z + q.off.z;
+        let y = 1.7 + q.off.y + Math.sin(time * 0.8 + i) * 0.08;
+        if (tgt) y += 1.4 * pick;
+        let x = bx, z = bz;
+        if (!tgt) { x = lerp(bx, c.x + cl.x + q.fall.x, pick); z = lerp(bz, c.z + q.fall.z, pick); y = lerp(y, q.fall.y, pick); }
+        q.m.position.set(x, lerp(-0.5, y, appear), z);
+        q.m.rotation.set(q.r0.x + time * 0.2 * (1 - pick), q.r0.y + time * 0.25, q.r0.z * (1 - pick));
+        q.m.scale.setScalar(Math.max(0.01, appear));
+        if (tgt) q.m.material.emissiveIntensity = 0.5 * pick; else q.m.material.color.set(pick > 0.5 ? '#3b5683' : '#b9cbe6');
+      }));
+      halo.position.set(c.x + xs[TGT], 3.2 + 0.1 * Math.sin(time * 2), c.z); halo.scale.setScalar(Math.max(0.01, pick)); halo.rotation.z = time * 0.4;
+      tT.vis = pick; tP.vis = span(0.7, 0.8, lp);
+    });
+  })();
+
+  // 4 · CAUSAL LEARNING — the chain mapped backwards from the outcome; lead vs lag; noise set apart
+  (() => {
+    const c = ST[4];
+    const xs = [-6, -2, 2, 6], hs = [1.0, 1.4, 1.9, 2.6], names = ['Inputs', 'Process', 'Outputs', 'Outcome'];
+    const pillars = xs.map((x, i) => {
+      const m = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, hs[i], 32).translate(0, hs[i] / 2, 0), mPale); m.position.set(c.x + x, 0, c.z); m.castShadow = true; scene.add(m);
+      const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.43, 0.43, 0.06, 32), i === 3 ? glow(2.4) : glow(0.7)); cap.position.set(c.x + x, hs[i] + 0.03, c.z); scene.add(cap);
+      tag(names[i], new THREE.Vector3(c.x + x, hs[i] + 0.4, c.z), 4, i === 3, -16);
+      return { m, cap, h: hs[i] };
+    });
+    const chain = tube(xs.map(x => new THREE.Vector3(c.x + x, 0.08, c.z)), 0.07, 2.4);
+    const back = tube([new THREE.Vector3(c.x + 6, 3.6, c.z), new THREE.Vector3(c.x, 4.2, c.z), new THREE.Vector3(c.x - 6, 3.6, c.z)], 0.04, 1.6);
+    const tBack = tag('Mapped backwards from the outcome', new THREE.Vector3(c.x, 4.3, c.z), 4, false, -16);
+    tag('Lead', new THREE.Vector3(c.x + 2, 0.2, c.z + 1.3), 4, false, 0); tag('Lag', new THREE.Vector3(c.x + 6, 0.2, c.z + 1.3), 4, false, 0);
+    const noise = []; for (let i = 0; i < 46; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(rr(0.08, 0.16), 10, 8), mDim); m.userData = { x: rr(-8, 8), y: rr(0.4, 2.4), z: rr(3, 7), ph: rr(0, 6) }; scene.add(m); noise.push(m); }
+    const tNoise = tag('Noise · what you can’t control', new THREE.Vector3(c.x - 6, 2.6, c.z + 5), 4, false, -10);
+    const sparks = [0, 1, 2].map(() => { const m = new THREE.Mesh(sparkGeo, glow(4)); m.visible = false; scene.add(m); return m; });
+    upd.push((p, time) => {
+      const lp = local(4, p);
+      pillars.forEach((pl, i) => { const k = span(0.04 + (3 - i) * 0.06, 0.22 + (3 - i) * 0.06, lp); pl.m.scale.y = Math.max(0.01, k); pl.cap.position.y = pl.h * pl.m.scale.y + 0.03; });
+      back.set(span(0.1, 0.4, lp), true); chain.set(span(0.3, 0.55, lp), true);
+      tBack.vis = span(0.15, 0.3, lp);
+      noise.forEach(m => { const u = m.userData; m.position.set(c.x + u.x + Math.sin(time * 0.4 + u.ph) * 0.4, u.y + Math.sin(time * 0.7 + u.ph) * 0.25, c.z + u.z); m.visible = lp > 0.45; });
+      tNoise.vis = span(0.5, 0.6, lp);
+      sparks.forEach((s, i) => { const on = lp > 0.6; s.visible = on; if (on) { chain.curve.getPointAt((time * 0.25 + i / 3) % 1, s.position); s.position.y = 0.25; } });
+    });
+  })();
+
+  // 5 · DELIVERY & IMPACT — different solutions, the riskiest tested against a bar set first, one disproven, impact at four levels
+  (() => {
+    const c = ST[5];
+    const start = new THREE.Vector3(c.x - 8, 0.07, c.z);
+    const ends = [-4.5, 0, 4.5].map(z => new THREE.Vector3(c.x + 4, 0.07, c.z + z));
+    const paths = ends.map((e, i) => tube([start, new THREE.Vector3(c.x - 3, 0.07, c.z + (e.z - c.z) * 0.75), e], 0.06, i === 1 ? 2.2 : 1.3));
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.4, 32), mPale); hub.position.copy(start).setY(0.2); scene.add(hub);
+    const names = ['Feature', 'Service', 'Automation'];
+    const blocks = ends.map((e, i) => { const m = new THREE.Mesh(new RoundedBoxGeometry(1, 1, 1, 2, 0.1).translate(0, 0.5, 0), i === 1 ? mPale : mPale2.clone()); m.position.copy(e).setY(0); m.castShadow = true; scene.add(m); tag(names[i], new THREE.Vector3(e.x, 1.4, e.z), 5, false, -10); return m; });
+    const gate = new THREE.Mesh(new THREE.TorusGeometry(1.1, 0.07, 12, 64, Math.PI), glow(2.6)); gate.position.set(c.x, 0, c.z); gate.rotation.y = Math.PI / 2; scene.add(gate);
+    const tGate = tag('Pass mark · set before results', new THREE.Vector3(c.x, 1.5, c.z), 5, true, -14);
+    const tDis = tag('Disproven', new THREE.Vector3(ends[2].x, 0.6, ends[2].z), 5, false, -40);
+    const spark = new THREE.Mesh(sparkGeo, glow(4.4)); spark.visible = false; scene.add(spark);
+    // impact ladder past the tested solution
+    const ladder = ['Behaviour', 'Relief', 'Product outcome', 'Business outcome'].map((n, i) => {
+      const m = new THREE.Mesh(new RoundedBoxGeometry(1.4, 0.5, 2.2, 2, 0.08), mPale); m.position.set(c.x + 6.2 + i * 1.5, 0.25 + i * 0.5, c.z); m.castShadow = true; scene.add(m);
+      const top = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.04, 2.2), glow(0.5)); top.position.set(m.position.x, m.position.y + 0.27 + i * 0, c.z); scene.add(top);
+      const t = tag(n, new THREE.Vector3(m.position.x, m.position.y + 0.4, c.z + 1.5), 5, false, -6);
+      return { m, top, t, i };
+    });
+    upd.push((p, time) => {
+      const lp = local(5, p);
+      paths.forEach((pa, i) => pa.set(span(0.04 + i * 0.03, 0.25 + i * 0.03, lp)));
+      gate.scale.setScalar(Math.max(0.01, span(0.2, 0.32, lp))); tGate.vis = span(0.25, 0.35, lp) * (1 - span(0.85, 0.95, lp));
+      const run = clamp((lp - 0.32) / 0.2); spark.visible = run > 0 && run < 1; if (spark.visible) { paths[1].curve.getPointAt(run, spark.position); spark.position.y = 0.3; }
+      const dis = span(0.4, 0.55, lp);
+      paths[2].core.material.color.copy(GLOW).multiplyScalar(1.5 * (1 - dis) + 0.15);
+      blocks[2].rotation.z = -dis * 1.45; blocks[2].material.color.set(dis > 0.5 ? '#2a4572' : '#b9cbe6');
+      tDis.vis = span(0.5, 0.6, lp);
+      ladder.forEach(l => { const k = span(0.56 + l.i * 0.08, 0.66 + l.i * 0.08, lp); l.top.material.color.copy(GLOW).multiplyScalar(0.35 + 1.25 * k); l.t.vis = k; });
+    });
+  })();
+
+  // 6 · THE TREE — the Progress-to-Outcome Tree: supply and demand spines converging
+  (() => {
+    const c = ST[6];
+    const N = { fr: [-5, -7], oc: [-5, -2.5], jb: [5, -7], tf: [5, -4.75], op: [5, -2.5], cs: [0, 0.5], so: [0, 3.2], ex: [0, 5.9], ii: [0, 8.6] };
+    const V = (k, y = 0.07) => new THREE.Vector3(c.x + N[k][0], y, c.z + N[k][1]);
+    const names = { fr: 'Framing', oc: 'Desired outcome', jb: 'Jobs to be Done', tf: 'Timeline & forces', op: 'Opportunities', cs: 'Causal system', so: 'Solutions', ex: 'Experiments', ii: 'Increment & impact' };
+    const E = [['fr', 'oc'], ['jb', 'tf'], ['tf', 'op'], ['oc', 'cs'], ['op', 'cs'], ['cs', 'so'], ['so', 'ex'], ['ex', 'ii']];
+    const edges = E.map(([a, b], i) => ({ t: tube([V(a), V(a).lerp(V(b), 0.5), V(b)], 0.06, ['jb', 'tf', 'op'].includes(a) ? 2.8 : 1.9), i }));
+    const nodes = Object.keys(N).map((k, i) => {
+      const demand = ['jb', 'tf', 'op'].includes(k), h = k === 'cs' ? 1.5 : 0.9;
+      const m = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, h, 32).translate(0, h / 2, 0), demand ? mPale : mPale2); m.position.copy(V(k, 0)); m.castShadow = true; scene.add(m);
+      const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.37, 0.37, 0.06, 32), glow(demand ? 2.4 : 0.8)); cap.position.copy(V(k, h + 0.03)); scene.add(cap);
+      const right = N[k][0] >= 0;
+      tag(names[k], V(k, h + 0.4), 6, demand, -14);
+      return { m, cap, h, i };
+    });
+    tag('Supply', V('fr', 2.2), 6, false, -12); tag('Demand', V('jb', 2.2), 6, true, -12);
+    const challenge = tube([V('op', 0.5), new THREE.Vector3(c.x, 1.8, c.z - 2.5), V('oc', 0.5)], 0.035, 1.6);
+    const tCh = tag('Demand can challenge the outcome', new THREE.Vector3(c.x, 2, c.z - 2.5), 6, false, -12);
+    const sparks = [0, 1, 2, 3].map(() => { const m = new THREE.Mesh(sparkGeo, glow(4)); m.visible = false; scene.add(m); return m; });
+    upd.push((p, time) => {
+      const lp = local(6, p);
+      edges.forEach(e => e.t.set(span(0.04 + e.i * 0.04, 0.2 + e.i * 0.04, lp)));
+      nodes.forEach(n => { const k = span(0.02 + n.i * 0.03, 0.16 + n.i * 0.03, lp); n.m.scale.y = Math.max(0.01, k); n.cap.position.y = n.h * n.m.scale.y + 0.03; });
+      challenge.set(span(0.55, 0.7, lp)); tCh.vis = span(0.6, 0.7, lp);
+      sparks.forEach((s, i) => { const e = edges[[1, 2, 4, 5][i]]; s.visible = lp > 0.5; if (s.visible) { e.t.curve.getPointAt((time * 0.3 + i * 0.25) % 1, s.position); s.position.y = 0.25; } });
+    });
+  })();
+
+
+  // ---------- post ----------
+  let composer = null;
+  if (!mobile) {
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    composer.addPass(new UnrealBloomPass(new THREE.Vector2(1, 1), 0.6, 0.5, 0.94));
+    composer.addPass(new OutputPass());
+  }
+
+  // ---------- camera: arrive at each station, drift round it, move on ----------
+  //  per step: [ty, dist, yawIn, yawOut, pitch]
+  //  per step: [ty, dist, yawIn, yawOut, pitch, dx, dz]
+  const VIEW = [[1.2, 24, 30, 10, 30, 0, 0], [0.8, 36, 14, -6, 40, 0, 0], [2.8, 27, 30, 6, 16, 0, 0], [1.6, 34, 18, -8, 30, 0, 0.6], [1.4, 36, 22, -4, 28, 0, 1.5], [0.6, 52, 20, 2, 50, 1.8, 0.4], [0.5, 46, 14, -6, 56, 0, 0.8]];
+  const KF = [[0, ST[0].x, 1.5, ST[0].z, 46, 34, 26]];
+  VIEW.forEach((v, k) => {
+    const s = stepStart(k), e = s + SW, c = ST[k];
+    KF.push([s + 0.018, c.x + v[5], v[0], c.z + v[6], v[1], v[2], v[4]]);
+    KF.push([e - 0.03, c.x + v[5], v[0], c.z + v[6], v[1] * 0.94, v[3], v[4]]);
+  });
+  KF.push([1.0, ST[6].x, 0.5, ST[6].z + 0.8, 58, -14, 58]);
+  const target = new THREE.Vector3(), cam = { dist: 0, yaw: 0, pitch: 0 };
+  function cameraAt(p) {
+    let i = 0; while (i < KF.length - 2 && p > KF[i + 1][0]) i++;
+    const a = KF[i], b = KF[i + 1], t = ease(clamp((p - a[0]) / (b[0] - a[0])));
+    target.set(lerp(a[1], b[1], t), lerp(a[2], b[2], t), lerp(a[3], b[3], t));
+    cam.dist = lerp(a[4], b[4], t); cam.yaw = lerp(a[5], b[5], t) * Math.PI / 180; cam.pitch = lerp(a[6], b[6], t) * Math.PI / 180;
+  }
+
+  let W = 0, H = 0;
+  function resize() { W = innerWidth; H = innerHeight; renderer.setSize(W, H, false); camera.aspect = W / H; camera.updateProjectionMatrix(); if (composer) { composer.setPixelRatio(Math.min(DPR, 1.5)); composer.setSize(W, H); } }
+  resize(); addEventListener('resize', resize);
+
+  let active = -1, panelBox = null;
+  function measurePanel() { const r = stepPanel.getBoundingClientRect(); panelBox = { right: r.right, top: r.top }; }
+  addEventListener('resize', () => setTimeout(measurePanel, 50));
+  function apply(p, time) {
+    cameraAt(p);
+    const aspect = W / H, distMul = aspect < 1.2 ? Math.min(2.1, 1.35 / aspect) : 1, d = cam.dist * distMul;
+    camera.position.set(target.x + Math.sin(cam.yaw) * Math.cos(cam.pitch) * d, target.y + Math.sin(cam.pitch) * d, target.z + Math.cos(cam.yaw) * Math.cos(cam.pitch) * d);
+    camera.lookAt(target);
+    const heroK = 1 - span(0.015, 0.05, p);
+    const panelOn = 1 - heroK;
+    const shiftX = (!mobile && aspect > 1.1) ? 0.17 * W * panelOn : 0;
+    const shiftY = -heroK * (mobile ? 0.22 : 0.3) * H + ((mobile || aspect <= 1.1) ? 0.22 * H * panelOn : 0);
+    if (Math.abs(shiftX) + Math.abs(shiftY) > 0.5) camera.setViewOffset(W, H, -shiftX, shiftY, W, H); else camera.clearViewOffset();
+    scene.fog.density = 0.012 / distMul;
+    sun.position.set(target.x - 16, 46, target.z + 12); sun.target.position.copy(target);
+    upd.forEach(f => f(p, time));
+
+    // panels
+    root.style.setProperty('--hero', heroK.toFixed(3));
+    heroPanel.style.opacity = heroK.toFixed(3); heroPanel.style.visibility = heroK < 0.01 ? 'hidden' : 'visible';
+    const sv = span(0.03, 0.055, p);
+    stepPanel.style.opacity = sv.toFixed(3); stepPanel.style.visibility = sv < 0.01 ? 'hidden' : 'visible';
+    const a = clamp(Math.floor((p - S0) / SW), 0, NSTEP - 1);
+    if (a !== active) { steps.forEach((li, i) => li.classList.toggle('on', i === a)); rail.forEach((li, i) => { li.classList.toggle('on', i === a); li.classList.toggle('done', i < a); }); active = a; }
+
+    // labels
+    tags.forEach(t => {
+      const lp = local(t.step, p), stepVis = span(0.0, 0.08, lp) * (1 - span(0.94, 1, lp)) * (t.step === a ? 1 : 0);
+      const v = stepVis * t.vis * (mobile && !t.hot ? 0 : 1);
+      if (v < 0.02) { t.el.style.opacity = 0; return; }
+      proj.copy(t.pos).project(camera);
+      if (proj.z > 1) { t.el.style.opacity = 0; return; }
+      const half = (t.el.offsetWidth || 100) / 2 + 8;
+      if (!panelBox || panelBox.right === 0) measurePanel();
+      const sideBySide = !mobile && W / H > 1.1;
+      const minX = sideBySide ? panelBox.right + half + 8 : half;
+      const maxY = sideBySide ? H - 20 : panelBox.top - 20;
+      const x = clamp((proj.x * 0.5 + 0.5) * W, minX, W - half), y = Math.min((-proj.y * 0.5 + 0.5) * H + t.dy, maxY);
+      t.el.style.opacity = v.toFixed(3);
+      t.el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-50%, -50%)`;
+    });
+  }
+
+  let pTarget = 0, p = 0, time = 0, last = performance.now(), running = false, visible = true;
+  function measure() { const r = journey.getBoundingClientRect(), total = r.height - H; pTarget = total > 0 ? clamp(-r.top / total) : 0; visible = r.bottom > 0; }
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now; time += dt;
+    measure(); p += (pTarget - p) * Math.min(1, dt * 6); if (Math.abs(pTarget - p) < 0.0004) p = pTarget;
+    apply(p, time);
+    if (composer) composer.render(); else renderer.render(scene, camera);
+    if (visible) requestAnimationFrame(frame); else running = false;
+  }
+  function wake() { if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); } }
+  addEventListener('scroll', wake, { passive: true });
+  measure(); p = pTarget; wake();
+}
+
+try { start(); } catch (err) {
+  document.documentElement.classList.remove('webgl');
+  document.querySelector('canvas.world')?.remove();
+  console.error(err);
+}
+
+addEventListener('load', () => {
+  if (reduce || !window.Lenis) return;
+  const lenis = new window.Lenis({ duration: 1.15, smoothWheel: true });
+  const raf = t => { lenis.raf(t); requestAnimationFrame(raf); };
+  requestAnimationFrame(raf);
+  document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    const id = a.getAttribute('href'); const el = id.length > 1 && document.querySelector(id);
+    if (!el) return; e.preventDefault();
+    const j = document.getElementById('how');
+    if (id === '#how') lenis.scrollTo(j.offsetTop + (j.offsetHeight - innerHeight) * 0.06); else lenis.scrollTo(el, { offset: -72 });
+  }));
+});
 </script>
 </body>
 </html>
