@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#061a38" />
+<title>Noetic Mind · Know what to build next</title>
+<meta name="description" content="Any company can build things. The hard part is knowing what to build. Noetic Mind gives Series A–B SaaS teams certainty about what to build next, and why." />
+<!--
+  NOETIC MIND / V13 — V5's world, V11's story.
+  One persistent 3D world (Three.js, generated in code, no model files), navy night with pale-blue
+  objects and glowing blue paths. Scrolling flies the camera between stations:
+    a cloud of tumbling cards (the noise) -> a glowing path carries them to piles of evidence and one
+    answer lights up -> the weak piles collapse -> a plinth is set up, customer stories descend into it
+    as threads of light, and a glowing path runs forward: build, test first, drop.
+  No JS / no WebGL / reduced motion -> a clean static page with every word present.
+-->
+<script>document.documentElement.classList.add('js');</script>
+<link rel="icon" type="image/svg+xml" href="../noetic-logo.svg" />
+<link rel="preconnect" href="https://fonts.bunny.net" />
+<link href="https://fonts.bunny.net/css?family=geist:400,500,600,700|geist-mono:400,500" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#061a38; --navy-2:#0a1f42; --raise:#0f2a55; --line:rgba(143,182,230,.18);
+    --white:#ffffff; --text:#e7eef8; --muted:#a9b8d0; --blue:#5e95d8; --blue-2:#8fb6e6; --blue-ink:#184c84;
+    --f:'Geist',system-ui,sans-serif; --mono:'Geist Mono',ui-monospace,monospace; --ease:cubic-bezier(.2,.7,.2,1);
+    --hero:1;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:var(--f);background:var(--navy);color:var(--text);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit}
+  ul,ol{list-style:none}
+  :focus-visible{outline:2px solid var(--blue-2);outline-offset:3px;border-radius:6px}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+  .eyebrow,.label{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-2)}
+  section[id]{scroll-margin-top:72px}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  h1 em,h2 em,h3 em{font-style:normal;color:var(--blue-2)}
+
+  /* buttons */
+  .btn{display:inline-flex;align-items:center;gap:12px;min-height:48px;padding:0 22px;border-radius:999px;background:var(--white);color:var(--navy);
+    font:600 15px var(--f);text-decoration:none;white-space:nowrap;transition:transform .2s var(--ease),background-color .2s var(--ease)}
+  .btn:hover{transform:translateY(-1px);background:#eaf2ff}
+  .btn-ghost{background:transparent;color:var(--white);box-shadow:inset 0 0 0 1px rgba(255,255,255,.28)}
+  .btn-ghost:hover{background:rgba(255,255,255,.08)}
+  .tlink{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:var(--white);text-decoration:none;font-weight:500}
+  .tlink span:first-child{border-bottom:1px solid rgba(143,182,230,.5);padding-bottom:2px}
+  .tlink:hover span:first-child{border-color:var(--white)}
+
+  /* header */
+  .masthead{position:fixed;inset:0 0 auto 0;z-index:50;background:linear-gradient(rgba(6,26,56,.86),rgba(6,26,56,0))}
+  .bar{display:flex;align-items:center;gap:28px;height:72px}
+  .brand{display:flex;align-items:center;gap:10px;min-height:44px;font:600 17px var(--f);text-decoration:none;color:var(--white)}
+  .brand img{width:28px;height:28px;border-radius:7px;box-shadow:0 0 0 1px rgba(255,255,255,.22)}
+  .nav{display:flex;gap:26px;margin-left:auto}
+  .nav a{font-size:14px;color:var(--muted);text-decoration:none}
+  .nav a:hover{color:var(--white)}
+  .bar .btn{min-height:44px;padding:0 18px;font-size:14px}
+
+  /* ---------- journey: static by default (no JS / no WebGL / reduced motion) ---------- */
+  .journey{position:relative;z-index:1}
+  .stage{padding:140px 0 40px}
+  .panel{max-width:760px;margin:0 auto 110px;padding:0 24px}
+  .p-hero{max-width:900px;text-align:center}
+  .p-hero h1{font-size:clamp(42px,6.4vw,88px);font-weight:600;letter-spacing:-.045em;line-height:.98;color:var(--white);margin-top:18px}
+  .p-hero h1 span{display:block}
+  .p-hero h1 .dim{color:#8ea3c4}
+  .hero-sub{max-width:620px;margin:26px auto 0;font-size:19px;color:var(--text)}
+  .hero-sub b{color:var(--white);font-weight:600}
+  .hero-price{margin-top:14px;font:400 14px var(--mono);color:var(--muted)}
+  .hero-price strong{color:var(--white);font-weight:500}
+  .hero-cta{margin-top:28px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+  .scroll-hint{display:none}
+  .panel h2{font-size:clamp(28px,2.7vw,40px);font-weight:600;letter-spacing:-.035em;line-height:1.06;color:var(--white);margin-top:12px}
+  .panel .body{margin-top:14px;color:var(--muted);font-size:16.5px}
+  .pains{margin-top:20px}
+  .pains li{position:relative;padding:12px 0 12px 22px;border-top:1px solid var(--line);color:var(--text);font-size:17px;line-height:1.45}
+  .pains li::before{content:"";position:absolute;left:0;top:23px;width:10px;height:2px;border-radius:2px;background:var(--blue)}
+  .pain-foot{margin-top:16px;color:var(--white);font-weight:600;font-size:16px}
+  .lessmore{margin-top:18px;border-top:1px solid var(--line)}
+  .lessmore li{display:grid;grid-template-columns:48px 1fr 48px 1fr;gap:4px 10px;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px}
+  .lessmore span{font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .lessmore b{font-weight:400;color:var(--muted)}
+  .lessmore b:last-child{color:var(--white);font-weight:500}
+  .gets{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:0 22px;border-top:1px solid var(--line)}
+  .gets li{padding:12px 0;border-bottom:1px solid var(--line)}
+  .gets h3{font-size:16px;font-weight:600;color:var(--white);letter-spacing:-.01em}
+  .gets p{margin-top:4px;font-size:14px;line-height:1.45;color:var(--muted)}
+  .beats{margin-top:18px}
+  .beats li{display:grid;grid-template-columns:30px 1fr;gap:0 14px;padding:12px 0;border-top:1px solid var(--line);transition:opacity .35s}
+  .beats .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;font:500 12px var(--mono);color:var(--blue-2);box-shadow:inset 0 0 0 1px var(--line);transition:background-color .3s,color .3s}
+  .beats h3{font-size:17px;font-weight:600;color:var(--white);align-self:center}
+  .beats p{grid-column:2;margin-top:4px;font-size:14.5px;color:var(--muted)}
+  .glance-link{margin-top:12px}
+  .tag3d{display:none}
+
+  /* ---------- journey: 3D mode ---------- */
+  .webgl .world{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block}
+  .webgl .journey{height:1150vh}
+  .webgl .stage{position:sticky;top:0;height:100vh;height:100svh;padding:0;overflow:hidden;pointer-events:none}
+  .webgl .stage::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(60% 46% at 50% 26%,rgba(6,26,56,.86),rgba(6,26,56,0) 70%);opacity:var(--hero)}
+  .webgl .panel{position:absolute;margin:0;pointer-events:auto;will-change:opacity,transform}
+  .webgl .p-hero{left:50%;top:clamp(104px,14vh,160px);width:min(900px,100%);translate:-50% 0;padding:0 24px}
+  .webgl .scroll-hint{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:38px;
+    font:500 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--blue-2)}
+  .webgl .scroll-hint i{display:block;width:1px;height:26px;background:linear-gradient(var(--blue-2),transparent)}
+  .webgl .p-side{left:clamp(24px,4vw,56px);top:50%;translate:0 -50%;width:min(460px,calc(100vw - 48px));max-width:none;
+    padding:24px 26px 22px;border-radius:18px;background:rgba(6,26,56,.74);box-shadow:inset 0 0 0 1px var(--line);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  .webgl .p-wide{width:min(580px,calc(100vw - 48px))}
+  .webgl .beats li{opacity:.45}
+  .webgl .beats li.on{opacity:1}
+  .webgl .beats li.on .n{background:var(--white);color:var(--navy);box-shadow:none}
+  .webgl .tag3d{display:block;position:absolute;left:0;top:0;opacity:0;pointer-events:none;white-space:nowrap;
+    font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;padding:7px 11px;border-radius:999px;
+    background:rgba(6,26,56,.82);color:var(--blue-2);box-shadow:inset 0 0 0 1px rgba(143,182,230,.45)}
+  .webgl .tag3d.t-hot{background:var(--white);color:var(--navy);box-shadow:0 0 24px rgba(143,182,230,.5)}
+  .webgl .tag3d.t-dim{color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+
+  /* ---------- content ---------- */
+  .content{position:relative;z-index:2;background:var(--navy)}
+  .sec{padding:120px 0;border-top:1px solid var(--line)}
+  .sec h2{font-size:clamp(34px,4.4vw,60px);font-weight:600;letter-spacing:-.04em;line-height:1.02;color:var(--white);max-width:18ch;margin-top:14px}
+  .lead{margin-top:20px;font-size:19px;color:var(--muted);max-width:56ch}
+
+  .ex{display:grid;grid-template-columns:1fr 2fr;gap:40px 64px}
+  .ex-row{display:grid;grid-template-columns:170px 1fr;gap:10px 28px;padding:28px 0;border-top:1px solid var(--line)}
+  .ex-row:last-of-type{border-bottom:1px solid var(--line)}
+  .ex-row .label{padding-top:8px;color:var(--muted)}
+  .request{font-size:clamp(24px,2.4vw,34px);font-weight:500;letter-spacing:-.02em;color:#8ea3c4;
+    background:linear-gradient(var(--blue-2),var(--blue-2)) no-repeat 0 56%/100% 2px}
+  .evidence li{position:relative;padding-left:22px;color:var(--text);font-size:18px}
+  .evidence li + li{margin-top:12px}
+  .evidence li::before{content:"";position:absolute;left:0;top:11px;width:8px;height:8px;border-radius:50%;background:var(--blue-2)}
+  .decision{font-size:clamp(26px,2.6vw,38px);font-weight:600;letter-spacing:-.03em;line-height:1.12;color:var(--blue-2)}
+  .ex-foot{margin-top:22px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 24px;color:var(--white);font-weight:500}
+  .ex-foot .label{color:var(--muted)}
+
+  .think{display:grid;grid-template-columns:1.6fr 1fr;gap:48px 80px;align-items:start}
+  .beliefs{margin-top:22px;border-top:1px solid var(--line)}
+  .beliefs li{padding:20px 0;border-bottom:1px solid var(--line);font-size:clamp(24px,2.4vw,34px);font-weight:500;letter-spacing:-.03em;line-height:1.15;color:var(--white)}
+  .founder{padding:28px;border-radius:18px;background:var(--raise);box-shadow:inset 0 0 0 1px var(--line)}
+  .mono-mark{width:56px;height:56px;border-radius:50%;background:var(--white);color:var(--navy);display:grid;place-items:center;font:600 18px var(--f);margin-bottom:18px}
+  .f-name{margin-top:8px;font-size:24px;font-weight:600;color:var(--white);letter-spacing:-.02em}
+  .f-role{color:var(--muted);font-size:15px}
+  .f-bio{margin-top:14px;color:var(--text);font-size:15.5px}
+
+  .close{text-align:center}
+  .close h2{margin:14px auto 0}
+  .close .lead{margin:20px auto 0}
+  .close .btn{margin-top:32px}
+  .fit{margin:88px auto 0;max-width:980px;display:grid;grid-template-columns:1fr 1fr;gap:28px 56px;text-align:left}
+  .fit ul{margin-top:12px;border-top:1px solid var(--line)}
+  .fit li{position:relative;padding:13px 0 13px 26px;border-bottom:1px solid var(--line);color:var(--text)}
+  .fit li::before{content:"";position:absolute;left:2px;top:22px;width:9px;height:9px;border-radius:2px;background:var(--blue-2)}
+  .fit .no li{color:var(--muted)}
+  .fit .no li::before{background:none;box-shadow:inset 0 0 0 1px var(--muted)}
+  .terms{margin:64px auto 0;max-width:980px;display:grid;grid-template-columns:auto 1fr;gap:20px 56px;align-items:baseline;text-align:left;padding-top:32px;border-top:1px solid var(--line)}
+  .amount{font-size:clamp(56px,7vw,96px);font-weight:600;letter-spacing:-.05em;line-height:.9;color:var(--white)}
+  .amount small{font-size:18px;letter-spacing:0;color:var(--muted);font-weight:400;margin-left:8px}
+  .terms p{color:var(--muted)}
+  .terms p b{color:var(--white);font-weight:600}
+  .terms p + p{margin-top:8px;font-size:15px}
+
+  .foot{position:relative;z-index:2;background:var(--navy);border-top:1px solid var(--line);padding:28px 0;font-size:14px;color:var(--muted)}
+  .foot .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center}
+  .foot .compare{margin-left:auto;display:flex;flex-wrap:wrap;gap:4px 12px}
+  .foot .compare a{color:var(--text);display:inline-flex;align-items:center;min-height:44px;min-width:28px;justify-content:center}
+
+  .js .rv{opacity:0;transform:translateY(16px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+  .js .rv.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none;transition:none}}
+
+  @media (max-width:900px){
+    .ex,.think,.fit{grid-template-columns:1fr}
+    .ex-row{grid-template-columns:1fr;gap:8px}
+    .terms{grid-template-columns:1fr}
+  }
+  @media (min-width:861px) and (max-height:820px){
+    .webgl .panel h2{font-size:clamp(24px,2.3vw,32px)}
+    .webgl .pains li{padding:9px 0 9px 22px;font-size:16px}
+    .webgl .gets li{padding:8px 0}
+    .webgl .beats li{padding:9px 0}
+  }
+  @media (max-width:860px){
+    body{font-size:16px}
+    .wrap{padding:0 20px}
+    .nav{display:none}
+    .bar{gap:12px}
+    .bar .btn{margin-left:auto;padding:0 14px;font-size:13px}
+    .hero-sub{font-size:17px}
+    .sec{padding:88px 0}
+    .gets{grid-template-columns:1fr}
+    .webgl .journey{height:1000vh}
+    .webgl .p-hero{top:96px}
+    .webgl .p-side,.webgl .p-wide{left:12px;right:12px;width:auto;top:auto;bottom:12px;translate:none;padding:18px 18px 14px}
+    .webgl .panel h2{font-size:clamp(24px,6.6vw,30px)}
+    .webgl .panel .body{font-size:15px}
+    .webgl .pains li{padding:8px 0 8px 20px;font-size:15.5px}
+    .webgl .pains li::before{top:18px}
+    .webgl #promise .lessmore{display:none}
+    .webgl .gets li{padding:7px 0}
+    .webgl .gets p{display:none}
+    .webgl .beats li{padding:8px 0}
+    .webgl .beats li:not(.on) p{display:none}
+    .webgl .scroll-hint{display:none}
+    .foot .compare{margin-left:0}
+  }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap bar">
+    <a class="brand" href="#top"><img src="../noetic-logo.svg" alt="" width="28" height="28" />Noetic Mind</a>
+    <nav class="nav" aria-label="Primary">
+      <a href="how-it-works/">How it works</a>
+      <a href="#example">Example</a>
+      <a href="#book">Pricing</a>
+    </nav>
+    <a class="btn" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demo%20session">Book a demo session</a>
+  </div>
+</header>
+
+<main>
+  <section class="journey" id="top" aria-label="Noetic Mind: from noise to a decision">
+    <div class="stage">
+
+      <div class="panel p-hero" data-range="-1 -1 0.025 0.06">
+        <p class="eyebrow">For Series A–B SaaS product teams</p>
+        <h1><span class="dim">You can build anything.</span><span>Know what to build next.</span></h1>
+        <p class="hero-sub"><b>The hard part is knowing what to build.</b> Noetic Mind gives your team certainty about what’s worth building, and why, from what your customers actually do.</p>
+        <p class="hero-price"><strong>$5,000/month</strong> · the system, training and coaching</p>
+        <div class="hero-cta">
+          <a class="btn" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demo%20session">Book a demo session</a>
+          <a class="btn btn-ghost" href="how-it-works/">See how it works</a>
+        </div>
+        <p class="scroll-hint" aria-hidden="true"><i></i>Scroll</p>
+      </div>
+
+      <div class="panel p-side" id="pain" data-range="0.09 0.12 0.27 0.30">
+        <p class="label">Sound familiar?</p>
+        <h2>You can build anything. <em>That’s the problem.</em></h2>
+        <ul class="pains">
+          <li>The roadmap is whoever asked loudest last week.</li>
+          <li>You shipped it on time. Nobody’s behaviour changed.</li>
+          <li>Customer interviews happen, then vanish into a doc nobody reads.</li>
+          <li>The board asks “why this, why now?” and the honest answer is a hunch.</li>
+        </ul>
+        <p class="pain-foot">Every sprint spent on the wrong thing is runway you don’t get back.</p>
+      </div>
+
+      <div class="panel p-side" id="promise" data-range="0.33 0.36 0.50 0.53">
+        <p class="label">With Noetic Mind</p>
+        <h2>One clear answer to what to build next, <em>and the evidence behind it.</em></h2>
+        <p class="body">Your customers’ real stories go in. Noetic Mind turns them into decisions your team can defend, and keeps them current as new evidence arrives, so the next sprint starts from what you know, not what you hope.</p>
+        <ul class="lessmore">
+          <li><span>Less</span><b>roadmap by loudest voice.</b><span>More</span><b>decisions you can defend.</b></li>
+          <li><span>Less</span><b>building to find out.</b><span>More</span><b>testing before you commit.</b></li>
+        </ul>
+      </div>
+
+      <div class="panel p-side p-wide" id="get" data-range="0.56 0.59 0.71 0.74">
+        <p class="label">What changes</p>
+        <h2>What your team <em>walks away with.</em></h2>
+        <ul class="gets">
+          <li><h3>Certainty, not opinions</h3><p>Every belief shows how sure you are: assumption, emerging, validated or disproven.</p></li>
+          <li><h3>A next best action, always</h3><p>The single step that would most reduce your uncertainty.</p></li>
+          <li><h3>Bad ideas killed early</h3><p>Weak bets are tested and dropped before they cost you a sprint.</p></li>
+          <li><h3>A story for your board</h3><p>The reasoning from evidence to decision, ready for your CEO or investors.</p></li>
+          <li><h3>Understanding that compounds</h3><p>Every conversation adds to what you know.</p></li>
+          <li><h3>Fewer arguments</h3><p>Debates settled by evidence, not seniority or volume.</p></li>
+        </ul>
+      </div>
+
+      <div class="panel p-side" id="glance" data-range="0.76 0.79 0.965 0.985">
+        <p class="label">At a glance</p>
+        <h2>Three things happen. <em>The Mind does the heavy lifting.</em></h2>
+        <ol class="beats">
+          <li><span class="n">1</span><h3>We set it up with you</h3><p>Your brief, your customers, the number you need to move. Installed in your team, with training.</p></li>
+          <li><span class="n">2</span><h3>Your customers tell their real stories</h3><p>Short interviews about real decisions, guided live by our Copilot. The only part that needs people.</p></li>
+          <li><span class="n">3</span><h3>The Mind turns them into decisions</h3><p>What to build, what to test first, what to drop, and why. You approve every change.</p></li>
+        </ol>
+        <p class="glance-link"><a class="tlink" href="how-it-works/"><span>See how it works in detail</span><span aria-hidden="true">→</span></a></p>
+      </div>
+
+      <span class="tag3d t-hot" id="tag-answer" aria-hidden="true">What to build next</span>
+      <span class="tag3d t-dim" id="tag-weak" aria-hidden="true">Disproven</span>
+      <span class="tag3d t-hot" id="tag-build" aria-hidden="true">Build</span>
+      <span class="tag3d" id="tag-test" aria-hidden="true">Test first</span>
+      <span class="tag3d t-dim" id="tag-drop" aria-hidden="true">Drop</span>
+    </div>
+  </section>
+
+  <div class="content">
+    <section class="sec" id="example" aria-labelledby="ex-h">
+      <div class="wrap ex">
+        <div>
+          <p class="label rv">Illustrative scenario</p>
+          <h2 id="ex-h" class="rv">One decision, <em>worked through.</em></h2>
+        </div>
+        <div>
+          <div class="ex-row rv"><p class="label">The request</p><p><span class="request">Build a more powerful project dashboard.</span></p></div>
+          <div class="ex-row rv"><p class="label">What customers showed</p>
+            <ul class="evidence">
+              <li>New account owners stall before the first client invite, unsure what “ready” means.</li>
+              <li>Owners who invited a client early rarely mentioned reporting.</li>
+            </ul></div>
+          <div class="ex-row rv"><p class="label">The decision</p><p class="decision">Test setup guidance before committing to dashboard expansion.</p></div>
+          <div class="ex-foot rv"><span>The dashboard waits. A sharper, cheaper bet goes first.</span><span class="label">A composite B2B SaaS example</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="thinking" aria-labelledby="think-h">
+      <div class="wrap think">
+        <div>
+          <p class="label rv">What we believe</p>
+          <h2 id="think-h" class="sr-only">What we believe</h2>
+          <ul class="beliefs">
+            <li class="rv">Feature requests are clues, <em>not instructions.</em></li>
+            <li class="rv">Confidence is <em>not evidence.</em></li>
+            <li class="rv">Killing a bad idea early <em>is a win.</em></li>
+          </ul>
+        </div>
+        <aside class="founder rv" aria-label="Who you work with">
+          <div class="mono-mark" aria-hidden="true">GR</div>
+          <p class="label">Who you work with</p>
+          <p class="f-name">George Reed</p>
+          <p class="f-role">Founder, Noetic Digital</p>
+          <p class="f-bio">George runs Jobs-to-be-Done customer interviews and trains product teams to run them themselves, including the product team of a personal-finance fintech. You work with him directly.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="sec close" id="book" aria-labelledby="cl-h">
+      <div class="wrap">
+        <p class="label rv">A private session</p>
+        <h2 id="cl-h" class="rv">Bring us one decision <em>you’re weighing.</em></h2>
+        <p class="lead rv">In 45 minutes, we walk through the system on a worked example, look at one of your live product decisions, and talk honestly about fit.</p>
+        <a class="btn rv" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demo%20session">Book a demo session</a>
+        <div class="fit">
+          <div class="rv">
+            <p class="label">A good fit if</p>
+            <ul>
+              <li>You’re a Series A–early B SaaS team</li>
+              <li>One person owns the product outcome</li>
+              <li>You can reach your customers</li>
+              <li>You have capacity to act on what you learn</li>
+            </ul>
+          </div>
+          <div class="rv">
+            <p class="label">We can’t help if</p>
+            <ul class="no">
+              <li>You want a research report, not a way to decide</li>
+              <li>The roadmap is decided and you need it validated</li>
+              <li>Nobody owns the outcome the product should move</li>
+            </ul>
+          </div>
+        </div>
+        <div class="terms rv">
+          <p class="amount">$5,000<small>/ month</small></p>
+          <div>
+            <p><b>The system, training and coaching</b>, installed inside your team.</p>
+            <p>One price covers Noetic Mind, installation, training your team to work with it, and coaching on the hard calls.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>Noetic Mind · © Noetic Digital · Led by George Reed</span>
+    <nav class="compare" aria-label="Compare versions">
+      <a href="../">v1</a><a href="../Astra/">v2</a><a href="../v3/">v3</a><a href="../v4/">v4</a><a href="../v5/">v5</a><a href="../v6/">v6</a><a href="../v7/">v7</a><a href="../v8/">v8</a><a href="../v9/">v9</a><a href="../v10/">v10</a><a href="../v11/">v11</a><a href="../v12/">v12</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var rv = [].slice.call(document.querySelectorAll('.rv'));
+  if ('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {rootMargin:'0px 0px -10% 0px'});
+    rv.forEach(function(el){ io.observe(el); });
+  } else { rv.forEach(function(el){ el.classList.add('in'); }); }
+})();
+</script>
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js" defer></script>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+const root = document.documentElement;
+const journey = document.getElementById('top');
+const panels = Array.from(document.querySelectorAll('.panel')).map(el => ({ el, r: el.dataset.range.split(' ').map(Number) }));
+const beats = Array.from(document.querySelectorAll('#glance .beats > li'));
+const tags = {
+  answer: document.getElementById('tag-answer'), weak: document.getElementById('tag-weak'),
+  build: document.getElementById('tag-build'), test: document.getElementById('tag-test'), drop: document.getElementById('tag-drop')
+};
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const mobile = matchMedia('(max-width: 860px)').matches;
+
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = t => t * t * t * (t * (t * 6 - 15) + 10);               // smootherstep
+const span = (a, b, x) => ease(clamp((x - a) / (b - a)));
+const lerp = (a, b, t) => a + (b - a) * t;
+
+function start() {
+  if (reduce || !journey) return;                                     // reduced motion: static page
+
+  // ---------- renderer ----------
+  const canvas = document.createElement('canvas');
+  canvas.className = 'world';
+  canvas.setAttribute('aria-hidden', 'true');
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+  } catch (e) { return; }
+  if (!renderer.getContext()) return;
+  document.body.prepend(canvas);
+  root.classList.add('webgl');
+
+  const DPR = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 1.75);
+  renderer.setPixelRatio(DPR);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.0;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const BG = new THREE.Color('#061a38');
+  const scene = new THREE.Scene();
+  scene.background = BG;
+  scene.fog = new THREE.FogExp2(BG, 0.0105);
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.3, 700);
+
+  // ---------- light ----------
+  scene.add(new THREE.HemisphereLight(0xc6dcff, 0x0a1d3d, 1.25));
+  const sun = new THREE.DirectionalLight(0xffffff, 2.3);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(mobile ? 1024 : 2048, mobile ? 1024 : 2048);
+  Object.assign(sun.shadow.camera, { left: -34, right: 34, top: 34, bottom: -34, near: 1, far: 160 });
+  sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03;
+  scene.add(sun, sun.target);
+  const fill = new THREE.DirectionalLight(0x6f9cff, 0.6);
+  fill.position.set(40, 22, -30);
+  scene.add(fill);
+
+  // ---------- ground ----------
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(600, 600),
+    new THREE.MeshStandardMaterial({ color: '#0c2549', roughness: 1, metalness: 0 }));
+  ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true;
+  scene.add(ground);
+  const grid = new THREE.GridHelper(600, 300, 0x1e4479, 0x1e4479);
+  grid.material.transparent = true; grid.material.opacity = 0.2; grid.position.y = 0.012;
+  scene.add(grid);
+
+  // ---------- materials ----------
+  const mBuild = new THREE.MeshStandardMaterial({ color: '#e6eefa', roughness: 0.8, metalness: 0 });
+  const GLOW = new THREE.Color(0.52, 0.8, 1.0);
+  const glow = (k = 2.2, opacity = 1, additive = false) => new THREE.MeshBasicMaterial({
+    color: GLOW.clone().multiplyScalar(k), toneMapped: false, transparent: additive || opacity < 1, opacity,
+    blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending, depthWrite: !additive });
+
+  let seed = 7;
+  const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const rr = (a, b) => a + (b - a) * rnd();
+
+  // ---------- stations ----------
+  const Z1 = new THREE.Vector3(0, 8, 0);          // the noise
+  const Z2 = new THREE.Vector3(0, 0, -36);        // the evidence piles
+  const Z3 = new THREE.Vector3(0, 0, -74);        // set-up, stories, decisions
+  const PILE_X = [-5.2, 0, 5.2], PILE_CAP = [20, 34, 20], STEP = 0.07;
+
+  // ---------- 01 the noise: a cloud of cards (requests, hunches, lost interview notes) ----------
+  const C_A = new THREE.Color('#e6eefa'), C_B = new THREE.Color('#b9cbe6'), C_C = new THREE.Color('#8ea6c9'), C_DEAD = new THREE.Color('#2a4572');
+  const NC = mobile ? 150 : 260;
+  const cardGeo = new RoundedBoxGeometry(1.5, 0.035, 1.0, 2, 0.016);
+  const cards = new THREE.InstancedMesh(cardGeo, new THREE.MeshStandardMaterial({ roughness: 0.8, metalness: 0 }), NC);
+  cards.castShadow = true; cards.receiveShadow = true; cards.frustumCulled = false;
+  cards.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  scene.add(cards);
+
+  const slotCount = [0, 0, 0];
+  const C = [];
+  for (let i = 0; i < NC; i++) {
+    let x, y, z;
+    do { x = rr(-1, 1); y = rr(-1, 1); z = rr(-1, 1); } while (x * x + y * y + z * z > 1);
+    const pile = i % 3 === 1 ? 1 : (rnd() < 0.5 ? 0 : 2);
+    const slot = slotCount[pile]++;
+    const tone = rnd();
+    const c = {
+      cloud: new THREE.Vector3(Z1.x + x * 17, Z1.y + y * 5.5, Z1.z + z * 11),
+      e0: new THREE.Euler(rr(0, 6.28), rr(0, 6.28), rr(0, 6.28)),
+      spin: new THREE.Vector3(rr(-0.35, 0.35), rr(-0.3, 0.3), rr(-0.35, 0.35)),
+      bob: rr(0, 6.28), pile, slot, kept: slot < PILE_CAP[pile],
+      pileYaw: rr(-0.12, 0.12), pileOff: new THREE.Vector2(rr(-0.07, 0.07), rr(-0.07, 0.07)),
+      delay: rnd(),
+      fallen: new THREE.Vector3(PILE_X[pile] + rr(-2.6, 2.6), 0.03 + rnd() * 0.05, Z2.z + rr(-2.4, 2.4)),
+      fallYaw: rr(0, 6.28), fallTilt: rr(-0.06, 0.06),
+      col: tone < 0.55 ? C_A : tone < 0.85 ? C_B : C_C
+    };
+    c.pileTop = new THREE.Vector3(Z2.x + PILE_X[pile], 0.04 + Math.min(slot, PILE_CAP[pile] - 1) * STEP, Z2.z);
+    C.push(c);
+    cards.setColorAt(i, c.col);
+  }
+  cards.instanceColor.needsUpdate = true;
+  // interview pings rising through the cloud
+  const pings = Array.from({ length: mobile ? 6 : 10 }, (_, i) => {
+    const m = new THREE.Mesh(new THREE.RingGeometry(0.36, 0.44, 40), glow(1.8, 1, true));
+    m.rotation.x = -Math.PI / 2; const c = C[(i * 23) % NC]; m.position.set(c.cloud.x, 0.05, c.cloud.z);
+    scene.add(m); return { m, o: i * 0.37 };
+  });
+
+  // ---------- 02 one answer: a glowing card over the evidence ----------
+  const answer = new THREE.Mesh(new RoundedBoxGeometry(1.75, 0.07, 1.18, 2, 0.02), glow(1.4));
+  scene.add(answer);
+  const answerHalo = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.04, 12, 96), glow(1.6));
+  answerHalo.rotation.x = Math.PI / 2; scene.add(answerHalo);
+  const centreTop = 0.04 + (PILE_CAP[1] - 1) * STEP;
+  const winRing = new THREE.Mesh(new THREE.RingGeometry(1.7, 1.82, 96), glow(1.5, 1, true));
+  winRing.rotation.x = -Math.PI / 2; winRing.position.set(Z2.x, 0.04, Z2.z); scene.add(winRing);
+
+  // ---------- 03 set-up: a plinth ----------
+  const plinth = new THREE.Mesh(new THREE.CylinderGeometry(6, 6, 0.5, 120), mBuild);
+  plinth.castShadow = plinth.receiveShadow = true; scene.add(plinth);
+  const rings = [2, 3.4, 4.8].map(r => {
+    const m = new THREE.Mesh(new THREE.RingGeometry(r, r + 0.06, 128), glow(1.9, 1, true));
+    m.rotation.x = -Math.PI / 2; m.position.set(Z3.x, 0.52, Z3.z); m.material.opacity = 0; scene.add(m); return m;
+  });
+
+  // ---------- 04 stories: threads of light descending into the plinth ----------
+  const NT = mobile ? 12 : 20, threads = [];
+  const sparkGeo = new THREE.SphereGeometry(0.13, 12, 10);
+  const threadMat = glow(1.5, 0.55, true);
+  for (let i = 0; i < NT; i++) {
+    const a = (i / NT) * Math.PI * 2 + rr(-0.15, 0.15), R = rr(20, 30);
+    const s = new THREE.Vector3(Z3.x + Math.cos(a) * R, rr(9, 17), Z3.z + Math.sin(a) * R * 0.8);
+    const e = new THREE.Vector3(Z3.x + rr(-0.4, 0.4), 0.55, Z3.z + rr(-0.4, 0.4));
+    const m = new THREE.Vector3(lerp(s.x, e.x, 0.55), s.y * 0.75, lerp(s.z, e.z, 0.55));
+    const curve = new THREE.CatmullRomCurve3([s, m, e]);
+    const geo = new THREE.TubeGeometry(curve, 90, 0.03, 6, false);
+    const mesh = new THREE.Mesh(geo, threadMat); mesh.visible = false; scene.add(mesh);
+    const sp = new THREE.Mesh(sparkGeo, glow(4.2)); sp.visible = false; scene.add(sp);
+    threads.push({ curve, geo, mesh, sp, d: rnd() * 0.5, o: rnd() });
+  }
+
+  // ---------- the glowing paths across the ground ----------
+  const V = (x, z, y = 0.07) => new THREE.Vector3(x, y, z);
+  const curves = {
+    stream:  new THREE.CatmullRomCurve3([V(-7, 7), V(-4, 0), V(-1.5, -10), V(-0.8, -22), V(0, -33.4)]),
+    deliver: new THREE.CatmullRomCurve3([V(0, -38.6), V(1.6, -46), V(-1.2, -56), V(0, -67.8)]),
+    forward: new THREE.CatmullRomCurve3([V(0, -80.2), V(0.4, -86), V(-0.3, -93), V(0.6, -100), V(0, -108)]),
+  };
+  function tube(curve, segs = 220) {
+    const core = new THREE.TubeGeometry(curve, segs, 0.075, 8, false);
+    const halo = new THREE.TubeGeometry(curve, segs, 0.26, 8, false);
+    const a = new THREE.Mesh(core, glow(2.6)), b = new THREE.Mesh(halo, glow(0.9, 0.2, true));
+    scene.add(a, b);
+    return { curve, set(f) { const n = Math.floor(segs * clamp(f)) * 48; core.setDrawRange(0, n); halo.setDrawRange(0, n); a.visible = b.visible = f > 0.002; } };
+  }
+  const P = { stream: tube(curves.stream), deliver: tube(curves.deliver, 160), forward: tube(curves.forward, 160) };
+  const KEYS = ['stream', 'deliver', 'forward'];
+  const sparks = KEYS.flatMap(k => [0, 1, 2].map(i => {
+    const m = new THREE.Mesh(sparkGeo, glow(4.2)); m.visible = false; scene.add(m); return { m, k, o: i / 3 };
+  }));
+  // halftone glow on the ground beside the paths
+  const tmpM = new THREE.Matrix4();
+  const dotPts = [];
+  (() => {
+    const samples = KEYS.map(k => curves[k].getSpacedPoints(140));
+    const R = 2.3, step = 0.55;
+    for (let x = -10; x <= 10; x += step) for (let z = -110; z <= 9; z += step) {
+      let best = null;
+      samples.forEach((arr, k) => arr.forEach((p, i) => {
+        const d = Math.hypot(p.x - x, p.z - z);
+        if (d < R && (!best || d < best.d)) best = { k, t: i / (arr.length - 1), d };
+      }));
+      if (best && !(Math.hypot(x - Z3.x, z - Z3.z) < 6.4)) dotPts.push({ x, z, ...best });
+    }
+  })();
+  const dots = new THREE.InstancedMesh(new THREE.CircleGeometry(0.1, 12).rotateX(-Math.PI / 2),
+    new THREE.MeshBasicMaterial({ toneMapped: false, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }), dotPts.length);
+  dotPts.forEach((p, i) => { dots.setMatrixAt(i, tmpM.makeTranslation(p.x, 0.03, p.z)); dots.setColorAt(i, new THREE.Color(0, 0, 0)); });
+  dots.frustumCulled = false;
+  scene.add(dots);
+  const dotCol = new THREE.Color();
+  let lastDraw = '';
+  function updateDots(draw) {
+    const sig = draw.map(v => v.toFixed(3)).join();
+    if (sig === lastDraw) return; lastDraw = sig;
+    dotPts.forEach((p, i) => {
+      const reveal = clamp((draw[p.k] - p.t) / 0.07);
+      const fall = Math.pow(1 - p.d / 2.3, 1.7);
+      dotCol.copy(GLOW).multiplyScalar(fall * reveal * 0.9);
+      dots.setColorAt(i, dotCol);
+    });
+    dots.instanceColor.needsUpdate = true;
+  }
+
+  // ---------- 05 decisions: three signposts on the path forward ----------
+  const steps = [
+    { z: -86, x: 0, mat: glow(2.3), tag: 'build' },
+    { z: -93, x: -1.6, mat: mBuild, tag: 'test' },
+    { z: -100, x: 1.8, mat: new THREE.MeshStandardMaterial({ color: '#2a4572', roughness: 0.9 }), tag: 'drop' },
+  ].map((s, i) => {
+    const m = new THREE.Mesh(new RoundedBoxGeometry(1.75, 0.07, 1.18, 2, 0.02), s.mat);
+    m.castShadow = true; m.position.set(Z3.x + s.x, 0.6, s.z); scene.add(m);
+    return { ...s, m, i };
+  });
+
+  // ---------- post ----------
+  let composer = null;
+  if (!mobile) {
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    composer.addPass(new UnrealBloomPass(new THREE.Vector2(1, 1), 0.85, 0.55, 0.92));
+    composer.addPass(new OutputPass());
+  }
+
+  // ---------- camera journey ----------
+  //            p      tx    ty    tz     dist  yaw  pitch
+  const KF = [[0.00,   0,    8,    0,     70,   28,  15],
+              [0.07,   0,    8,    0,     54,   20,  13],
+              [0.17,   0,    7.5, -1,     22,   -6,   6],
+              [0.29,   0,    6,   -8,     26,  -18,   9],
+              [0.37,   0,    3,   -20,    46,   75,  22],
+              [0.49,   0,    2.4, -36,    21,   16,  17],
+              [0.58,   0,    2.6, -36,    22,  -22,  19],
+              [0.72,   0,    2.6, -36,    22,  -64,  16],
+              [0.78,   0,    1.2, -66,    40,   34,  30],
+              [0.85,   0,    3.5, -74,    32,    8,  20],
+              [0.935,  0,    0.8, -90,    38,   30,  27],
+              [0.97,   0,    0.8, -91,    36,   26,  27],
+              [1.00,   0,    0.5, -70,    80,  -30,  36]];
+  const target = new THREE.Vector3();
+  const cam = { dist: 0, yaw: 0, pitch: 0 };
+  function cameraAt(p) {
+    let i = 0; while (i < KF.length - 2 && p > KF[i + 1][0]) i++;
+    const a = KF[i], b = KF[i + 1], t = ease(clamp((p - a[0]) / (b[0] - a[0])));
+    target.set(lerp(a[1], b[1], t), lerp(a[2], b[2], t), lerp(a[3], b[3], t));
+    cam.dist = lerp(a[4], b[4], t); cam.yaw = lerp(a[5], b[5], t) * Math.PI / 180; cam.pitch = lerp(a[6], b[6], t) * Math.PI / 180;
+  }
+
+  let W = 0, H = 0;
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    renderer.setSize(W, H, false);
+    camera.aspect = W / H; camera.updateProjectionMatrix();
+    if (composer) { composer.setPixelRatio(Math.min(DPR, 1.5)); composer.setSize(W, H); }
+  }
+  resize();
+  addEventListener('resize', resize);
+
+  const q = new THREE.Quaternion(), e3 = new THREE.Euler(), m4 = new THREE.Matrix4(), v3 = new THREE.Vector3(), s3 = new THREE.Vector3(1, 1, 1);
+  const qFlat = new THREE.Quaternion(), qTumble = new THREE.Quaternion(), tmpC = new THREE.Color();
+  const mid = new THREE.Vector3(), proj = new THREE.Vector3();
+
+  function placeTag(el, pos, vis, dy = -34) {
+    if (vis < 0.02) { el.style.opacity = 0; return; }
+    proj.copy(pos).project(camera);
+    if (proj.z > 1) { el.style.opacity = 0; return; }
+    const half = (el.offsetWidth || 120) / 2 + 10;
+    const x = clamp((proj.x * 0.5 + 0.5) * W, half, W - half), y = (-proj.y * 0.5 + 0.5) * H + dy;
+    el.style.opacity = vis.toFixed(3);
+    el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-50%, -50%)`;
+  }
+
+  let lastBeat = -1;
+  function apply(p, time) {
+    // ---- camera ----
+    cameraAt(p);
+    const aspect = W / H, distMul = aspect < 1.2 ? Math.min(2.1, 1.35 / aspect) : 1;
+    const d = cam.dist * distMul;
+    camera.position.set(
+      target.x + Math.sin(cam.yaw) * Math.cos(cam.pitch) * d,
+      target.y + Math.sin(cam.pitch) * d,
+      target.z + Math.cos(cam.yaw) * Math.cos(cam.pitch) * d);
+    camera.lookAt(target);
+    const heroK = 1 - span(0.02, 0.09, p);
+    const panelOn = (1 - heroK) * (1 - span(0.97, 0.995, p));
+    const shiftX = (!mobile && aspect > 1.1) ? 0.17 * W * panelOn : 0;
+    const shiftY = -heroK * (mobile ? 0.22 : 0.3) * H + ((mobile || aspect <= 1.1) ? 0.2 * H * panelOn : 0);
+    if (Math.abs(shiftX) + Math.abs(shiftY) > 0.5) camera.setViewOffset(W, H, -shiftX, shiftY, W, H); else camera.clearViewOffset();
+    scene.fog.density = (0.0105 + 0.006 * heroK) / distMul;
+    sun.position.set(target.x - 16, 46, target.z + 12);
+    sun.target.position.copy(target);
+
+    // ---- the noise ----
+    const agitate = 1 + 0.8 * span(0.1, 0.18, p) * (1 - span(0.26, 0.32, p));
+    const kill = span(0.6, 0.68, p);
+    for (let i = 0; i < NC; i++) {
+      const c = C[i];
+      e3.set(c.e0.x + time * c.spin.x * agitate, c.e0.y + time * c.spin.y * agitate, c.e0.z + time * c.spin.z * agitate);
+      qTumble.setFromEuler(e3);
+      const bob = Math.sin(time * 0.6 + c.bob) * 0.35;
+      const fly = span(0.3 + c.delay * 0.13, 0.36 + c.delay * 0.13, p);
+      let x, y, z, scl = 1;
+      if (fly <= 0) { x = c.cloud.x; y = c.cloud.y + bob; z = c.cloud.z; q.copy(qTumble); }
+      else {
+        mid.set((c.cloud.x + c.pileTop.x) / 2, Math.max(c.cloud.y, c.pileTop.y) + 5, (c.cloud.z + c.pileTop.z) / 2);
+        const t = fly, u = 1 - t;
+        x = u * u * c.cloud.x + 2 * u * t * mid.x + t * t * c.pileTop.x;
+        y = u * u * (c.cloud.y + bob) + 2 * u * t * mid.y + t * t * c.pileTop.y;
+        z = u * u * c.cloud.z + 2 * u * t * mid.z + t * t * c.pileTop.z;
+        qFlat.setFromEuler(e3.set(0, c.pileYaw, 0));
+        q.copy(qTumble).slerp(qFlat, span(0.35, 1, t));
+        if (c.kept) { x += c.pileOff.x * t; z += c.pileOff.y * t; }
+        else scl = 1 - span(0.85, 1, t);
+        // the weaker piles collapse: bad ideas killed early
+        if (c.pile !== 1 && c.kept && kill > 0) {
+          const o = (PILE_CAP[c.pile] - c.slot) / PILE_CAP[c.pile] * 0.5;
+          const k = span(o, 0.5 + o, kill);
+          x = lerp(x, c.fallen.x, k); y = lerp(y, c.fallen.y, k) + Math.sin(k * Math.PI) * 1.2; z = lerp(z, c.fallen.z, k);
+          q.slerp(qFlat.setFromEuler(e3.set(c.fallTilt, c.fallYaw, 0)), k);
+          tmpC.copy(c.col).lerp(C_DEAD, k); cards.setColorAt(i, tmpC);
+        }
+      }
+      m4.compose(v3.set(x, y, z), q, s3.setScalar(Math.max(0.0001, scl)));
+      cards.setMatrixAt(i, m4);
+    }
+    cards.instanceMatrix.needsUpdate = true;
+    if (kill > 0) cards.instanceColor.needsUpdate = true;
+    const sNoise = 1 - span(0.3, 0.36, p);
+    pings.forEach(({ m, o }) => {
+      const ph = (time * 0.55 + o) % 1;
+      m.scale.setScalar(1 + ph * 3.4); m.material.opacity = (1 - ph) * 0.8 * sNoise;
+      m.visible = sNoise > 0.01;
+    });
+
+    // ---- the one answer ----
+    const ans = span(0.44, 0.5, p);
+    answer.visible = answerHalo.visible = ans > 0.001;
+    const ay = centreTop + 0.35 + ans * 1.1 + Math.sin(time * 1.4) * 0.08 * ans;
+    answer.position.set(Z2.x, ay, Z2.z); answer.rotation.set(0, Math.sin(time * 0.5) * 0.08, 0);
+    answer.scale.setScalar(0.4 + 0.6 * ans);
+    answerHalo.position.set(Z2.x, ay, Z2.z); answerHalo.rotation.z = time * 0.35; answerHalo.scale.setScalar((0.4 + 0.6 * ans) * (1 + 0.04 * Math.sin(time * 2.2)));
+    answer.material.color.copy(GLOW).multiplyScalar(1.25 + 0.2 * Math.sin(time * 2));
+    winRing.material.opacity = 0.7 * ans; winRing.scale.setScalar(1 + 0.06 * Math.sin(time * 2.4));
+
+    // ---- paths ----
+    const dStream = span(0.3, 0.42, p), dDeliver = span(0.73, 0.79, p), dForward = span(0.88, 0.94, p);
+    P.stream.set(dStream); P.deliver.set(dDeliver); P.forward.set(dForward);
+    updateDots([dStream, dDeliver, dForward]);
+    const drawn = { stream: dStream, deliver: dDeliver, forward: dForward };
+    sparks.forEach(({ m, k, o }) => {
+      if (drawn[k] < 0.05) { m.visible = false; return; }
+      m.visible = true; curves[k].getPointAt(((time * 0.16 + o) % 1) * drawn[k] * 0.999, m.position); m.position.y = 0.16;
+    });
+
+    // ---- set-up, stories, decisions ----
+    const rise = span(0.74, 0.8, p);
+    plinth.position.set(Z3.x, -0.3 + rise * 0.55, Z3.z); plinth.visible = rise > 0.001;
+    rings.forEach((m, i) => { m.material.opacity = 0.9 * span(0.78 + i * 0.012, 0.81 + i * 0.012, p); });
+    const thr = span(0.8, 0.87, p), go0 = span(0.88, 0.92, p);
+    threadMat.opacity = 0.55 * (1 - 0.6 * go0);
+    threads.forEach(t => {
+      const f = clamp((thr - t.d * 0.4) / 0.6);
+      t.mesh.visible = f > 0.01;
+      t.geo.setDrawRange(0, Math.floor(f * 90) * 6 * 6);
+      t.sp.visible = f > 0.98 && go0 < 0.6;
+      if (t.sp.visible) t.curve.getPointAt((time * 0.22 + t.o) % 1, t.sp.position);
+    });
+    steps.forEach(s => {
+      const k = span(0.9 + s.i * 0.012, 0.93 + s.i * 0.012, p);
+      s.m.visible = k > 0.001;
+      const fall = s.tag === 'drop' ? span(0.945, 0.965, p) : 0;
+      s.m.position.y = 0.05 + 0.59 * (1 - fall) + (1 - k) * 3 + (s.tag === 'build' ? Math.sin(time * 1.5) * 0.05 : 0);
+      s.m.rotation.set(-Math.PI / 2 + fall * (Math.PI / 2 - 0.04), s.tag === 'test' ? 0.25 : s.tag === 'drop' ? -0.3 : 0, 0);
+      s.m.scale.setScalar(Math.max(0.001, k));
+    });
+
+    // ---- labels that follow the world ----
+    placeTag(tags.answer, answer.position, ans * (1 - span(0.73, 0.76, p)));
+    placeTag(tags.weak, v3.set(Z2.x + PILE_X[0], 0.3, Z2.z), span(0.66, 0.7, p) * (1 - span(0.73, 0.76, p)), -26);
+    const pathVis = 1 - span(0.965, 0.985, p);
+    steps.forEach(s => placeTag(tags[s.tag], s.m.position, span(0.92 + s.i * 0.012, 0.94 + s.i * 0.012, p) * pathVis, -44));
+
+    // ---- panels ----
+    root.style.setProperty('--hero', heroK.toFixed(3));
+    panels.forEach(({ el, r }) => {
+      const v = (r[0] < 0 ? 1 : span(r[0], r[1], p)) * (1 - span(r[2], r[3], p));
+      el.style.opacity = v.toFixed(3);
+      el.style.transform = `translateY(${((1 - v) * 18).toFixed(1)}px)`;
+      el.style.visibility = v < 0.01 ? 'hidden' : 'visible';
+    });
+    const beat = p < 0.835 ? 0 : p < 0.89 ? 1 : 2;
+    if (beat !== lastBeat) { beats.forEach((li, i) => li.classList.toggle('on', i === beat)); lastBeat = beat; }
+  }
+
+  // ---------- loop ----------
+  let pTarget = 0, p = 0, time = 0, last = performance.now(), running = false, visible = true;
+  function measure() {
+    const r = journey.getBoundingClientRect(), total = r.height - H;
+    pTarget = total > 0 ? clamp(-r.top / total) : 0;
+    visible = r.bottom > 0;
+  }
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now; time += dt;
+    measure();
+    p += (pTarget - p) * Math.min(1, dt * 6);
+    if (Math.abs(pTarget - p) < 0.0004) p = pTarget;
+    apply(p, time);
+    if (composer) composer.render(); else renderer.render(scene, camera);
+    if (visible) requestAnimationFrame(frame); else running = false;
+  }
+  function wake() { if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); } }
+  addEventListener('scroll', wake, { passive: true });
+  measure(); p = pTarget; wake();
+}
+
+try { start(); } catch (err) {
+  // anything goes wrong: return to the static page
+  document.documentElement.classList.remove('webgl');
+  document.querySelector('canvas.world')?.remove();
+  console.error(err);
+}
+
+// ---------- smooth scroll ----------
+addEventListener('load', () => {
+  if (reduce || !window.Lenis) return;
+  const lenis = new window.Lenis({ duration: 1.15, smoothWheel: true });
+  const raf = t => { lenis.raf(t); requestAnimationFrame(raf); };
+  requestAnimationFrame(raf);
+  document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    const id = a.getAttribute('href'); const el = id.length > 1 && document.querySelector(id);
+    if (id === '#top') { e.preventDefault(); lenis.scrollTo(0); return; }
+    if (!el) return; e.preventDefault(); lenis.scrollTo(el, { offset: -72 });
+  }));
+});
+</script>
+</body>
+</html>
