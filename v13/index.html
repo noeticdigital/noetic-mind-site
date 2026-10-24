@@ -550,20 +550,22 @@ function start() {
     m.rotation.x = -Math.PI / 2; m.position.set(Z3.x, 0.52, Z3.z); m.material.opacity = 0; scene.add(m); return m;
   });
 
-  // ---------- 04 stories: threads of light descending into the plinth ----------
-  const NT = mobile ? 12 : 20, threads = [];
+  // ---------- 04 stories: interview cards glide in and land on the plinth ----------
   const sparkGeo = new THREE.SphereGeometry(0.13, 12, 10);
-  const threadMat = glow(1.5, 0.55, true);
-  for (let i = 0; i < NT; i++) {
-    const a = (i / NT) * Math.PI * 2 + rr(-0.15, 0.15), R = rr(20, 30);
-    const s = new THREE.Vector3(Z3.x + Math.cos(a) * R, rr(9, 17), Z3.z + Math.sin(a) * R * 0.8);
-    const e = new THREE.Vector3(Z3.x + rr(-0.4, 0.4), 0.55, Z3.z + rr(-0.4, 0.4));
-    const m = new THREE.Vector3(lerp(s.x, e.x, 0.55), s.y * 0.75, lerp(s.z, e.z, 0.55));
-    const curve = new THREE.CatmullRomCurve3([s, m, e]);
-    const geo = new THREE.TubeGeometry(curve, 90, 0.03, 6, false);
-    const mesh = new THREE.Mesh(geo, threadMat); mesh.visible = false; scene.add(mesh);
-    const sp = new THREE.Mesh(sparkGeo, glow(4.2)); sp.visible = false; scene.add(sp);
-    threads.push({ curve, geo, mesh, sp, d: rnd() * 0.5, o: rnd() });
+  const NS = mobile ? 8 : 12, stories = [];
+  const storyGeo = new RoundedBoxGeometry(2.3, 0.06, 1.55, 2, 0.022);
+  for (let i = 0; i < NS; i++) {
+    // they come from the far side and the flanks, never from behind the camera
+    const a = Math.PI * (1.08 + 0.84 * (i / (NS - 1))) + rr(-0.08, 0.08), R = rr(15, 21);
+    const from = new THREE.Vector3(Z3.x + Math.cos(a) * R, rr(1.6, 3.4), Z3.z + Math.sin(a) * R * 0.85);
+    const to = new THREE.Vector3(Z3.x + rr(-0.08, 0.08), 0.58 + i * 0.1, Z3.z + rr(-0.08, 0.08));
+    const mid = new THREE.Vector3(lerp(from.x, to.x, 0.5), Math.max(from.y, to.y) + 2.2, lerp(from.z, to.z, 0.5));
+    const mat = new THREE.MeshStandardMaterial({ color: i % 3 === 2 ? '#b9cbe6' : '#e6eefa', roughness: 0.8 });
+    const m = new THREE.Mesh(storyGeo, mat); m.castShadow = true; m.visible = false; scene.add(m);
+    const ring = new THREE.Mesh(new THREE.RingGeometry(1.4, 1.52, 96), glow(2.0, 1, true));
+    ring.rotation.x = -Math.PI / 2; ring.position.set(Z3.x, 0.53, Z3.z); ring.visible = false; scene.add(ring);
+    stories.push({ m, ring, from, to, mid, yaw0: rr(-1.2, 1.2), yaw1: rr(-0.15, 0.15), tilt: rr(-0.35, 0.35),
+      t0: 0.802 + i * (0.062 / NS), landed: -1 });
   }
 
   // ---------- the glowing paths across the ground ----------
@@ -650,7 +652,7 @@ function start() {
               [0.58,   0,    2.6, -36,    22,  -22,  19],
               [0.72,   0,    2.6, -36,    22,  -64,  16],
               [0.78,   0,    1.2, -66,    40,   34,  30],
-              [0.85,   0,    3.5, -74,    32,    8,  20],
+              [0.85,   0,    2.6, -74,    27,    8,  21],
               [0.935,  0,    0.8, -90,    38,   30,  27],
               [0.97,   0,    0.8, -91,    36,   26,  27],
               [1.00,   0,    0.5, -70,    80,  -30,  36]];
@@ -773,14 +775,22 @@ function start() {
     const rise = span(0.74, 0.8, p);
     plinth.position.set(Z3.x, -0.3 + rise * 0.55, Z3.z); plinth.visible = rise > 0.001;
     rings.forEach((m, i) => { m.material.opacity = 0.9 * span(0.78 + i * 0.012, 0.81 + i * 0.012, p); });
-    const thr = span(0.8, 0.87, p), go0 = span(0.88, 0.92, p);
-    threadMat.opacity = 0.55 * (1 - 0.6 * go0);
-    threads.forEach(t => {
-      const f = clamp((thr - t.d * 0.4) / 0.6);
-      t.mesh.visible = f > 0.01;
-      t.geo.setDrawRange(0, Math.floor(f * 90) * 6 * 6);
-      t.sp.visible = f > 0.98 && go0 < 0.6;
-      if (t.sp.visible) t.curve.getPointAt((time * 0.22 + t.o) % 1, t.sp.position);
+    stories.forEach(st => {
+      const f = span(st.t0, st.t0 + 0.02, p);
+      st.m.visible = f > 0.001;
+      if (st.m.visible) {
+        const u = 1 - f;
+        st.m.position.set(u * u * st.from.x + 2 * u * f * st.mid.x + f * f * st.to.x,
+                          u * u * st.from.y + 2 * u * f * st.mid.y + f * f * st.to.y,
+                          u * u * st.from.z + 2 * u * f * st.mid.z + f * f * st.to.z);
+        st.m.rotation.set(st.tilt * u, lerp(st.yaw0, st.yaw1, f), st.tilt * 0.6 * u);
+      }
+      // a ring of light pulses out from the plinth as each story lands
+      if (f >= 0.999 && st.landed < 0) st.landed = time;
+      if (f < 0.999) st.landed = -1;
+      const age = st.landed < 0 ? 1 : (time - st.landed) / 1.6;
+      st.ring.visible = age < 1;
+      if (st.ring.visible) { st.ring.scale.setScalar(1 + age * 2.9); st.ring.material.opacity = (1 - age) * 0.9; }
     });
     steps.forEach(s => {
       const k = span(0.9 + s.i * 0.012, 0.93 + s.i * 0.012, p);
