@@ -361,23 +361,25 @@ function start() {
       const half = t.el.offsetWidth / 2, lo = (p > 0.045 ? panelPx : 0) + 10 + half, x = Math.min(W - 10 - half, Math.max(lo, (v3.x + 1) / 2 * W));
       t.el.style.transform = `translate(${x.toFixed(1)}px,${((1 - v3.y) / 2 * H).toFixed(1)}px) translate(-50%,-50%)`; t.el.style.opacity = t.a.toFixed(2); t.shown = true; });
 
+    canvas.style.opacity = span(0.012, 0.05, p).toFixed(3);                 // nothing is drawn behind the opening headline
     root.style.setProperty('--hero', heroK.toFixed(3));
     panels.forEach(({ el, r }) => { const v = (r[0] < 0 ? 1 : span(r[0], r[1], p)) * (1 - span(r[2], r[3], p));
       el.style.opacity = v.toFixed(3); el.style.transform = `translateY(${((1 - v) * 18).toFixed(1)}px)`; el.style.visibility = v < 0.01 ? 'hidden' : 'visible'; });
   }
 
-  let pTarget = 0, p = 0, time = 0, last = performance.now(), running = false, visible = true, lastTick = 0;
+  let pTarget = 0, p = 0, time = 0, last = performance.now(), running = false, visible = true, lastTick = 0, lastFrame = 0;
   function measure() { const r = journey.getBoundingClientRect(), total = r.height - H; pTarget = total > 0 ? clamp(-r.top / total) : 0; visible = r.bottom > 0; }
   function tick(now, snap) { const dt = Math.min(snap ? 0.25 : 0.05, (now - last) / 1000); last = now; lastTick = now; time += dt;
     measure(); if (snap) p = pTarget; else { p += (pTarget - p) * Math.min(1, dt * 6); if (Math.abs(pTarget - p) < 0.0004) p = pTarget; }
     if (window.__p != null) p = window.__p;
     apply(p, time); renderer.render(scene, camera); }
-  function frame(now) { tick(now, false); if (visible) requestAnimationFrame(frame); else running = false; }
+  function frame(now) { lastFrame = performance.now(); tick(now, false); if (visible) requestAnimationFrame(frame); else running = false; }
   function wake() { if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); } }
   // Some viewers pause animation frames (a background pane, a throttled embed, a remote view). The page must still
   // move, so when frames stop arriving it is drawn from the scroll event and from a slow timer instead.
-  function rescue() { const now = performance.now(); if (now - lastTick < 180) return; measure(); if (visible) tick(now, true); }
-  addEventListener('scroll', () => { wake(); rescue(); }, { passive: true }); setInterval(rescue, 250);
+  // The timer fills in at full speed whenever frames are late, so the motion stays smooth instead of stepping.
+  function rescue() { if (document.hidden) return; const now = performance.now(); if (now - lastFrame < 60 || now - lastTick < 14) return; measure(); if (visible) tick(now, false); }
+  addEventListener('scroll', () => { wake(); rescue(); }, { passive: true }); setInterval(rescue, 16);
   measure(); p = pTarget; tick(performance.now(), true); wake();
 }
 
@@ -387,10 +389,14 @@ addEventListener('load', () => {
   if (reduce || !window.Lenis) return;
   // Smooth scrolling takes over the wheel and moves the page on animation frames. If frames are not arriving it would
   // swallow every scroll, so it starts only once frames are proven to run, and stands down if they stop.
-  let lenis = null, lastRaf = 0;
-  const raf = t => { lastRaf = performance.now(); if (lenis) { lenis.raf(t); requestAnimationFrame(raf); } };
-  requestAnimationFrame(() => requestAnimationFrame(() => { lenis = new window.Lenis({ duration: 1.15, smoothWheel: true }); lastRaf = performance.now(); requestAnimationFrame(raf); }));
-  setInterval(() => { if (lenis && performance.now() - lastRaf > 1200) { lenis.destroy(); lenis = null; } }, 500);
+  let lenis = null, seen = 0, t0 = 0, count = 0;
+  const raf = t => { count++; if (lenis) { lenis.raf(t); requestAnimationFrame(raf); } };
+  // probe: twelve frames must arrive at a healthy rate before smooth scrolling is allowed to take the wheel
+  const probe = t => { if (!seen) t0 = t; if (++seen < 12) { requestAnimationFrame(probe); return; }
+    if ((t - t0) / 11 < 34) { lenis = new window.Lenis({ duration: 1.15, smoothWheel: true }); count = 30; requestAnimationFrame(raf); } };
+  requestAnimationFrame(probe);
+  setInterval(() => { if (lenis && !document.hidden && count < 20) { lenis.destroy(); lenis = null; } count = 0; }, 1000);
+  document.addEventListener('visibilitychange', () => { count = 60; });   // returning from a hidden tab is not a stall
   document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
     const id = a.getAttribute('href'); const el = id.length > 1 && document.querySelector(id);
     if (!lenis) return;
