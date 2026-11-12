@@ -385,6 +385,27 @@ function start() {
 
 try { start(); } catch (err) { root.classList.remove('webgl'); document.querySelector('canvas.world')?.remove(); console.error(err); }
 
+// Arrow keys step through the page: each panel of the walkthrough in turn, then each section below it.
+let smooth = null;
+addEventListener('keydown', e => {
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+  if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+  const t = e.target; if (t && t.closest && t.closest('input, textarea, select, [contenteditable]')) return;
+  const j = document.querySelector('.journey'); if (!j) return;
+  const span = j.offsetHeight - innerHeight, stops = [];
+  document.querySelectorAll('.journey .panel[data-range]').forEach(el => { const r = el.dataset.range.split(/\s+/).map(Number);
+    const mid = r[1] < 0 ? 0 : (r[1] + Math.min(r[2], 1)) / 2; stops.push(j.offsetTop + mid * span); });
+  document.querySelectorAll('.content .sec').forEach(s => stops.push(s.getBoundingClientRect().top + scrollY));
+  const max = document.documentElement.scrollHeight - innerHeight; stops.push(max);
+  stops.sort((a, b) => a - b);
+  const y = smooth ? smooth.targetScroll : scrollY, down = e.key === 'ArrowDown';
+  const to = down ? stops.find(v => v > y + 8) : [...stops].reverse().find(v => v < y - 8);
+  e.preventDefault(); if (to == null) return;
+  const top = Math.min(Math.round(to), max);
+  if (smooth) smooth.scrollTo(top, { duration: top < j.offsetTop + span ? 1.5 : 0.9 });
+  else scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+});
+
 addEventListener('load', () => {
   if (reduce || !window.Lenis) return;
   // Smooth scrolling takes over the wheel and moves the page on animation frames. If frames are not arriving it would
@@ -393,9 +414,9 @@ addEventListener('load', () => {
   const raf = t => { count++; if (lenis) { lenis.raf(t); requestAnimationFrame(raf); } };
   // probe: twelve frames must arrive at a healthy rate before smooth scrolling is allowed to take the wheel
   const probe = t => { if (!seen) t0 = t; if (++seen < 12) { requestAnimationFrame(probe); return; }
-    if ((t - t0) / 11 < 34) { lenis = new window.Lenis({ duration: 1.15, smoothWheel: true }); count = 30; root.classList.remove('snap-css'); requestAnimationFrame(raf); } };
+    if ((t - t0) / 11 < 34) { lenis = new window.Lenis({ duration: 1.15, smoothWheel: true }); smooth = lenis; count = 30; root.classList.remove('snap-css'); requestAnimationFrame(raf); } };
   requestAnimationFrame(probe);
-  setInterval(() => { if (lenis && !document.hidden && count < 20) { lenis.destroy(); lenis = null; root.classList.add('snap-css'); } count = 0; }, 1000);
+  setInterval(() => { if (lenis && !document.hidden && count < 20) { lenis.destroy(); lenis = null; smooth = null; root.classList.add('snap-css'); } count = 0; }, 1000);
   // Magnetic sections: once the wheel rests, a section heading that is close to the top of the screen is drawn up to it.
   // The pull is one-sided, so reading on down a tall section is never dragged back. Without smooth scrolling the
   // browser's own proximity snapping does the same job (html.snap-css).
