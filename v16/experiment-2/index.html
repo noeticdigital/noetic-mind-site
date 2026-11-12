@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#f7f9fd" />
+<title>Experiment 2 · a scene for each stage</title>
+<!--
+  NOETIC MIND / Experiment 2. Twelve candidate scenes, each tied to one stage of the method.
+  One visual language throughout: drawn lines and light on the V15 white gradient. The line is the
+  customer's voice; every later stage does something to that same line. Each scene loops; drag to orbit.
+-->
+<link rel="icon" type="image/svg+xml" href="../../noetic-logo.svg" />
+<link rel="preconnect" href="https://fonts.bunny.net" />
+<link href="https://fonts.bunny.net/css?family=geist:400,500,600,700|geist-mono:400,500" rel="stylesheet" />
+<style>
+  :root{--navy:#0a1a38;--ink:#0f2347;--muted:#5b6b85;--line:rgba(24,76,132,.14);--blue:#184c84;--white:#fff;
+    --f:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--f);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased;
+    background:linear-gradient(180deg,#ffffff 0%,#f3f7fd 45%,#e3ecf9 100%)}
+  a{color:inherit}
+  canvas.world{position:fixed;inset:0;width:100vw;height:100vh;display:block;touch-action:none}
+  .bar{position:fixed;inset:0 0 auto 0;z-index:5;display:flex;align-items:center;gap:20px;height:72px;padding:0 28px;
+    background:linear-gradient(rgba(255,255,255,.9),rgba(255,255,255,0))}
+  .brand{display:flex;align-items:center;gap:10px;font:600 17px var(--f);text-decoration:none;color:var(--navy)}
+  .brand img{width:28px;height:28px;border-radius:7px;box-shadow:0 0 0 1px rgba(10,26,56,.1)}
+  .bar .back{margin-left:auto;font-size:14px;color:var(--muted);text-decoration:none}
+  .bar .back:hover{color:var(--navy)}
+  .panel{position:fixed;left:24px;bottom:24px;z-index:5;width:min(520px,calc(100vw - 48px));padding:18px 20px 16px;border-radius:18px;
+    background:rgba(255,255,255,.8);box-shadow:inset 0 0 0 1px var(--line),0 20px 50px rgba(10,26,56,.08);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+  .eyebrow{font:500 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+  .panel h1{margin-top:6px;font-size:21px;font-weight:600;letter-spacing:-.02em;color:var(--navy)}
+  .tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:12px}
+  .tabs button{min-height:44px;border:0;border-radius:10px;background:rgba(24,76,132,.06);color:var(--muted);font:500 11.5px var(--f);cursor:pointer;
+    box-shadow:inset 0 0 0 1px var(--line);transition:background-color .2s,color .2s;padding:4px 2px}
+  .tabs button:hover{color:var(--navy)}
+  .tabs button[aria-selected="true"]{background:var(--navy);color:var(--white);box-shadow:none}
+  .tabs button b{display:block;font:500 11px var(--mono);letter-spacing:.08em}
+  .desc{margin-top:12px;font-size:14.5px;line-height:1.5;color:var(--ink)}
+  .desc strong{color:var(--navy)}
+  .hint{margin-top:8px;font:400 12px var(--mono);color:var(--muted)}
+  .nogl{position:fixed;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted)}
+  @media (max-width:700px){ .bar{padding:0 16px} .panel{left:12px;right:12px;bottom:12px;width:auto;padding:14px} .desc{font-size:13.5px}
+    .tabs{grid-template-columns:repeat(6,1fr)} .tabs button span{display:none} .tabs button{min-height:38px} }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="../"><img src="../../noetic-logo.svg" alt="" width="28" height="28" />Noetic Mind</a>
+  <a class="back" href="../">Back to the site</a>
+</header>
+<div class="panel">
+  <p class="eyebrow" id="stage">Interviews</p>
+  <h1 id="title"></h1>
+  <div class="tabs" role="tablist" aria-label="Scenes" id="tabs"></div>
+  <p class="desc" id="desc"></p>
+  <p class="hint">Plays on a loop · drag to orbit · scroll to zoom</p>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+
+const mobile = matchMedia('(max-width: 760px)').matches;
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = t => t * t * t * (t * (t * 6 - 15) + 10);
+const span = (a, b, x) => ease(clamp((x - a) / (b - a)));
+const lerp = (a, b, t) => a + (b - a) * t;
+let seed = 23;
+const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+const rr = (a, b) => a + (b - a) * rnd();
+const TAU = Math.PI * 2;
+
+const NAVY = '#0a1a38', BLUE = '#184c84', MID = '#2f6fb3', SKY = '#8fb6e6', PALE = '#c9d9ef';
+const AMBER = '#c98a1e', GREEN = '#3f8f5b', GREY = '#b8c0cc';
+
+/* fat lines, updated in place */
+const mats = [];
+function mkLine(n, color = MID, width = 2, opacity = 1) {
+  const geo = new LineGeometry(); geo.setPositions(new Float32Array(n * 3));
+  const mat = new LineMaterial({ color, linewidth: width * (mobile ? 0.8 : 1), transparent: true, opacity, depthWrite: false });
+  mats.push(mat);
+  const l = new Line2(geo, mat); l.frustumCulled = false; l.n = n; l.buf = new Float32Array(n * 3); return l;
+}
+function push(l) {
+  const a = l.geometry.attributes.instanceStart.data.array, b = l.buf;
+  for (let i = 0; i < l.n - 1; i++) { const o = i * 6, s = i * 3; a[o] = b[s]; a[o + 1] = b[s + 1]; a[o + 2] = b[s + 2]; a[o + 3] = b[s + 3]; a[o + 4] = b[s + 4]; a[o + 5] = b[s + 5]; }
+  l.geometry.attributes.instanceStart.data.needsUpdate = true;
+}
+const draw = (l, f) => { l.geometry.instanceCount = Math.max(0, Math.round(clamp(f) * (l.n - 1))); };
+
+/* a soft blue halo that reads as glow on white */
+const glowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d');
+  const g = x.createRadialGradient(128, 128, 0, 128, 128, 128);
+  g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.12, 'rgba(120,175,240,.95)'); g.addColorStop(0.4, 'rgba(70,135,220,.35)'); g.addColorStop(1, 'rgba(70,135,220,0)');
+  x.fillStyle = g; x.fillRect(0, 0, 256, 256); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+function glow(size = 4) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, transparent: true, depthWrite: false, depthTest: false })); s.scale.setScalar(size); s.base = size; return s; }
+const dot = (r, color) => new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), new THREE.MeshBasicMaterial({ color, transparent: true }));
+
+/* a voice: irregular, with pauses, different for each speaker */
+function voice(i) {
+  const f = [rr(0.9, 1.6), rr(2.2, 3.6), rr(5, 8)], p = [rr(0, TAU), rr(0, TAU), rr(0, TAU)], e = rr(0.25, 0.5), ep = rr(0, TAU);
+  return (x, time) => { const env = 0.35 + 0.65 * Math.pow(0.5 + 0.5 * Math.sin(x * e + ep + time * 0.6), 2);
+    return env * (0.55 * Math.sin(x * f[0] + p[0] - time * 2.2) + 0.3 * Math.sin(x * f[1] + p[1] - time * 3.1) + 0.15 * Math.sin(x * f[2] + p[2] - time * 4.5)); };
+}
+const clean = (x, time) => Math.sin(x * 1.25 - time * 2.4);
+
+const SCENES = [
+  { stage: 'Interviews', tab: 'Ten voices', title: 'Ten voices, one signal', cam: [0, 0, 0, 44, 0, 14], make: fanIn,
+    desc: '<strong>Ten conversations, each its own waveform.</strong> They run side by side, then draw together and meet in the centre, where one clean signal carries on with a glow. This is your idea, built as described.' },
+  { stage: 'Interviews', tab: 'In the round', title: 'Voices in the round', cam: [0, 0, 0, 44, 0, 52], make: radial,
+    desc: '<strong>The same ten voices, arriving from every side.</strong> They travel inwards to a ring in the centre, which starts out as noisy as they are and settles into one steady pulse.' },
+  { stage: 'Interviews', tab: 'Ridgeline', title: 'What they have in common', cam: [0, 1, 0, 40, 26, 30], make: ridge,
+    desc: '<strong>Ten recordings laid out one behind another.</strong> Each is different. As they close up, the shape they share shows through and the differences fall away, leaving a single line.' },
+  { stage: 'Define', tab: 'Five views', title: 'Five views of the same problem', cam: [0, 0, 0, 34, 0, 8], make: views,
+    desc: '<strong>Each person on the team sees the problem differently.</strong> Five translucent fields drift, then overlap. The part they all share lights up. That shared part is the starting definition, and it is held as a guess.' },
+  { stage: 'Define', tab: 'Gyroscope', title: 'Getting the frame level', cam: [0, 0, 0, 30, 24, 22], make: gyro,
+    desc: '<strong>Five rings turning on different axes.</strong> One by one they settle into the same plane, around one point. A calmer, more mechanical way to show a team agreeing what it is trying to learn.' },
+  { stage: 'Outcome', tab: 'One orbit', title: 'One number to steer by', cam: [0, 0, 0, 36, 20, 30], make: orbit,
+    desc: '<strong>Hundreds of points on orbits of their own.</strong> Activity without direction. They are pulled, gradually, into one orbit around one point: the customer behaviour the team has agreed to change.' },
+  { stage: 'Opportunity', tab: 'Terrain', title: 'The struggle worth solving', cam: [0, 1.5, 0, 40, 32, 30], make: terrain,
+    desc: '<strong>The signal becomes a landscape.</strong> Each rise is a struggle customers described. All of them come up; then the one worth solving is marked and the others are set down, parked and still visible.' },
+  { stage: 'Causal model', tab: 'Causes', title: 'What must be true', cam: [0, 0, 0, 36, 0, 12], make: causes,
+    desc: '<strong>Worked backwards from the outcome.</strong> The links draw from right to left, cause by cause. Then the pulses run forwards along them. The grey points are the things you do not control.' },
+  { stage: 'Delivery', tab: 'Prism', title: 'Several answers, tested', cam: [3, 0, 0, 48, 0, 16], make: prism,
+    desc: '<strong>One beam goes in; several different solutions come out.</strong> Each meets a bar that was set before the results came in. Most stop there. One passes, and that is the one you build.' },
+  { stage: 'Delivery', tab: 'Probes', title: 'The smallest real test', cam: [0, 0.5, 0, 42, 18, 28], make: probes,
+    desc: '<strong>Four routes to the same place.</strong> A small probe is sent down each before anything is built. Three routes fade when their probe fails. The fourth thickens into the path you take.' },
+  { stage: 'The tree', tab: 'Helix', title: 'Each lap, a little higher', cam: [0, 6, 0, 40, 20, 14], make: helix,
+    desc: '<strong>The method as a rising spiral.</strong> Each turn is one lap, and each belief on it changes from grey to amber to green as evidence arrives. You come back to the same question knowing more.' },
+  { stage: 'The tree', tab: 'Rings', title: 'Growth rings', cam: [0, 0, 0, 34, 0, 62], make: rings,
+    desc: '<strong>A tree in cross-section.</strong> Every lap lays down another ring, coloured by how well its beliefs held. A quieter way to say that what you know builds up.' },
+];
+
+function start() {
+  const canvas = document.createElement('canvas'); canvas.className = 'world';
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }); } catch (e) { return false; }
+  if (!renderer.getContext()) return false;
+  document.body.prepend(canvas);
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mobile ? 1.5 : 2));
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.3, 400);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xdfe8f5, 1.6));
+  const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(-14, 30, 16); scene.add(sun);
+  const controls = new OrbitControls(camera, canvas); controls.enableDamping = true;
+
+  const tabsEl = document.getElementById('tabs');
+  SCENES.forEach((s, i) => { const b = document.createElement('button'); b.setAttribute('role', 'tab'); b.dataset.k = i;
+    b.innerHTML = `<b>${String(i + 1).padStart(2, '0')}</b><span>${s.tab}</span>`; tabsEl.appendChild(b); });
+  const scenes = SCENES.map(s => s.make());
+  scenes.forEach(s => { s.g.visible = false; scene.add(s.g); });
+
+  let k = 0, t0 = performance.now();
+  const title = document.getElementById('title'), desc = document.getElementById('desc'), stage = document.getElementById('stage');
+  const tabs = Array.from(tabsEl.children);
+  function select(i) {
+    k = i; scenes.forEach((s, j) => s.g.visible = j === i);
+    title.textContent = SCENES[i].title; desc.innerHTML = SCENES[i].desc; stage.textContent = 'Stage · ' + SCENES[i].stage;
+    tabs.forEach((b, j) => b.setAttribute('aria-selected', j === i));
+    const c = SCENES[i].cam, d = c[3] * (mobile ? 1.7 : 1); controls.target.set(c[0], c[1] + (mobile ? -3 : 0), c[2]);
+    const yaw = c[4] * Math.PI / 180, pitch = c[5] * Math.PI / 180;
+    camera.position.set(c[0] + Math.sin(yaw) * Math.cos(pitch) * d, c[1] + Math.sin(pitch) * d, c[2] + Math.cos(yaw) * Math.cos(pitch) * d);
+    t0 = performance.now(); history.replaceState(null, '', '#' + (i + 1));
+  }
+  tabs.forEach(b => b.addEventListener('click', () => select(+b.dataset.k)));
+  const hash = +location.hash.slice(1) - 1; select(Number.isInteger(hash) && hash >= 0 && hash < SCENES.length ? hash : 0);
+
+  function resize() { const W = innerWidth, H = innerHeight; renderer.setSize(W, H, false); camera.aspect = W / H; camera.updateProjectionMatrix();
+    mats.forEach(m => m.resolution.set(W, H)); }
+  resize(); addEventListener('resize', resize);
+  const LOOP = 14000;
+  function frame(now) {
+    const t = window.__t ?? ((now - t0) % LOOP) / LOOP, time = now / 1000;
+    scenes[k].update(t, time);
+    controls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  return true;
+}
+
+/* ---------- 01  Ten voices, one signal ---------- */
+function fanIn() {
+  const g = new THREE.Group(), N = 10, P = 110, X0 = -17;
+  const lines = [], voices = [];
+  for (let i = 0; i < N; i++) {
+    const a = i / N * TAU + 0.3; const l = mkLine(P, i % 2 ? MID : SKY, 1.8, 0.9);
+    l.off = [Math.sin(a) * 6.2, Math.cos(a) * 3.2]; lines.push(l); voices.push(voice(i)); g.add(l);
+  }
+  const out = mkLine(140, BLUE, 3.4, 1); g.add(out);
+  const halo = glow(7), core = glow(2.6), tip = glow(2.2); g.add(halo, core, tip);
+  return { g, update(t, time) {
+    const k = span(0.3, 0.58, t), fadeOut = 1 - span(0.94, 1, t);
+    lines.forEach((l, i) => {
+      const appear = span(i * 0.022, 0.1 + i * 0.022, t);
+      for (let j = 0; j < P; j++) {
+        const u = j / (P - 1), x = lerp(X0, 0, u), c = Math.pow(u, 1.6) * k, amp = 1.15 * (1 - 0.9 * Math.pow(u, 2) * k);
+        const w = lerp(voices[i](x, time), clean(x, time), Math.pow(u, 3) * k) * amp;
+        l.buf[j * 3] = x; l.buf[j * 3 + 1] = l.off[0] * (1 - c) + w; l.buf[j * 3 + 2] = l.off[1] * (1 - c);
+      }
+      push(l); draw(l, appear); l.material.opacity = 0.9 * fadeOut;
+    });
+    const o = span(0.55, 0.8, t);
+    for (let j = 0; j < 140; j++) { const x = j / 139 * 17; out.buf[j * 3] = x; out.buf[j * 3 + 1] = clean(x, time) * 0.95 * Math.min(1, 0.12 + x * 0.35); out.buf[j * 3 + 2] = 0; }
+    push(out); draw(out, o); out.material.opacity = fadeOut;
+    const pulse = 1 + 0.08 * Math.sin(time * 3);
+    halo.scale.setScalar(halo.base * k * pulse); halo.material.opacity = 0.85 * k * fadeOut;
+    core.scale.setScalar(core.base * k * pulse); core.material.opacity = k * fadeOut;
+    const tx = o * 17; tip.position.set(tx, clean(tx, time) * 0.95, 0); tip.material.opacity = (o > 0.02 && o < 0.99 ? 1 : 0) * fadeOut;
+  } };
+}
+
+/* ---------- 02  Voices in the round ---------- */
+function radial() {
+  const g = new THREE.Group(), N = 10, P = 90, R0 = 16, R1 = 2.6;
+  const lines = [], voices = [];
+  for (let i = 0; i < N; i++) { const l = mkLine(P, i % 2 ? MID : SKY, 1.8, 0.9); l.a = i / N * TAU; lines.push(l); voices.push(voice(i)); g.add(l); }
+  const ring = mkLine(181, BLUE, 3.4, 1), ringV = voice(99); g.add(ring);
+  const halo = glow(9), core = glow(3); g.add(halo, core);
+  return { g, update(t, time) {
+    const k = span(0.35, 0.65, t), fadeOut = 1 - span(0.94, 1, t);
+    lines.forEach((l, i) => {
+      const appear = span(i * 0.022, 0.12 + i * 0.022, t), ca = Math.cos(l.a), sa = Math.sin(l.a);
+      for (let j = 0; j < P; j++) {
+        const u = j / (P - 1), r = lerp(R0, R1, u), w = voices[i](r, time) * 1.1 * (1 - 0.75 * u * u);
+        l.buf[j * 3] = ca * r; l.buf[j * 3 + 1] = w; l.buf[j * 3 + 2] = sa * r;
+      }
+      push(l); draw(l, appear); l.material.opacity = 0.9 * fadeOut;
+    });
+    const rIn = span(0.2, 0.4, t);
+    for (let j = 0; j <= 180; j++) { const a = j / 180 * TAU;
+      const w = lerp(ringV(a * 6, time) * 0.9, Math.sin(a * 8 - time * 2.4) * 0.5, k);
+      ring.buf[j * 3] = Math.cos(a) * R1; ring.buf[j * 3 + 1] = w; ring.buf[j * 3 + 2] = Math.sin(a) * R1; }
+    push(ring); draw(ring, rIn); ring.material.opacity = fadeOut;
+    const pulse = 1 + 0.1 * Math.sin(time * 2.4);
+    halo.scale.setScalar(halo.base * k * pulse); halo.material.opacity = 0.9 * k * fadeOut;
+    core.scale.setScalar(core.base * k * pulse); core.material.opacity = k * fadeOut;
+  } };
+}
+
+/* ---------- 03  Ridgeline ---------- */
+function ridge() {
+  const g = new THREE.Group(), N = 10, P = 120, lines = [], voices = [];
+  const shared = x => 1.5 * Math.exp(-Math.pow((x + 5) / 2.2, 2)) + 2.3 * Math.exp(-Math.pow((x - 3) / 1.8, 2)) + 0.8 * Math.exp(-Math.pow((x - 9) / 1.5, 2));
+  for (let i = 0; i < N; i++) { const l = mkLine(P, i % 2 ? MID : SKY, 1.8, 0.9); l.z = (i - (N - 1) / 2) * 1.7; lines.push(l); voices.push(voice(i)); g.add(l); }
+  const one = mkLine(P, BLUE, 3.6, 1); g.add(one);
+  const halo = glow(6); halo.position.set(3, 2.3, 0); g.add(halo);
+  return { g, update(t, time) {
+    const k = span(0.4, 0.72, t), fadeOut = 1 - span(0.94, 1, t);
+    lines.forEach((l, i) => {
+      const appear = span(i * 0.02, 0.12 + i * 0.02, t);
+      for (let j = 0; j < P; j++) { const x = lerp(-14, 14, j / (P - 1));
+        const own = Math.abs(voices[i](x, time * 0.5)) * 2.2 + shared(x) * 0.45;
+        l.buf[j * 3] = x; l.buf[j * 3 + 1] = lerp(own, shared(x), k); l.buf[j * 3 + 2] = l.z * (1 - k); }
+      push(l); draw(l, appear); l.material.opacity = 0.9 * (1 - 0.85 * span(0.66, 0.76, t)) * fadeOut;
+    });
+    for (let j = 0; j < P; j++) { const x = lerp(-14, 14, j / (P - 1)); one.buf[j * 3] = x; one.buf[j * 3 + 1] = shared(x); one.buf[j * 3 + 2] = 0; }
+    push(one); one.material.opacity = span(0.66, 0.76, t) * fadeOut;
+    halo.material.opacity = span(0.7, 0.82, t) * fadeOut * (0.8 + 0.2 * Math.sin(time * 3));
+  } };
+}
+
+/* ---------- 04  Five views ---------- */
+function views() {
+  const g = new THREE.Group(), N = 5, discs = [];
+  const cols = [SKY, MID, PALE, '#6f9fd8', '#a9c6ec'];
+  for (let i = 0; i < N; i++) {
+    const a = i / N * TAU + 0.4, m = new THREE.Mesh(new THREE.CircleGeometry(4.6, 96), new THREE.MeshBasicMaterial({ color: cols[i], transparent: true, opacity: 0.2, depthWrite: false, side: THREE.DoubleSide }));
+    const edge = mkLine(97, BLUE, 1.4, 0.55); for (let j = 0; j < 97; j++) { const b = j / 96 * TAU; edge.buf[j * 3] = Math.cos(b) * 4.6; edge.buf[j * 3 + 1] = Math.sin(b) * 4.6; edge.buf[j * 3 + 2] = 0; } push(edge);
+    const grp = new THREE.Group(); grp.add(m, edge); grp.far = [Math.cos(a) * 10.5, Math.sin(a) * 6]; grp.near = [Math.cos(a) * 2.5, Math.sin(a) * 2.5]; grp.ph = rr(0, TAU);
+    grp.position.z = i * 0.05; g.add(grp); discs.push(grp);
+  }
+  const halo = glow(7), core = glow(3.4); halo.position.z = core.position.z = 0.5; g.add(halo, core);
+  return { g, update(t, time) {
+    const k = span(0.2, 0.6, t), fadeOut = 1 - span(0.94, 1, t), lit = span(0.55, 0.75, t);
+    discs.forEach((d, i) => { const ap = span(i * 0.03, 0.1 + i * 0.03, t);
+      d.position.x = lerp(d.far[0], d.near[0], k) + Math.sin(time * 0.6 + d.ph) * 0.5 * (1 - k);
+      d.position.y = lerp(d.far[1], d.near[1], k) + Math.cos(time * 0.5 + d.ph) * 0.5 * (1 - k);
+      d.children[0].material.opacity = 0.2 * ap * fadeOut; d.children[1].material.opacity = 0.55 * ap * fadeOut; d.scale.setScalar(0.6 + 0.4 * ap); });
+    const pulse = 1 + 0.06 * Math.sin(time * 3);
+    halo.scale.setScalar(halo.base * lit * pulse); halo.material.opacity = 0.9 * lit * fadeOut; core.scale.setScalar(core.base * lit); core.material.opacity = lit * fadeOut;
+  } };
+}
+
+/* ---------- 05  Gyroscope ---------- */
+function gyro() {
+  const g = new THREE.Group(), N = 5, ringsA = [];
+  for (let i = 0; i < N; i++) {
+    const r = 2.4 + i * 1.5, m = new THREE.Mesh(new THREE.TorusGeometry(r, 0.07, 12, 160), new THREE.MeshBasicMaterial({ color: [BLUE, MID, SKY, MID, BLUE][i], transparent: true }));
+    m.ax = new THREE.Vector3(rr(-1, 1), rr(-1, 1), rr(-1, 1)).normalize(); m.sp = rr(0.5, 1.1) * (i % 2 ? 1 : -1); m.tilt = rr(0.6, 1.5);
+    g.add(m); ringsA.push(m);
+  }
+  const core = dot(0.45, BLUE), halo = glow(6); g.add(core, halo);
+  const q = new THREE.Quaternion(), flat = new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI / 2, 0, 0));
+  return { g, update(t, time) {
+    const fadeOut = 1 - span(0.94, 1, t);
+    ringsA.forEach((m, i) => { const k = span(0.25 + i * 0.09, 0.45 + i * 0.09, t);
+      q.setFromAxisAngle(m.ax, time * m.sp + m.tilt * 3); m.quaternion.copy(q).slerp(flat, k); m.material.opacity = span(i * 0.03, 0.1 + i * 0.03, t) * fadeOut; });
+    const lit = span(0.78, 0.88, t); halo.scale.setScalar(halo.base * lit * (1 + 0.08 * Math.sin(time * 3))); halo.material.opacity = lit * fadeOut; core.material.opacity = fadeOut;
+  } };
+}
+
+/* ---------- 06  One orbit ---------- */
+function orbit() {
+  const g = new THREE.Group(), N = mobile ? 380 : 700, pos = new Float32Array(N * 3), P = [];
+  for (let i = 0; i < N; i++) P.push({ r: rr(2.5, 10), a: rr(0, TAU), sp: rr(0.25, 0.8) * (rnd() > 0.5 ? 1 : -1), tilt: rr(-1.4, 1.4), az: rr(0, TAU), bob: rr(0, TAU) });
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const pts = new THREE.Points(geo, new THREE.PointsMaterial({ color: MID, size: 0.16, transparent: true, opacity: 0.85, depthWrite: false })); pts.frustumCulled = false; g.add(pts);
+  const ringL = mkLine(181, BLUE, 2.4, 1); for (let j = 0; j <= 180; j++) { const a = j / 180 * TAU; ringL.buf[j * 3] = Math.cos(a) * 6.5; ringL.buf[j * 3 + 1] = 0; ringL.buf[j * 3 + 2] = Math.sin(a) * 6.5; } push(ringL); g.add(ringL);
+  const core = dot(0.5, BLUE), halo = glow(7); g.add(core, halo);
+  return { g, update(t, time) {
+    const fadeOut = 1 - span(0.94, 1, t), k = span(0.25, 0.7, t);
+    for (let i = 0; i < N; i++) { const p = P[i], ki = clamp(k * 1.25 - (i / N) * 0.25), a = p.a + time * lerp(p.sp, 0.45, ki), r = lerp(p.r, 6.5 + Math.sin(p.bob) * 0.25, ki), tilt = p.tilt * (1 - ki);
+      const x = Math.cos(a) * r, z = Math.sin(a) * r, y = z * Math.sin(tilt), z2 = z * Math.cos(tilt), ca = Math.cos(p.az), sa = Math.sin(p.az);
+      pos[i * 3] = x * ca - z2 * sa; pos[i * 3 + 1] = y + Math.sin(p.bob + time) * 0.08; pos[i * 3 + 2] = x * sa + z2 * ca; }
+    geo.attributes.position.needsUpdate = true; pts.material.opacity = 0.85 * span(0, 0.08, t) * fadeOut;
+    ringL.material.opacity = span(0.62, 0.78, t) * 0.7 * fadeOut;
+    const lit = span(0.55, 0.75, t); halo.scale.setScalar(halo.base * (0.35 + 0.65 * lit) * (1 + 0.07 * Math.sin(time * 3))); halo.material.opacity = (0.3 + 0.7 * lit) * fadeOut; core.material.opacity = fadeOut;
+  } };
+}
+
+/* ---------- 07  Terrain ---------- */
+function terrain() {
+  const g = new THREE.Group(), R = 26, P = 90, lines = [];
+  const peaks = [[-8, -4, 2.2, 2.2], [-2, 3, 3.0, 2.0], [5, -1, 5.2, 2.3], [9, 5, 2.6, 1.8], [-6, 6, 1.8, 1.6], [1, -6, 2.4, 2.0]], pick = 2;
+  for (let i = 0; i < R; i++) { const l = mkLine(P, i % 2 ? MID : SKY, 1.4, 0.8); l.z = lerp(-9, 9, i / (R - 1)); lines.push(l); g.add(l); }
+  const pin = mkLine(2, BLUE, 2, 1), halo = glow(5); g.add(pin, halo);
+  return { g, update(t, time) {
+    const fadeOut = 1 - span(0.94, 1, t), park = span(0.55, 0.75, t);
+    lines.forEach((l, i) => { for (let j = 0; j < P; j++) { const x = lerp(-14, 14, j / (P - 1)); let y = 0;
+        peaks.forEach((p, n) => { const rise = span(0.05 + n * 0.06, 0.3 + n * 0.06, t), h = p[2] * rise * (n === pick ? 1 : 1 - 0.68 * park);
+          y += h * Math.exp(-((x - p[0]) ** 2 + (l.z - p[1]) ** 2) / (2 * p[3] * p[3])); });
+        y += 0.06 * Math.sin(x * 2 + l.z + time * 1.2);
+        l.buf[j * 3] = x; l.buf[j * 3 + 1] = y - 2; l.buf[j * 3 + 2] = l.z; }
+      push(l); l.material.opacity = 0.8 * span(0, 0.08, t) * fadeOut; });
+    const top = peaks[pick][2] - 2, m = span(0.6, 0.8, t);
+    pin.buf.set([peaks[pick][0], top, peaks[pick][1], peaks[pick][0], top + 3.2 * m, peaks[pick][1]]); push(pin); pin.material.opacity = m * fadeOut;
+    halo.position.set(peaks[pick][0], top + 3.2 * m, peaks[pick][1]); halo.scale.setScalar(halo.base * m * (1 + 0.08 * Math.sin(time * 3))); halo.material.opacity = m * fadeOut;
+  } };
+}
+
+/* ---------- 08  Causes ---------- */
+function causes() {
+  const g = new THREE.Group(), layers = [[-12, 4], [-6, 3], [0, 2], [7, 1]], nodes = [], links = [], P = 40;
+  layers.forEach(([x, n], li) => { for (let i = 0; i < n; i++) { const y = (i - (n - 1) / 2) * (li === 0 ? 3 : 3.6), m = dot(li === 3 ? 0.6 : 0.34, li === 3 ? BLUE : MID); m.position.set(x, y, rr(-1.5, 1.5) * (li === 3 ? 0 : 1)); m.li = li; g.add(m); nodes.push(m); } });
+  const by = li => nodes.filter(n => n.li === li);
+  for (let li = 0; li < 3; li++) by(li).forEach((a, i) => { const targets = by(li + 1); const bs = [targets[Math.min(targets.length - 1, Math.floor(i * targets.length / by(li).length))]]; if (li < 2 && i % 2 === 0 && targets.length > 1) bs.push(targets[(i + 1) % targets.length]);
+    bs.forEach(b => { const l = mkLine(P, SKY, 1.6, 0.9); for (let j = 0; j < P; j++) { const u = j / (P - 1), e = u * u * (3 - 2 * u);
+        // drawn from the effect back to the cause
+        l.buf[j * 3] = lerp(b.position.x, a.position.x, u); l.buf[j * 3 + 1] = lerp(b.position.y, a.position.y, e); l.buf[j * 3 + 2] = lerp(b.position.z, a.position.z, e); }
+      push(l); l.li = li; l.a = a; l.b = b; const pulse = glow(1.3); l.pulse = pulse; l.ph = rr(0, 1); g.add(l, pulse); links.push(l); }); });
+  const noise = Array.from({ length: 7 }, () => { const m = dot(0.22, GREY); m.home = [rr(-13, 6), rr(-7, 7) , rr(-4, 4)]; m.ph = rr(0, TAU); g.add(m); return m; });
+  const halo = glow(7); halo.position.copy(nodes[nodes.length - 1].position); g.add(halo);
+  return { g, update(t, time) {
+    const fadeOut = 1 - span(0.94, 1, t), flow = span(0.5, 0.6, t);
+    nodes.forEach(n => { n.material.opacity = (n.li === 3 ? 1 : span(0.1 + (2 - n.li) * 0.13, 0.22 + (2 - n.li) * 0.13, t)) * fadeOut; });
+    links.forEach(l => { const d = span(0.04 + (2 - l.li) * 0.13, 0.2 + (2 - l.li) * 0.13, t); draw(l, d); l.material.opacity = 0.9 * fadeOut;
+      const u = 1 - ((time * 0.45 + l.ph) % 1), e = u * u * (3 - 2 * u);
+      l.pulse.position.set(lerp(l.b.position.x, l.a.position.x, u), lerp(l.b.position.y, l.a.position.y, e), lerp(l.b.position.z, l.a.position.z, e)); l.pulse.material.opacity = flow * fadeOut * Math.sin(u * Math.PI); });
+    noise.forEach(m => { m.position.set(m.home[0] + Math.sin(time * 0.5 + m.ph) * 0.6, m.home[1] + Math.cos(time * 0.4 + m.ph) * 0.6, m.home[2]); m.material.opacity = 0.8 * span(0.3, 0.45, t) * fadeOut; });
+    halo.scale.setScalar(halo.base * (0.4 + 0.6 * flow) * (1 + 0.08 * Math.sin(time * 3))); halo.material.opacity = (0.35 + 0.65 * flow) * fadeOut;
+  } };
+}
+
+/* ---------- 09  Prism ---------- */
+function prism() {
+  const g = new THREE.Group(), N = 5, pass = 1, BX = 9;
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(2.4, 2.4, 3.2, 3), new THREE.MeshStandardMaterial({ color: '#dfe9f7', transparent: true, opacity: 0.45, roughness: 0.2, depthWrite: false }));
+  body.rotation.x = Math.PI / 2; body.rotation.y = Math.PI / 6;
+  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(body.geometry), new THREE.LineBasicMaterial({ color: BLUE, transparent: true, opacity: 0.6 })); body.add(edges); g.add(body);
+  const inb = mkLine(2, BLUE, 3.2, 1); g.add(inb);
+  const beams = Array.from({ length: N }, (_, i) => { const l = mkLine(2, [SKY, BLUE, MID, SKY, MID][i], 2.2, 1); l.y = (i - (N - 1) / 2) * 2.3; g.add(l); return l; });
+  const bar = mkLine(2, NAVY, 2, 0.5); bar.buf.set([BX, -6.6, 0, BX, 6.6, 0]); push(bar); g.add(bar);
+  const stops = beams.map(b => { const s = dot(0.2, GREY); s.position.set(BX, b.y, 0); g.add(s); return s; });
+  const halo = glow(5.5); g.add(halo);
+  return { g, update(t, time) {
+    const fadeOut = 1 - span(0.94, 1, t), a = span(0.04, 0.2, t);
+    inb.buf.set([-17, 0, 0, lerp(-17, -1, a), 0, 0]); push(inb); inb.material.opacity = fadeOut;
+    body.material.opacity = 0.45 * fadeOut; edges.material.opacity = 0.6 * fadeOut; body.rotation.z = Math.sin(time * 0.4) * 0.04;
+    bar.material.opacity = 0.5 * span(0.3, 0.4, t) * fadeOut;
+    beams.forEach((b, i) => { const out = span(0.2 + i * 0.03, 0.42 + i * 0.03, t), isP = i === pass, kill = isP ? 0 : span(0.5 + i * 0.05, 0.6 + i * 0.05, t), go = isP ? span(0.72, 0.9, t) : 0;
+      const ex = lerp(1, BX, out) + go * 8; b.buf.set([1, b.y * 0.12, 0, ex, lerp(b.y * 0.12, b.y, clamp((ex - 1) / (BX - 1))), 0]); push(b);
+      b.material.opacity = (1 - 0.85 * kill) * fadeOut; b.material.linewidth = (isP ? 2.2 + 1.6 * go : 2.2) * (mobile ? 0.8 : 1);
+      stops[i].material.opacity = (isP ? 0 : kill) * fadeOut; });
+    const go = span(0.72, 0.9, t); halo.position.set(BX + go * 8, beams[pass].y, 0); halo.scale.setScalar(halo.base * go * (1 + 0.08 * Math.sin(time * 3))); halo.material.opacity = go * fadeOut;
+  } };
+}
+
+/* ---------- 10  Probes ---------- */
+function probes() {
+  const g = new THREE.Group(), N = 4, P = 70, win = 2, paths = [];
+  const start = dot(0.4, BLUE), end = dot(0.5, BLUE); start.position.set(-13, 0, 0); end.position.set(13, 0, 0); g.add(start, end);
+  for (let i = 0; i < N; i++) { const l = mkLine(P, i === win ? BLUE : MID, 1.8, 0.9), bend = (i - (N - 1) / 2) * 4.2, lift = [2.5, -1, 1.5, -2.5][i];
+    l.at = u => [lerp(-13, 13, u), Math.sin(u * Math.PI) * lift + Math.sin(u * TAU) * 0.6, Math.sin(u * Math.PI) * bend];
+    for (let j = 0; j < P; j++) { const p = l.at(j / (P - 1)); l.buf.set(p, j * 3); } push(l);
+    l.probe = glow(1.6); l.fail = [0.45, 0.7, 2, 0.58][i]; l.x = dot(0.2, GREY); g.add(l, l.probe, l.x); paths.push(l); }
+  const halo = glow(6); halo.position.copy(end.position); g.add(halo);
+  return { g, update(t, time) {
+    const fadeOut = 1 - span(0.94, 1, t);
+    paths.forEach((l, i) => { const drawn = span(0.02 + i * 0.03, 0.2 + i * 0.03, t); draw(l, drawn);
+      const u = clamp((t - 0.28 - i * 0.04) / 0.38), reach = Math.min(u, l.fail), failed = i !== win && u >= l.fail, f = failed ? span(0, 0.08, u - l.fail) : 0;
+      const p = l.at(reach); l.probe.position.set(p[0], p[1], p[2]); l.probe.material.opacity = (u > 0 && !failed && u < 1 ? 1 : (failed ? 1 - f : 0)) * fadeOut;
+      l.x.position.set(p[0], p[1], p[2]); l.x.material.opacity = (failed ? f : 0) * fadeOut;
+      const wins = i === win ? span(0.72, 0.85, t) : 0;
+      l.material.opacity = (i === win ? 0.9 : 0.9 * (1 - 0.8 * f)) * fadeOut; l.material.linewidth = (1.8 + 2 * wins) * (mobile ? 0.8 : 1); });
+    const lit = span(0.72, 0.85, t); halo.scale.setScalar(halo.base * lit * (1 + 0.08 * Math.sin(time * 3))); halo.material.opacity = lit * fadeOut;
+    start.material.opacity = end.material.opacity = fadeOut;
+  } };
+}
+
+/* ---------- 11  Helix ---------- */
+function helix() {
+  const g = new THREE.Group(), P = 420, TURNS = 3.5, l = mkLine(P, MID, 2.4, 1), beads = [];
+  const at = u => { const a = u * TURNS * TAU, r = 4 + u * 3.2; return [Math.cos(a) * r, u * 12, Math.sin(a) * r]; };
+  for (let j = 0; j < P; j++) l.buf.set(at(j / (P - 1)), j * 3); push(l); g.add(l);
+  const axis = mkLine(2, PALE, 1.2, 0.8); axis.buf.set([0, -0.5, 0, 0, 13, 0]); push(axis); g.add(axis);
+  const cG = new THREE.Color(GREY), cA = new THREE.Color(AMBER), cN = new THREE.Color(GREEN);
+  for (let i = 0; i < 21; i++) { const m = dot(0.3, GREY); m.u = (i + 0.5) / 21; m.position.set(...at(m.u)); m.fate = i % 5 === 3 ? 0 : 1; g.add(m); beads.push(m); }
+  const tip = glow(3.4); g.add(tip);
+  return { g, update(t, time) {
+    const fadeOut = 1 - span(0.94, 1, t), d = span(0.03, 0.8, t) ; draw(l, d); l.material.opacity = fadeOut; axis.material.opacity = 0.8 * fadeOut;
+    g.rotation.y = time * 0.12;
+    beads.forEach(m => { const seen = clamp((d - m.u) * 9), a = clamp((d - m.u) * 3.2 - 0.25), n = clamp((d - m.u) * 3.2 - 0.9);
+      m.material.color.copy(cG).lerp(cA, a); if (m.fate) m.material.color.lerp(cN, n); m.material.opacity = seen * (m.fate ? 1 : 1 - 0.75 * n) * fadeOut; m.scale.setScalar(0.5 + 0.5 * seen); });
+    const p = at(d); tip.position.set(p[0], p[1], p[2]); tip.material.opacity = (d > 0.01 ? 1 : 0) * fadeOut;
+  } };
+}
+
+/* ---------- 12  Growth rings ---------- */
+function rings() {
+  const g = new THREE.Group(), N = 7, SEG = 6, arcs = [];
+  const cG = new THREE.Color(GREY), cA = new THREE.Color(AMBER), cN = new THREE.Color(GREEN), cB = new THREE.Color(MID);
+  for (let i = 0; i < N; i++) for (let s = 0; s < SEG; s++) { const P = 40, l = mkLine(P, GREY, 2.6, 1), r = 1.6 + i * 1.25, a0 = s / SEG * TAU + i * 0.35, a1 = a0 + TAU / SEG - 0.09;
+    for (let j = 0; j < P; j++) { const a = lerp(a0, a1, j / (P - 1)), wob = 1 + 0.035 * Math.sin(a * 3 + i); l.buf[j * 3] = Math.cos(a) * r * wob; l.buf[j * 3 + 1] = 0; l.buf[j * 3 + 2] = Math.sin(a) * r * wob; }
+    push(l); l.i = i; l.s = s; l.fate = rnd() < 0.18 ? 0 : (rnd() < 0.3 ? 1 : 2); g.add(l); arcs.push(l); }
+  const core = dot(0.4, BLUE), halo = glow(5); g.add(core, halo);
+  return { g, update(t, time) {
+    const fadeOut = 1 - span(0.94, 1, t); g.rotation.y = time * 0.05;
+    arcs.forEach(l => { const b = 0.04 + l.i * 0.105, d = span(b + l.s * 0.008, b + 0.07 + l.s * 0.008, t), age = clamp((t - b - 0.08) / 0.22);
+      draw(l, d); const c = l.material.color; c.copy(cG).lerp(cA, clamp(age * 2)); if (l.fate === 2) c.lerp(cN, clamp(age * 2 - 1)); if (l.i === 0) c.copy(cB);
+      l.material.opacity = (l.fate === 0 ? 1 - 0.75 * clamp(age * 2 - 1) : 1) * fadeOut; });
+    halo.scale.setScalar(halo.base * (1 + 0.08 * Math.sin(time * 3))); halo.material.opacity = 0.8 * fadeOut; core.material.opacity = fadeOut;
+  } };
+}
+
+if (!start()) {
+  const d = document.createElement('div'); d.className = 'nogl'; d.textContent = 'This experiment needs WebGL.'; document.body.appendChild(d);
+}
+</script>
+</body>
+</html>

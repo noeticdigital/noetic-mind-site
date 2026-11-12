@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#f7f9fd" />
+<title>Experiment · seven 3D walkthroughs</title>
+<!--
+  NOETIC MIND / V15 experiment page. Seven candidate 3D walkthroughs for the landing page, on the
+  V15 light world (white to pale-blue gradient, frosted pale forms, navy and blue accents, soft
+  shadows, no bloom). Each loops on its own; drag to orbit. The loop plays the story once in about
+  twelve seconds, then starts again.
+    A  The tree           B  Fog lifting          C  Coming into focus     D  Threads into a pattern
+    E  Glass blocks       F  Compass needles      G  Strata
+-->
+<link rel="icon" type="image/svg+xml" href="../../noetic-logo.svg" />
+<link rel="preconnect" href="https://fonts.bunny.net" />
+<link href="https://fonts.bunny.net/css?family=geist:400,500,600,700|geist-mono:400,500" rel="stylesheet" />
+<style>
+  :root{--navy:#0a1a38;--ink:#0f2347;--muted:#5b6b85;--line:rgba(24,76,132,.14);--blue:#184c84;--blue-2:#5e95d8;--white:#fff;
+    --f:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--f);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased;
+    background:linear-gradient(180deg,#ffffff 0%,#f3f7fd 45%,#e3ecf9 100%)}
+  a{color:inherit}
+  canvas.world{position:fixed;inset:0;width:100vw;height:100vh;display:block;touch-action:none}
+  .bar{position:fixed;inset:0 0 auto 0;z-index:5;display:flex;align-items:center;gap:20px;height:72px;padding:0 28px;
+    background:linear-gradient(rgba(255,255,255,.9),rgba(255,255,255,0))}
+  .brand{display:flex;align-items:center;gap:10px;font:600 17px var(--f);text-decoration:none;color:var(--navy)}
+  .brand img{width:28px;height:28px;border-radius:7px;box-shadow:0 0 0 1px rgba(10,26,56,.1)}
+  .bar .back{margin-left:auto;font-size:14px;color:var(--muted);text-decoration:none}
+  .bar .back:hover{color:var(--navy)}
+  .panel{position:fixed;left:24px;bottom:24px;z-index:5;width:min(470px,calc(100vw - 48px));padding:20px 22px 18px;border-radius:18px;
+    background:rgba(255,255,255,.78);box-shadow:inset 0 0 0 1px var(--line),0 20px 50px rgba(10,26,56,.08);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+  .eyebrow{font:500 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+  .panel h1{margin-top:8px;font-size:22px;font-weight:600;letter-spacing:-.02em;color:var(--navy)}
+  .tabs{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:14px}
+  .tabs button{min-height:46px;border:0;border-radius:10px;background:rgba(24,76,132,.06);color:var(--muted);font:500 12px var(--f);cursor:pointer;
+    box-shadow:inset 0 0 0 1px var(--line);transition:background-color .2s,color .2s;padding:4px 2px}
+  .tabs button:hover{color:var(--navy)}
+  .tabs button[aria-selected="true"]{background:var(--navy);color:var(--white);box-shadow:none}
+  .tabs button b{display:block;font:500 11px var(--mono);letter-spacing:.1em}
+  .desc{margin-top:14px;font-size:15px;line-height:1.5;color:var(--ink)}
+  .desc strong{color:var(--navy)}
+  .hint{margin-top:10px;font:400 12px var(--mono);color:var(--muted)}
+  .nogl{position:fixed;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted)}
+  @media (max-width:700px){ .bar{padding:0 16px} .panel{left:12px;right:12px;bottom:12px;width:auto;padding:16px} .desc{font-size:14px}
+    .tabs{grid-template-columns:repeat(4,1fr)} .tabs button span{display:none} }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="../"><img src="../../noetic-logo.svg" alt="" width="28" height="28" />Noetic Mind</a>
+  <a class="back" href="../">Back to V15</a>
+</header>
+<div class="panel">
+  <p class="eyebrow">Experiment · seven 3D walkthroughs</p>
+  <h1 id="title">The tree</h1>
+  <div class="tabs" role="tablist" aria-label="Concepts">
+    <button role="tab" aria-selected="true" data-k="0"><b>A</b><span>Tree</span></button>
+    <button role="tab" aria-selected="false" data-k="1"><b>B</b><span>Fog</span></button>
+    <button role="tab" aria-selected="false" data-k="2"><b>C</b><span>Focus</span></button>
+    <button role="tab" aria-selected="false" data-k="3"><b>D</b><span>Threads</span></button>
+    <button role="tab" aria-selected="false" data-k="4"><b>E</b><span>Blocks</span></button>
+    <button role="tab" aria-selected="false" data-k="5"><b>F</b><span>Compass</span></button>
+    <button role="tab" aria-selected="false" data-k="6"><b>G</b><span>Strata</span></button>
+  </div>
+  <p class="desc" id="desc"></p>
+  <p class="hint">Plays on a loop · drag to orbit · scroll to zoom</p>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const mobile = matchMedia('(max-width: 760px)').matches;
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = t => t * t * t * (t * (t * 6 - 15) + 10);
+const span = (a, b, x) => ease(clamp((x - a) / (b - a)));
+const lerp = (a, b, t) => a + (b - a) * t;
+let seed = 11;
+const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+const rr = (a, b) => a + (b - a) * rnd();
+
+const PALE = '#f4f7fc', PALE2 = '#dfe8f5', NAVY = '#0a1a38', BLUE = '#184c84', GLOW = '#5e95d8';
+const AMBER = '#c98a1e', GREEN = '#3f8f5b', GREY = '#b8c0cc';
+const frosted = (color = PALE, opacity = 1) => new THREE.MeshPhysicalMaterial({ color, roughness: 0.55, metalness: 0, transparent: opacity < 1, opacity, clearcoat: 0.3, clearcoatRoughness: 0.6 });
+const solid = (color) => new THREE.MeshStandardMaterial({ color, roughness: 0.7 });
+const lit = (color = GLOW, k = 1) => new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: k, roughness: 0.5 });
+
+const CONCEPTS = [
+  { title: 'The tree', cam: [0, 4.5, 0, 36, 18, 12],
+    desc: '<strong>The brief grows into the Progress-to-Outcome Tree.</strong> Interviews arrive as light along the trunk and branches thicken. Buds turn from grey to amber to green as beliefs go from assumption to emerging to validated; a disproven branch drops. Each lap adds a ring.' },
+  { title: 'Fog lifting', cam: [0, 1, 0, 40, 24, 36],
+    desc: '<strong>A landscape under white fog.</strong> Each stage clears the fog from another region until one path to the destination is visible. The dead ends fade back into the fog. Knowing what to build next, literally.' },
+  { title: 'Coming into focus', cam: [0, 3, -4, 34, 48, 12],
+    desc: '<strong>A blurred cloud of points.</strong> Each stage is a glass lens the camera passes through. The cloud tightens step by step and resolves into one sharp point: the next thing to build.' },
+  { title: 'Threads into a pattern', cam: [0, 3, 0, 30, 30, 22],
+    desc: '<strong>Customer stories as loose threads.</strong> They drift, then are drawn together and woven into one pattern. Frayed threads, the weak bets, are cut away. Warm, human, and true to "stories go in".' },
+  { title: 'Glass blocks', cam: [0, 3, 0, 30, 28, 18],
+    desc: '<strong>Scattered frosted blocks, one per belief.</strong> They sort themselves into one standing structure. A block clears as it is tested; untested ones stay frosted, and disproven ones dissolve.' },
+  { title: 'Compass needles', cam: [0, 0.5, -3, 40, 10, 48],
+    desc: '<strong>Dozens of needles pointing everywhere: opinions.</strong> As evidence arrives they swing round one by one, until they all point the same way. The direction is what to build next.' },
+  { title: 'Strata', cam: [0, 5, 0, 40, 24, 18],
+    desc: '<strong>Translucent planes stacked in depth, one per stage.</strong> The camera descends through them, and each adds structure to the single shape forming below: the decision.' },
+];
+
+function start() {
+  const canvas = document.createElement('canvas'); canvas.className = 'world';
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }); } catch (e) { return false; }
+  if (!renderer.getContext()) return false;
+  document.body.prepend(canvas);
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mobile ? 1.5 : 2));
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog('#eef3fb', 30, 90);
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.3, 400);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xdfe8f5, 1.1));
+  const sun = new THREE.DirectionalLight(0xffffff, 2.0); sun.position.set(-14, 30, 16); sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -25, right: 25, top: 25, bottom: -25, near: 1, far: 80 });
+  sun.shadow.normalBias = 0.03; sun.shadow.bias = -0.0003; scene.add(sun);
+  const fill = new THREE.DirectionalLight(0xbdd4f5, 0.8); fill.position.set(30, 18, -20); scene.add(fill);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.ShadowMaterial({ color: NAVY, opacity: 0.1 }));
+  ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+  const controls = new OrbitControls(camera, canvas); controls.enableDamping = true; controls.maxPolarAngle = Math.PI / 2 - 0.03;
+
+  const helpers = { THREE, RoundedBoxGeometry, frosted, solid, lit, rr, rnd, span, lerp, clamp, ease, mobile };
+  const scenes = [tree, fog, focus, threads, blocks, compass, strata].map(f => f(helpers));
+  scenes.forEach(s => { s.g.visible = false; scene.add(s.g); });
+
+  let k = 0, t0 = performance.now();
+  const title = document.getElementById('title'), desc = document.getElementById('desc');
+  const tabs = Array.from(document.querySelectorAll('.tabs button'));
+  function select(i) {
+    k = i; scenes.forEach((s, j) => s.g.visible = j === i);
+    title.textContent = CONCEPTS[i].title; desc.innerHTML = CONCEPTS[i].desc;
+    tabs.forEach((b, j) => b.setAttribute('aria-selected', j === i));
+    const c = CONCEPTS[i].cam; controls.target.set(c[0], c[1], c[2]);
+    const yaw = c[4] * Math.PI / 180, pitch = c[5] * Math.PI / 180;
+    camera.position.set(c[0] + Math.sin(yaw) * Math.cos(pitch) * c[3], c[1] + Math.sin(pitch) * c[3], c[2] + Math.cos(yaw) * Math.cos(pitch) * c[3]);
+    t0 = performance.now();
+  }
+  tabs.forEach(b => b.addEventListener('click', () => select(+b.dataset.k)));
+  const hash = +location.hash.slice(1); select(Number.isInteger(hash) && hash >= 0 && hash < 7 ? hash : 0);
+
+  function resize() { const W = innerWidth, H = innerHeight; renderer.setSize(W, H, false); camera.aspect = W / H; camera.updateProjectionMatrix(); }
+  resize(); addEventListener('resize', resize);
+  const LOOP = 12000;
+  function frame(now) {
+    const t = ((now - t0) % LOOP) / LOOP, time = now / 1000;
+    scenes[k].update(t, time);
+    controls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  return true;
+}
+
+/* ---------- A  The tree ---------- */
+function tree({ THREE, frosted, solid, lit, rr, span, lerp }) {
+  const g = new THREE.Group();
+  const trunkM = frosted(PALE), budM = () => new THREE.MeshStandardMaterial({ color: GREY, roughness: 0.6 });
+  const branches = [], buds = [];
+  function limb(from, dir, len, r, depth, delay) {
+    const to = from.clone().add(dir.clone().multiplyScalar(len));
+    const mid = from.clone().lerp(to, 0.5).add(new THREE.Vector3(rr(-0.4, 0.4), 0.2, rr(-0.4, 0.4)));
+    const curve = new THREE.CatmullRomCurve3([from, mid, to]);
+    const geo = new THREE.TubeGeometry(curve, 24, r, 10, false);
+    const m = new THREE.Mesh(geo, depth === 0 ? trunkM : frosted(depth === 1 ? PALE : PALE2)); m.castShadow = true; g.add(m);
+    const b = { m, geo, delay, drop: depth === 2 && branches.length % 5 === 3, from, to };
+    branches.push(b);
+    if (depth < 2) {
+      const n = depth === 0 ? 4 : 2;
+      for (let i = 0; i < n; i++) {
+        const d = dir.clone().applyAxisAngle(new THREE.Vector3(rr(-1, 1), 0, rr(-1, 1)).normalize(), rr(0.5, 0.95));
+        d.y = Math.abs(d.y) + 0.2; d.normalize();
+        limb(to.clone(), d, len * rr(0.55, 0.75), r * 0.55, depth + 1, delay + 0.14 + i * 0.03);
+      }
+    } else {
+      const bud = new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 14), budM()); bud.position.copy(to); bud.castShadow = true; g.add(bud);
+      buds.push({ m: bud, delay: delay + 0.12, state: rnd() < 0.3 ? 1 : 2, parent: b });
+    }
+  }
+  limb(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1, 0), 5, 0.42, 0, 0);
+  // the brief: a seed card on the ground; the ring: one per lap
+  const seedCard = new THREE.Mesh(new RoundedBoxGeometry(1.6, 0.08, 1.1, 2, 0.02), lit(BLUE, 0.15)); seedCard.position.y = 0.06; g.add(seedCard);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(2.2, 2.32, 96), new THREE.MeshBasicMaterial({ color: GLOW, transparent: true, opacity: 0, side: THREE.DoubleSide }));
+  ring.rotation.x = -Math.PI / 2; ring.position.y = 0.02; g.add(ring);
+  // light travelling up the trunk: interviews arriving
+  const sparks = Array.from({ length: 6 }, (_, i) => { const s = new THREE.Mesh(new THREE.SphereGeometry(0.12, 10, 8), lit(GLOW, 1.4)); g.add(s); return { s, o: i / 6 }; });
+  const cA = new THREE.Color(GREY), cE = new THREE.Color(AMBER), cV = new THREE.Color(GREEN), tmp = new THREE.Color();
+  return { g, update(t, time) {
+    branches.forEach(b => {
+      const f = span(b.delay, b.delay + 0.12, t);
+      const n = Math.floor(24 * f) * 60; b.geo.setDrawRange(0, n); b.m.visible = f > 0.01;
+      if (b.drop) { const d = span(0.8, 0.9, t); b.m.position.y = -d * 6; b.m.rotation.z = d * 0.9; b.m.material.opacity = 1 - d; b.m.material.transparent = true; }
+    });
+    buds.forEach(b => {
+      const f = span(b.delay, b.delay + 0.06, t); b.m.scale.setScalar(Math.max(0.001, f));
+      const e = span(b.delay + 0.1, b.delay + 0.25, t), v = b.state === 2 ? span(b.delay + 0.3, b.delay + 0.5, t) : 0;
+      tmp.copy(cA).lerp(cE, e).lerp(cV, v); b.m.material.color.copy(tmp);
+      b.m.material.emissive.copy(tmp).multiplyScalar(0.25 * Math.max(e, v));
+      if (b.parent.drop) { const d = span(0.8, 0.9, t); b.m.position.y = b.parent.to.y - d * 6; b.m.material.opacity = 1 - d; b.m.material.transparent = true; b.m.rotation.z = d; }
+    });
+    const live = span(0.06, 0.12, t);
+    sparks.forEach(({ s, o }) => { const ph = (time * 0.35 + o) % 1; s.position.set(Math.sin(ph * 9) * 0.3, ph * 5.2, Math.cos(ph * 9) * 0.3); s.visible = live > 0.5 && ph < 0.95; });
+    seedCard.material.emissiveIntensity = 0.2 + 0.3 * Math.sin(time * 2) * (1 - live);
+    ring.material.opacity = 0.7 * span(0.9, 0.97, t); ring.scale.setScalar(1 + 0.4 * span(0.9, 1, t));
+  } };
+}
+
+/* ---------- B  Fog lifting ---------- */
+function fog({ THREE, frosted, solid, lit, rr, span, lerp, clamp }) {
+  const g = new THREE.Group();
+  const N = 90, size = 36;
+  const geo = new THREE.PlaneGeometry(size, size, N, N); geo.rotateX(-Math.PI / 2);
+  const pos = geo.attributes.position;
+  const h = (x, z) => 1.6 * Math.sin(x * 0.35) * Math.cos(z * 0.3) + 0.9 * Math.sin(x * 0.9 + 1) * Math.sin(z * 0.7) + 0.4 * Math.cos(x * 1.9) * Math.cos(z * 2.1);
+  for (let i = 0; i < pos.count; i++) pos.setY(i, h(pos.getX(i), pos.getZ(i)) + 1.5);
+  geo.computeVertexNormals();
+  const terrain = new THREE.Mesh(geo, frosted(PALE)); terrain.receiveShadow = true; terrain.castShadow = true; g.add(terrain);
+  // the path across it, and the dead ends
+  const P = (x, z) => new THREE.Vector3(x, h(x, z) + 1.65, z);
+  const main = new THREE.CatmullRomCurve3([P(-15, 14), P(-9, 8), P(-3, 5), P(2, -1), P(7, -6), P(12, -12)]);
+  const pathGeo = new THREE.TubeGeometry(main, 160, 0.11, 8, false);
+  const path = new THREE.Mesh(pathGeo, lit(GLOW, 1.1)); g.add(path);
+  const deadEnds = [[P(-3, 5), P(-1, 9), P(3, 12)], [P(2, -1), P(6, 2), P(10, 5)], [P(-9, 8), P(-13, 3), P(-15, -3)]].map(pts => {
+    const c = new THREE.CatmullRomCurve3(pts); const m = new THREE.Mesh(new THREE.TubeGeometry(c, 60, 0.08, 8, false), new THREE.MeshStandardMaterial({ color: GREY, roughness: 0.7, transparent: true })); g.add(m); return m; });
+  const flag = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.2, 8), solid(NAVY)); flag.position.copy(P(12, -12)).add(new THREE.Vector3(0, 1.1, 0)); g.add(flag);
+  const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 14), lit(GLOW, 1.6)); beacon.position.copy(flag.position).add(new THREE.Vector3(0, 1.3, 0)); g.add(beacon);
+  // fog: six soft discs, one per region, that lift and thin
+  const regions = [[-11, 10], [-4, 4], [3, -2], [9, -9], [-10, -3], [6, 8]];
+  const fogM = () => new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.96, depthWrite: false });
+  const pads = regions.map(([x, z], i) => {
+    const m = new THREE.Mesh(new THREE.CircleGeometry(6.5, 48), fogM()); m.rotation.x = -Math.PI / 2; m.position.set(x, 4.4 + i * 0.01, z); g.add(m);
+    const m2 = new THREE.Mesh(new THREE.CircleGeometry(5, 48), fogM()); m2.rotation.x = -Math.PI / 2; m2.position.set(x + 1, 5.2, z - 1); g.add(m2);
+    return { m, m2, x, z, i };
+  });
+  return { g, update(t, time) {
+    pads.forEach(p => {
+      const order = [0, 1, 2, 3, 4, 5][p.i] / 6;
+      const lift = span(0.08 + order * 0.55, 0.2 + order * 0.55, t) * (1 - span(0.93, 1, t));
+      p.m.position.y = 4.4 + lift * 9 + Math.sin(time + p.i) * 0.15; p.m.material.opacity = 0.96 * (1 - lift);
+      p.m2.position.y = 5.4 + lift * 11; p.m2.material.opacity = 0.9 * (1 - lift);
+      p.m.scale.setScalar(1 + lift * 0.6); p.m2.scale.setScalar(1 + lift * 0.8);
+    });
+    const draw = span(0.15, 0.7, t); pathGeo.setDrawRange(0, Math.floor(160 * draw) * 48); path.visible = draw > 0.01;
+    deadEnds.forEach((m, i) => { m.material.opacity = span(0.3 + i * 0.1, 0.4 + i * 0.1, t) * (1 - span(0.6 + i * 0.08, 0.7 + i * 0.08, t)); m.visible = m.material.opacity > 0.01; });
+    const arrive = span(0.7, 0.78, t); beacon.scale.setScalar(Math.max(0.001, arrive) * (1 + 0.1 * Math.sin(time * 3))); flag.scale.y = Math.max(0.001, arrive);
+  } };
+}
+
+/* ---------- C  Coming into focus ---------- */
+function focus({ THREE, frosted, lit, rr, span, lerp }) {
+  const g = new THREE.Group();
+  const N = mobile ? 500 : 1100, cloud = [], tight = [];
+  const geo = new THREE.BufferGeometry(); const arr = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) { let x, y, z; do { x = rr(-1, 1); y = rr(-1, 1); z = rr(-1, 1); } while (x * x + y * y + z * z > 1); cloud.push(new THREE.Vector3(x * 9, 3 + y * 5, z * 9)); tight.push(new THREE.Vector3(rr(-.5, .5), 3 + rr(-.5, .5), rr(-.5, .5))); }
+  geo.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+  const tex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'); const gr = x.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(24,76,132,1)'); gr.addColorStop(0.5, 'rgba(24,76,132,.35)'); gr.addColorStop(1, 'rgba(24,76,132,0)'); x.fillStyle = gr; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+  const pm = new THREE.PointsMaterial({ size: 1.3, map: tex, transparent: true, opacity: 0.7, depthWrite: false, sizeAttenuation: true, color: BLUE });
+  const pts = new THREE.Points(geo, pm); g.add(pts);
+  // five lenses along the z axis
+  const lenses = [0, 1, 2].map(i => {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(3.6 - i * 0.6, 0.08, 12, 96), frosted(PALE)); ring.castShadow = true;
+    const glass = new THREE.Mesh(new THREE.CircleGeometry(3.55 - i * 0.6, 64), new THREE.MeshPhysicalMaterial({ color: '#ffffff', transparent: true, opacity: 0.18, roughness: 0.1, transmission: 0.6, thickness: 0.4, side: THREE.DoubleSide }));
+    const grp = new THREE.Group(); grp.add(ring, glass); grp.position.set(0, 3, 4 - i * 6); g.add(grp); return grp;
+  });
+  const point = new THREE.Mesh(new THREE.SphereGeometry(0.42, 24, 20), lit(GLOW, 1.4)); point.position.set(0, 3, -14); g.add(point);
+  const halo = new THREE.Mesh(new THREE.RingGeometry(0.7, 0.78, 64), new THREE.MeshBasicMaterial({ color: GLOW, transparent: true, side: THREE.DoubleSide })); halo.position.copy(point.position); g.add(halo);
+  const camPath = [12, -14]; const self = { g };
+  self.update = (t, time) => {
+    const f = span(0.1, 0.85, t);
+    for (let i = 0; i < N; i++) { const a = cloud[i], b = tight[i]; const z = lerp(a.z, b.z - 14 + 14 * (1 - f), f); arr[i * 3] = lerp(a.x, b.x, f) + Math.sin(time + i) * 0.05 * (1 - f); arr[i * 3 + 1] = lerp(a.y, b.y, f); arr[i * 3 + 2] = lerp(a.z, point.position.z, f) + (1 - f) * 0; }
+    geo.attributes.position.needsUpdate = true;
+    pm.size = lerp(1.3, 0.25, f); pm.opacity = lerp(0.7, 0.95, f);
+    lenses.forEach((l, i) => { l.rotation.y = Math.sin(time * 0.3 + i) * 0.05; });
+    const sharp = span(0.82, 0.92, t); point.scale.setScalar(Math.max(0.001, sharp)); halo.scale.setScalar(1 + sharp * 2 * ((time % 1.6) / 1.6)); halo.material.opacity = sharp * (1 - (time % 1.6) / 1.6);
+    // the group drifts so the camera appears to move through the lenses
+    g.position.z = lerp(0, 6, f);
+  };
+  return self;
+}
+
+/* ---------- D  Threads into a pattern ---------- */
+function threads({ THREE, frosted, lit, rr, span, lerp }) {
+  const g = new THREE.Group();
+  const N = 14, W = 12, items = [];
+  for (let i = 0; i < N; i++) {
+    const loose = Array.from({ length: 6 }, (_, j) => new THREE.Vector3(rr(-9, 9), rr(1, 7), rr(-7, 7)));
+    const warp = i < 8, idx = warp ? i : i - 8;
+    const woven = Array.from({ length: 6 }, (_, j) => warp ? new THREE.Vector3(-W / 2 + idx * (W / 7), 3 + (j % 2 ? 0.14 : -0.14), -6 + j * 2.4) : new THREE.Vector3(-6 + j * 2.4, 3 + (j % 2 ? -0.14 : 0.14), -W / 2 + idx * (W / 5)));
+    const frayed = i === 6 || i === 12;
+    const pts = loose.map(p => p.clone());
+    const curve = new THREE.CatmullRomCurve3(pts);
+    const mat = new THREE.MeshStandardMaterial({ color: frayed ? GREY : (i % 3 ? BLUE : GLOW), roughness: 0.6, transparent: true, emissive: frayed ? '#000000' : (i % 3 ? BLUE : GLOW), emissiveIntensity: 0.2 });
+    const m = new THREE.Mesh(new THREE.TubeGeometry(curve, 80, 0.07, 8, false), mat); m.castShadow = true; g.add(m);
+    items.push({ m, loose, woven, pts, curve, frayed, delay: i / N * 0.4 });
+  }
+  const frame = new THREE.Mesh(new RoundedBoxGeometry(W + 2.4, 0.12, W + 2.4, 2, 0.04), frosted(PALE)); frame.position.y = 2.7; frame.receiveShadow = true; g.add(frame);
+  return { g, update(t, time) {
+    items.forEach((it, i) => {
+      const f = span(0.2 + it.delay, 0.45 + it.delay, t);
+      it.pts.forEach((p, j) => { const a = it.loose[j], b = it.woven[j]; p.set(lerp(a.x + Math.sin(time * 0.7 + j + i) * 0.5 * (1 - f), b.x, f), lerp(a.y + Math.cos(time * 0.5 + j) * 0.4 * (1 - f), b.y, f), lerp(a.z, b.z, f)); });
+      it.m.geometry.dispose(); it.m.geometry = new THREE.TubeGeometry(it.curve, 80, 0.07, 8, false);
+      if (it.frayed) { const cut = span(0.8, 0.9, t); it.m.material.opacity = 1 - cut; it.m.position.y = -cut * 3; it.m.visible = cut < 0.99; }
+    });
+    frame.position.y = 2.7 - 6 * (1 - span(0.15, 0.35, t));
+  } };
+}
+
+/* ---------- E  Glass blocks ---------- */
+function blocks({ THREE, rr, span, lerp }) {
+  const g = new THREE.Group();
+  const N = mobile ? 36 : 54, items = [];
+  const geo = new RoundedBoxGeometry(1.6, 1.0, 1.6, 3, 0.08);
+  const cols = 3, rows = 3;
+  for (let i = 0; i < N; i++) {
+    const loose = new THREE.Vector3(rr(-11, 11), rr(0.5, 8), rr(-9, 9)), rot = new THREE.Euler(rr(0, 6), rr(0, 6), rr(0, 6));
+    const layer = Math.floor(i / (cols * rows)), cx = i % cols, cz = Math.floor(i / cols) % rows;
+    const home = new THREE.Vector3((cx - 1) * 1.75, 0.5 + layer * 1.05, (cz - 1) * 1.75);
+    const tested = rnd() < 0.6, dis = !tested && rnd() < 0.3;
+    const mat = new THREE.MeshPhysicalMaterial({ color: PALE, roughness: 0.6, transparent: true, opacity: 0.85, transmission: 0, thickness: 0.6, clearcoat: 0.4 });
+    const m = new THREE.Mesh(geo, mat); m.castShadow = true; m.receiveShadow = true; g.add(m);
+    items.push({ m, loose, rot, home, tested, dis, delay: rr(0, 0.35), yaw: rr(-0.04, 0.04) });
+  }
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(4.2, 4.2, 0.3, 64), new THREE.MeshStandardMaterial({ color: PALE2, roughness: 0.8 })); base.position.y = -0.15; base.receiveShadow = true; g.add(base);
+  const q = new THREE.Quaternion(), q0 = new THREE.Quaternion(), e = new THREE.Euler();
+  return { g, update(t, time) {
+    items.forEach(it => {
+      const f = span(0.15 + it.delay, 0.4 + it.delay, t);
+      it.m.position.set(lerp(it.loose.x, it.home.x, f), lerp(it.loose.y + Math.sin(time + it.loose.x) * 0.3 * (1 - f), it.home.y, f) + Math.sin(f * Math.PI) * 2, lerp(it.loose.z, it.home.z, f));
+      q0.setFromEuler(e.set(it.rot.x + time * 0.2 * (1 - f), it.rot.y, it.rot.z)); q.setFromEuler(e.set(0, it.yaw, 0)); it.m.quaternion.copy(q0).slerp(q, f);
+      const test = it.tested ? span(0.55 + it.delay * 0.5, 0.7 + it.delay * 0.5, t) : 0;
+      it.m.material.roughness = lerp(0.6, 0.08, test); it.m.material.transmission = test * 0.9; it.m.material.opacity = lerp(0.85, 1, test);
+      it.m.material.color.set(PALE).lerp(new THREE.Color(GLOW), test * 0.35);
+      if (it.dis) { const d = span(0.78, 0.9, t); it.m.material.opacity = 0.85 * (1 - d); it.m.scale.setScalar(Math.max(0.001, 1 - d)); }
+    });
+  } };
+}
+
+/* ---------- F  Compass needles ---------- */
+function compass({ THREE, frosted, solid, lit, rr, span, lerp }) {
+  const g = new THREE.Group();
+  const N = mobile ? 60 : 110, items = [];
+  const geo = new THREE.ConeGeometry(0.13, 2.0, 12); geo.rotateX(Math.PI / 2);
+  const dial = new THREE.Mesh(new THREE.CylinderGeometry(12, 12, 0.3, 96), frosted(PALE)); dial.position.y = -0.15; dial.receiveShadow = true; g.add(dial);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(12, 0.12, 12, 128), solid(PALE2)); rim.rotation.x = Math.PI / 2; g.add(rim);
+  for (let i = 0; i < N; i++) {
+    const r = Math.sqrt(rnd()) * 10.5, a = rr(0, 6.28);
+    const m = new THREE.Mesh(geo, solid(NAVY)); m.castShadow = true; m.position.set(Math.cos(a) * r, 0.35, Math.sin(a) * r); g.add(m);
+    items.push({ m, a0: rr(0, 6.28), spin: rr(-1.5, 1.5), delay: (r / 10.5) * 0.6 + rnd() * 0.1 });
+  }
+  const north = new THREE.Mesh(new THREE.SphereGeometry(0.5, 20, 16), lit(GLOW, 1.5)); north.position.set(0, 1.2, -16); g.add(north);
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.2, 8), solid(NAVY)); pole.position.set(0, 0.6, -16); g.add(pole);
+  const target = new THREE.Vector3();
+  return { g, update(t, time) {
+    const arrive = span(0.05, 0.15, t); north.scale.setScalar(Math.max(0.001, arrive)); pole.scale.y = Math.max(0.001, arrive);
+    items.forEach(it => {
+      const f = span(0.15 + it.delay, 0.3 + it.delay, t);
+      target.set(north.position.x, it.m.position.y, north.position.z).sub(it.m.position);
+      const want = Math.atan2(target.x, target.z);
+      const wander = it.a0 + time * it.spin * (1 - f) + Math.sin(time * 2 + it.a0) * 0.08 * f;
+      let d = want - wander; d = Math.atan2(Math.sin(d), Math.cos(d));
+      it.m.rotation.y = wander + d * f;
+      it.m.material.color.set(NAVY).lerp(new THREE.Color(BLUE), f);
+    });
+  } };
+}
+
+/* ---------- G  Strata ---------- */
+function strata({ THREE, frosted, solid, lit, rr, span, lerp }) {
+  const g = new THREE.Group();
+  const L = 6, planes = [], labels = ['Define', 'Jobs', 'Outcome', 'Opportunity', 'Causal', 'Delivery'];
+  for (let i = 0; i < L; i++) {
+    const m = new THREE.Mesh(new RoundedBoxGeometry(16 - i * 1.2, 0.12, 12 - i * 0.9, 2, 0.04), new THREE.MeshPhysicalMaterial({ color: PALE, transparent: true, opacity: 0.42, roughness: 0.3, transmission: 0.3, thickness: 0.3, side: THREE.DoubleSide }));
+    m.position.y = 12 - i * 2; m.castShadow = false; m.receiveShadow = true; g.add(m); planes.push(m);
+  }
+  // the shape below: a decision card assembled from pieces, one per stratum
+  const pieces = Array.from({ length: L }, (_, i) => {
+    const m = new THREE.Mesh(new RoundedBoxGeometry(4.6 / 1, 0.3, 0.9, 2, 0.05), i === L - 1 ? lit(GLOW, 0.5) : frosted(i % 2 ? PALE2 : PALE));
+    m.castShadow = true; m.position.set(0, 0.15, -2.75 + i * 1.1); g.add(m); return m;
+  });
+  const plinth = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 0.3, 64), new THREE.MeshStandardMaterial({ color: PALE2, roughness: 0.85 })); plinth.position.y = -0.15; plinth.receiveShadow = true; g.add(plinth);
+  const self = { g };
+  self.update = (t, time) => {
+    planes.forEach((m, i) => {
+      const pass = span(0.05 + i * 0.13, 0.15 + i * 0.13, t);
+      m.material.opacity = 0.42 * (1 - pass) + 0.06; m.position.y = 12 - i * 2 + pass * 3; m.scale.setScalar(1 + pass * 0.3);
+      m.rotation.y = Math.sin(time * 0.2 + i) * 0.03;
+    });
+    pieces.forEach((m, i) => {
+      const f = span(0.12 + i * 0.13, 0.22 + i * 0.13, t);
+      m.position.y = 0.15 + (1 - f) * (12 - i * 2); m.material.opacity = 1; m.scale.setScalar(Math.max(0.001, 0.3 + 0.7 * f)); m.visible = f > 0.01;
+    });
+    g.position.y = -span(0.1, 0.9, t) * 9 * 0; // the camera stays; the strata rise past it instead
+  };
+  return self;
+}
+
+if (!start()) {
+  const d = document.createElement('div'); d.className = 'nogl'; d.textContent = 'This experiment needs WebGL.'; document.body.appendChild(d);
+}
+</script>
+</body>
+</html>

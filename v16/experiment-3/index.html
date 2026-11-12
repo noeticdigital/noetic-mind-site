@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#f7f9fd" />
+<title>Experiment 3 · the five-step ring</title>
+<!--
+  NOETIC MIND / Experiment 3. The method as one circuit: five stations on a ring, visited in order,
+  then the result travels back into step 1 and the next lap begins.
+    1 Progress: ten voices into one signal      2 Outcome: a line and its target
+    3 Opportunity: the tree, one branch chosen   4 Causal learning: a chain, drawn backwards
+    5 Delivery and impact: (a) candidates against a bar, (b) an increment and its effect
+-->
+<link rel="icon" type="image/svg+xml" href="../../noetic-logo.svg" />
+<link rel="preconnect" href="https://fonts.bunny.net" />
+<link href="https://fonts.bunny.net/css?family=geist:400,500,600,700|geist-mono:400,500" rel="stylesheet" />
+<style>
+  :root{--navy:#0a1a38;--ink:#0f2347;--muted:#5b6b85;--line:rgba(24,76,132,.14);--blue:#184c84;--white:#fff;
+    --f:'Geist',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--f);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased;
+    background:linear-gradient(180deg,#ffffff 0%,#f3f7fd 45%,#e3ecf9 100%)}
+  a{color:inherit}
+  canvas.world{position:fixed;inset:0;width:100vw;height:100vh;display:block}
+  .bar{position:fixed;inset:0 0 auto 0;z-index:5;display:flex;align-items:center;gap:20px;height:72px;padding:0 28px;
+    background:linear-gradient(rgba(255,255,255,.9),rgba(255,255,255,0))}
+  .brand{display:flex;align-items:center;gap:10px;font:600 17px var(--f);text-decoration:none;color:var(--navy)}
+  .brand img{width:28px;height:28px;border-radius:7px;box-shadow:0 0 0 1px rgba(10,26,56,.1)}
+  .bar .back{margin-left:auto;font-size:14px;color:var(--muted);text-decoration:none}
+  .panel{position:fixed;left:24px;bottom:24px;z-index:5;width:min(500px,calc(100vw - 48px));padding:18px 20px 16px;border-radius:18px;
+    background:rgba(255,255,255,.82);box-shadow:inset 0 0 0 1px var(--line),0 20px 50px rgba(10,26,56,.08);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+  .head{display:flex;align-items:center;gap:14px}
+  .head svg{flex:none;width:58px;height:58px}
+  .eyebrow{font:500 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+  .panel h1{margin-top:4px;font-size:21px;font-weight:600;letter-spacing:-.02em;color:var(--navy)}
+  .desc{margin-top:10px;font-size:14.5px;line-height:1.5;color:var(--ink);min-height:3em}
+  .ctl{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .ctl button{min-height:40px;min-width:40px;padding:0 12px;border:0;border-radius:10px;background:rgba(24,76,132,.06);color:var(--muted);font:500 13px var(--f);cursor:pointer;
+    box-shadow:inset 0 0 0 1px var(--line)}
+  .ctl button:hover{color:var(--navy)}
+  .ctl button[aria-pressed="true"]{background:var(--navy);color:var(--white);box-shadow:none}
+  .ctl .sp{flex:1}
+  .tag{position:fixed;left:0;top:0;z-index:3;pointer-events:none;white-space:nowrap;font:500 11.5px var(--mono);letter-spacing:.06em;color:var(--navy);
+    padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.86);box-shadow:inset 0 0 0 1px var(--line);opacity:0;will-change:transform,opacity}
+  .tag.hot{background:var(--navy);color:#fff;box-shadow:none}
+  .tag.num{font-size:14px;padding:6px 11px}
+  .nogl{position:fixed;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted)}
+  @media (max-width:700px){ .bar{padding:0 16px} .panel{left:12px;right:12px;bottom:12px;width:auto;padding:14px} .desc{font-size:13.5px} .tag{font-size:10.5px} }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="../"><img src="../../noetic-logo.svg" alt="" width="28" height="28" />Noetic Mind</a>
+  <a class="back" href="../">Back to the site</a>
+</header>
+<div class="panel">
+  <div class="head">
+    <svg viewBox="-30 -30 60 60" aria-hidden="true" id="mini"></svg>
+    <div><p class="eyebrow" id="eyebrow">Step 1 of 5 · Lap 1</p><h1 id="title">Progress</h1></div>
+  </div>
+  <p class="desc" id="desc"></p>
+  <div class="ctl" id="ctl"></div>
+</div>
+<div id="tags" aria-hidden="true"></div>
+<script type="module">
+import * as THREE from 'three';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+
+const mobile = matchMedia('(max-width: 760px)').matches;
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = t => t * t * t * (t * (t * 6 - 15) + 10);
+const span = (a, b, x) => ease(clamp((x - a) / (b - a)));
+const lerp = (a, b, t) => a + (b - a) * t;
+let seed = 7;
+const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+const rr = (a, b) => a + (b - a) * rnd();
+const TAU = Math.PI * 2;
+const NAVY = '#0a1a38', BLUE = '#184c84', MID = '#2f6fb3', SKY = '#8fb6e6', PALE = '#c9d9ef', BG = '#f1f5fc', GREY = '#b8c0cc';
+
+/* ---- lines ---- */
+const mats = [];
+function mkLine(n, color = MID, width = 2, opacity = 1, o = {}) {
+  const geo = new LineGeometry(); geo.setPositions(new Float32Array(n * 3));
+  const mat = new LineMaterial({ color: o.colors ? 0xffffff : color, linewidth: width * (mobile ? 0.8 : 1), transparent: true, opacity, depthWrite: false,
+    vertexColors: !!o.colors, dashed: !!o.dash, dashSize: o.dash || 1, gapSize: (o.dash || 1) * 0.7 });
+  mats.push(mat);
+  const l = new Line2(geo, mat); l.frustumCulled = false; l.n = n; l.buf = new Float32Array(n * 3); l.w = width;
+  if (o.colors) geo.setColors(o.colors);
+  return l;
+}
+function push(l, dist) {
+  const a = l.geometry.attributes.instanceStart.data.array, b = l.buf;
+  for (let i = 0; i < l.n - 1; i++) { const o = i * 6, s = i * 3; a[o] = b[s]; a[o + 1] = b[s + 1]; a[o + 2] = b[s + 2]; a[o + 3] = b[s + 3]; a[o + 4] = b[s + 4]; a[o + 5] = b[s + 5]; }
+  l.geometry.attributes.instanceStart.data.needsUpdate = true; if (dist) l.computeLineDistances();
+}
+const draw = (l, f) => { l.geometry.instanceCount = Math.max(0, Math.round(clamp(f) * (l.n - 1))); };
+const setW = (l, w) => { l.material.linewidth = w * (mobile ? 0.8 : 1); };
+function seg(pts, color, width, opacity, o) { const l = mkLine(pts.length, color, width, opacity, o); pts.forEach((p, i) => l.buf.set(p, i * 3)); push(l, o && o.dash); return l; }
+function curve(a, b, n = 36) { return Array.from({ length: n }, (_, j) => { const u = j / (n - 1), e = u * u * (3 - 2 * u); return [lerp(a[0], b[0], e), lerp(a[1], b[1], u), lerp(a[2] || 0, b[2] || 0, u)]; }); }
+
+/* ---- glow and solids ---- */
+const glowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d');
+  const g = x.createRadialGradient(128, 128, 0, 128, 128, 128);
+  g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.1, 'rgba(130,180,242,.95)'); g.addColorStop(0.38, 'rgba(70,135,220,.32)'); g.addColorStop(1, 'rgba(70,135,220,0)');
+  x.fillStyle = g; x.fillRect(0, 0, 256, 256); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+function glow(size = 4) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, transparent: true, depthWrite: false, depthTest: false, opacity: 0 })); s.scale.setScalar(size); s.base = size; return s; }
+const setGlow = (s, k, time) => { s.material.opacity = clamp(k); s.scale.setScalar(Math.max(0.001, s.base * (0.4 + 0.6 * clamp(k)) * (1 + 0.07 * Math.sin(time * 3)))); };
+const dot = (r, color) => new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), new THREE.MeshBasicMaterial({ color, transparent: true }));
+
+/* ---- labels that follow points in the scene ---- */
+const tagHost = document.getElementById('tags'), allTags = [];
+function tag(owner, text, pos, alpha, cls = '') { const el = document.createElement('span'); el.className = 'tag ' + cls; el.textContent = text; tagHost.appendChild(el);
+  const t = { el, p: new THREE.Vector3(...pos), alpha, owner }; allTags.push(t); return t; }
+
+/* ============ the five stations ============ */
+const STEPS = [
+  { name: 'Progress', desc: 'Customers are interviewed about what they actually did. Ten conversations are brought together into one clear signal.' },
+  { name: 'Outcome', desc: 'The team agrees one customer behaviour to change, and how far it needs to move.' },
+  { name: 'Opportunity', desc: 'The struggles customers described are set out along their timeline. One is chosen. The others are parked.' },
+  { name: 'Causal learning', desc: 'Worked backwards from the outcome, link by link, to the thing you control.' },
+  { name: 'Delivery and impact', desc: '' },
+];
+const D5 = { a: 'Several solutions are tested against a standard set beforehand. One passes, and that is the one you build.',
+             b: 'A small increment ships, and its effect is read at four levels before the next lap begins.' };
+
+/* 1 · ten voices into one signal */
+function sProgress(g) {
+  const N = 10, P = 240, C = [-1, 3.6, 0], cols = [BLUE, MID, SKY], bg = new THREE.Color(BG), voices = [];
+  for (let i = 0; i < N; i++) {
+    const th = lerp(124, 236, i / (N - 1)) * Math.PI / 180, col = new THREE.Color(cols[i % 3]), ca = new Float32Array(P * 3);
+    for (let j = 0; j < P; j++) { const c = bg.clone().lerp(col, clamp(j / (P * 0.3))); ca.set([c.r, c.g, c.b], j * 3); }
+    const l = mkLine(P, 0xffffff, 1.7, 1, { colors: ca });
+    Object.assign(l, { px: C[0] + Math.cos(th) * 10, py: C[1] + Math.sin(th) * 4.8, pz: Math.sin(i * 2.4) * 3.5, fr: rr(46, 78), sp: rr(5, 8), ph: rr(0, TAU), ph2: rr(0, TAU), es: rr(1.2, 2) });
+    g.add(l); voices.push(l);
+  }
+  const OUT = 200, out = mkLine(OUT, BLUE, 4, 1), outHalo = mkLine(OUT, SKY, 13, 0.22); g.add(outHalo, out);
+  const halo = glow(8), core = glow(3), tip = glow(2.4); halo.position.set(...C); core.position.set(...C); g.add(halo, core, tip);
+  const pulses = [0, 1].map(() => { const l = mkLine(73, MID, 1.6, 0); g.add(l); return l; });
+  tag(g, 'Ten conversations', [-10, 8.2, 0], u => span(0.05, 0.2, u));
+  tag(g, 'One signal', [7.5, 5.6, 0], u => span(0.75, 0.9, u), 'hot');
+  return (u, time) => {
+    const k = span(0.3, 0.6, u), o = span(0.55, 0.85, u);
+    voices.forEach((l, i) => {
+      for (let j = 0; j < P; j++) { const v = j / (P - 1), f = Math.pow(1 - v, 1.7);
+        const burst = Math.pow(0.5 + 0.5 * Math.sin(v * 9 + l.ph - time * l.es), 2) * (0.65 + 0.35 * Math.sin(v * 23 + l.ph2 - time * 2.3));
+        const amp = 0.8 * Math.pow(1 - v, 0.85) * clamp(v / 0.1) * (0.22 + 0.78 * burst);
+        l.buf[j * 3] = lerp(l.px, C[0], v); l.buf[j * 3 + 1] = C[1] + (l.py - C[1]) * f + amp * Math.sin(v * l.fr - time * l.sp + l.ph); l.buf[j * 3 + 2] = l.pz * f; }
+      push(l); draw(l, span(i * 0.025, 0.14 + i * 0.025, u));
+    });
+    for (let j = 0; j < OUT; j++) { const x = j / (OUT - 1) * 11.5, y = C[1] + 0.95 * Math.min(1, x / 2.6) * Math.sin(x * 1.55 - time * 3);
+      out.buf.set([C[0] + x, y, 0], j * 3); outHalo.buf.set([C[0] + x, y, 0], j * 3); }
+    push(out); push(outHalo); draw(out, o); draw(outHalo, o);
+    setGlow(halo, k, time); setGlow(core, k, time);
+    const tx = o * 11.5; tip.position.set(C[0] + tx, C[1] + 0.95 * Math.min(1, tx / 2.6) * Math.sin(tx * 1.55 - time * 3), 0); setGlow(tip, o > 0.02 && o < 0.985 ? 1 : 0, time);
+    pulses.forEach((l, n) => { const c = (time * 0.45 + n * 0.5) % 1, r = 0.4 + c * 3.2;
+      for (let j = 0; j < 73; j++) { const a = j / 72 * TAU; l.buf.set([C[0] + Math.cos(a) * r, C[1] + Math.sin(a) * r, 0], j * 3); } push(l); l.material.opacity = 0.5 * (1 - c) * k; });
+  };
+}
+
+/* 2 · a line and its target */
+function sOutcome(g) {
+  const X0 = -6.5, X1 = 6.5, Y0 = 0.8, T = 5.4, NOWX = 0.2, P = 90;
+  g.add(seg([[X0, 6.8, 0], [X0, Y0, 0], [X1 + 0.4, Y0, 0]], NAVY, 1.4, 0.55));
+  const past = mkLine(P, BLUE, 3.2, 1); g.add(past);
+  const target = seg([[X0, T, 0], [X1 + 0.4, T, 0]], NAVY, 1.6, 0, { dash: 0.32 }); g.add(target);
+  const yNow = 1.9, proj = seg(Array.from({ length: 60 }, (_, j) => { const v = j / 59, e = v * v * (3 - 2 * v); return [lerp(NOWX, X1 - 0.3, v), lerp(yNow, T, e), 0]; }), MID, 2.6, 1, { dash: 0.26 }); g.add(proj);
+  const now = dot(0.2, BLUE), end = glow(4.5); end.position.set(X1 - 0.3, T, 0); g.add(now, end);
+  const gap = seg([[NOWX, yNow + 0.35, 0], [NOWX, T - 0.2, 0]], SKY, 1.4, 0, { dash: 0.16 }); g.add(gap);
+  tag(g, 'Today', [NOWX, yNow - 0.9, 0], u => span(0.25, 0.38, u));
+  tag(g, 'Where it needs to be', [-3.6, T + 0.75, 0], u => span(0.35, 0.5, u), 'hot');
+  tag(g, 'One customer behaviour', [X0 + 2.6, Y0 - 0.9, 0], u => span(0.05, 0.2, u));
+  return (u, time) => {
+    for (let j = 0; j < P; j++) { const v = j / (P - 1), x = lerp(X0, NOWX, v), settle = clamp((x - X0) / 6);
+      past.buf.set([x, 1.7 + 0.32 * Math.sin(x * 1.25 + 1) * (1 - 0.3 * settle) + 0.1 * Math.sin(x * 3.3 - time * 1.4) + 0.2 * v, 0], j * 3); }
+    push(past); draw(past, span(0.03, 0.3, u));
+    now.position.set(NOWX, past.buf[(P - 1) * 3 + 1], 0); now.material.opacity = span(0.26, 0.32, u);
+    target.material.opacity = 0.7 * span(0.33, 0.46, u); gap.material.opacity = 0.9 * span(0.45, 0.55, u);
+    draw(proj, span(0.52, 0.82, u)); setGlow(end, span(0.8, 0.9, u), time);
+  };
+}
+
+/* 3 · the tree, one branch chosen */
+function sOpportunity(g) {
+  const root = [0, 6.6, 0], bx = [-5.3, -1.8, 1.8, 5.3], PICK = 2, LEAF = 1, links = [], leaves = [];
+  const rootDot = dot(0.32, BLUE); rootDot.position.set(...root); g.add(rootDot);
+  g.add(seg([[-7, 0.5, 0], [7, 0.5, 0]], NAVY, 1.2, 0.4));
+  bx.forEach((x, b) => {
+    const mid = [x, 4.1, 0], l = seg(curve(root, mid), MID, 2, 1); l.b = b; l.lv = 0; g.add(l); links.push(l);
+    const m = dot(0.24, MID); m.position.set(...mid); m.b = b; m.lv = 0; g.add(m); leaves.push(m);
+    [-1.05, 0, 1.05].forEach((dx, n) => { const p = [x + dx, 1.7, 0], l2 = seg(curve(mid, p, 26), SKY, 1.7, 1); l2.b = b; l2.lv = 1; l2.n = l2.n; l2.leaf = n; g.add(l2); links.push(l2);
+      const d = dot(0.18, MID); d.position.set(...p); d.b = b; d.lv = 1; d.leaf = n; g.add(d); leaves.push(d); });
+  });
+  const hot = glow(4.2); hot.position.set(bx[PICK], 1.7, 0); g.add(hot);
+  const cB = new THREE.Color(BLUE), cM = new THREE.Color(MID), cS = new THREE.Color(SKY);
+  tag(g, 'Outcome', [0, 7.5, 0], u => span(0.02, 0.12, u));
+  tag(g, 'The customer’s timeline', [4.4, -0.3, 0], u => span(0.1, 0.25, u));
+  tag(g, 'The one to solve', [bx[PICK], 0.95, 0], u => span(0.7, 0.82, u), 'hot');
+  tag(g, 'Parked', [bx[0], 0.95, 0], u => span(0.7, 0.82, u));
+  return (u, time) => {
+    const ch = span(0.6, 0.8, u);
+    links.forEach(l => { const on = l.b === PICK && (l.lv === 0 || l.leaf === LEAF), s = l.lv === 0 ? 0.05 + l.b * 0.05 : 0.3 + l.b * 0.05 + l.leaf * 0.02;
+      draw(l, span(s, s + 0.16, u)); l.material.opacity = on ? 1 : 1 - 0.72 * ch; setW(l, on ? l.w + 1.8 * ch : l.w); l.material.color.copy(l.lv ? cS : cM).lerp(cB, on ? ch : 0); });
+    leaves.forEach(m => { const on = m.b === PICK && (m.lv === 0 || m.leaf === LEAF), s = m.lv === 0 ? 0.2 + m.b * 0.05 : 0.45 + m.b * 0.05;
+      m.material.opacity = span(s, s + 0.06, u) * (on ? 1 : 1 - 0.65 * ch); m.scale.setScalar(on ? 1 + 0.5 * ch : 1); });
+    rootDot.material.opacity = span(0, 0.06, u); setGlow(hot, ch, time);
+  };
+}
+
+/* 4 · a chain, drawn backwards from the outcome */
+function sCausal(g) {
+  const N = 9, links = [], Y = 3.6, SP = 1.55;
+  for (let i = 0; i < N; i++) { const last = i === N - 1;
+    const m = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.15, 20, 64), new THREE.MeshStandardMaterial({ color: last ? BLUE : (i === 0 ? MID : '#dbe6f5'), roughness: 0.35, metalness: 0.15, transparent: true }));
+    m.position.set(6.2 - i * SP, Y, 0); m.scale.x = 1.5; m.rotation.x = i % 2 ? Math.PI / 2 : 0; g.add(m); links.push(m); }
+  const outG = glow(6), ctlG = glow(4), pulse = glow(2.6); outG.position.set(6.2, Y, 0); ctlG.position.set(6.2 - (N - 1) * SP, Y, 0); g.add(outG, ctlG, pulse);
+  const arrow = seg([[5.6, 1.5, 0], [-5.6, 1.5, 0], [-5.1, 1.85, 0], [-5.6, 1.5, 0], [-5.1, 1.15, 0]], NAVY, 1.4, 0); g.add(arrow);
+  tag(g, 'The outcome', [6.2, Y + 1.7, 0], u => span(0.02, 0.12, u), 'hot');
+  tag(g, 'What would have to be true?', [0, 0.7, 0], u => span(0.15, 0.3, u) * (1 - span(0.62, 0.7, u)));
+  tag(g, 'What you control', [6.2 - (N - 1) * SP, Y + 1.7, 0], u => span(0.55, 0.65, u));
+  tag(g, 'Change this, and that follows', [0, 0.7, 0], u => span(0.7, 0.8, u));
+  return (u, time) => {
+    links.forEach((m, i) => { const a = span(0.04 + i * 0.058, 0.12 + i * 0.058, u); m.material.opacity = a; m.scale.set(1.5 * Math.max(0.001, a), Math.max(0.001, a), Math.max(0.001, a)); m.position.y = Y + (1 - a) * 0.8; });
+    arrow.material.opacity = 0.5 * span(0.12, 0.25, u) * (1 - span(0.6, 0.68, u));
+    const f = clamp((u - 0.68) / 0.2), x = lerp(6.2 - (N - 1) * SP, 6.2, f); pulse.position.set(x, Y, 0); setGlow(pulse, f > 0 && f < 1 ? 1 : 0, time);
+    setGlow(ctlG, span(0.58, 0.68, u) * (1 - 0.5 * span(0.85, 0.95, u)), time); setGlow(outG, span(0.86, 0.95, u), time);
+  };
+}
+
+/* 5a · candidates against a bar */
+function sBar(g) {
+  const H = [2.7, 3.5, 5.6, 2.0, 3.8], PASS = 2, BAR = 4.4, cols = [];
+  H.forEach((h, i) => { const m = new THREE.Mesh(new THREE.BoxGeometry(1.25, 1, 1.25), new THREE.MeshStandardMaterial({ color: '#cfdcf0', roughness: 0.5, transparent: true }));
+    m.position.x = (i - 2) * 2.5; m.h = h; g.add(m); cols.push(m); });
+  g.add(seg([[-7.2, 0.5, 0], [7.2, 0.5, 0]], NAVY, 1.2, 0.4));
+  const bar = seg([[-7.2, BAR, 0], [7.2, BAR, 0]], NAVY, 2, 0, { dash: 0.34 }); g.add(bar);
+  const top = glow(5); top.position.set(0, 0.5 + H[PASS] + 0.3, 0); g.add(top);
+  const cP = new THREE.Color('#cfdcf0'), cB = new THREE.Color(BLUE), cG = new THREE.Color('#dfe3ea');
+  tag(g, 'The standard, set beforehand', [-4.2, BAR + 0.75, 0], u => span(0.04, 0.16, u));
+  tag(g, 'Five different solutions', [0, -0.3, 0], u => span(0.2, 0.32, u));
+  tag(g, 'Build this one', [0, 0.5 + H[PASS] + 1.7, 0], u => span(0.8, 0.9, u), 'hot');
+  return (u, time) => {
+    bar.material.opacity = 0.75 * span(0.03, 0.15, u);
+    cols.forEach((m, i) => { const gr = span(0.22 + i * 0.07, 0.48 + i * 0.07, u), h = Math.max(0.02, m.h * gr), res = span(0.7, 0.82, u);
+      m.scale.y = h; m.position.y = 0.5 + h / 2; m.material.opacity = span(0.2 + i * 0.07, 0.24 + i * 0.07, u) * (i === PASS ? 1 : 1 - 0.45 * res);
+      m.material.color.copy(cP).lerp(i === PASS ? cB : cG, res); });
+    setGlow(top, span(0.8, 0.9, u), time);
+  };
+}
+
+/* 5b · an increment and its effect, read at four levels */
+function sRipple(g) {
+  const block = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.7, 1.3), new THREE.MeshStandardMaterial({ color: BLUE, roughness: 0.4, transparent: true })); block.position.y = 0.85; g.add(block);
+  g.add(seg([[-7.2, 0.5, 0], [7.2, 0.5, 0]], NAVY, 1.2, 0.4));
+  const lv = [1, 2, 3, 4].map(n => { const r = 1.6 + n * 1.25, y = 0.9 + n * 1.35, l = mkLine(121, [SKY, MID, MID, BLUE][n - 1], 2.2, 1);
+    for (let j = 0; j <= 120; j++) { const a = j / 120 * TAU - Math.PI / 2; l.buf.set([Math.cos(a) * r, y, Math.sin(a) * r * 0.5], j * 3); } push(l); l.y = y; g.add(l); return l; });
+  const riser = glow(3), topG = glow(6); topG.position.set(0, 0.9 + 4 * 1.35, 0); g.add(riser, topG);
+  const stem = seg([[0, 1.2, 0], [0, 0.9 + 4 * 1.35, 0]], PALE, 1.4, 0); g.add(stem);
+  tag(g, 'Shipped', [2.2, 0.9, 0], u => span(0.06, 0.16, u));
+  tag(g, 'Its effect, read at four levels', [0, 7.6, 0], u => span(0.72, 0.84, u), 'hot');
+  return (u, time) => {
+    const a = span(0.02, 0.12, u); block.material.opacity = a; block.scale.setScalar(Math.max(0.001, a));
+    stem.material.opacity = 0.9 * span(0.15, 0.25, u);
+    lv.forEach((l, n) => { draw(l, span(0.2 + n * 0.14, 0.38 + n * 0.14, u)); });
+    const f = clamp((u - 0.18) / 0.56); riser.position.set(0, lerp(1.2, 0.9 + 4 * 1.35, f), 0); setGlow(riser, f > 0 && f < 1 ? 1 : 0, time);
+    setGlow(topG, span(0.74, 0.84, u), time);
+  };
+}
+
+/* ============ the ring ============ */
+function start() {
+  const canvas = document.createElement('canvas'); canvas.className = 'world';
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }); } catch (e) { return false; }
+  if (!renderer.getContext()) return false;
+  document.body.prepend(canvas);
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mobile ? 1.5 : 2)); renderer.setClearColor(0x000000, 0); renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(32, 1, 0.3, 600);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xdfe8f5, 1.7));
+  const sun = new THREE.DirectionalLight(0xffffff, 1.4); sun.position.set(-10, 30, 10); scene.add(sun);
+
+  const R = 30, N = 5, ANG = i => -Math.PI / 2 + i * TAU / N;
+  const makers = [sProgress, sOutcome, sOpportunity, sCausal];
+  const stations = Array.from({ length: N }, (_, i) => { const g = new THREE.Group(), a = ANG(i);
+    g.position.set(Math.cos(a) * R, 0, Math.sin(a) * R); g.rotation.y = Math.PI / 2 - a + Math.PI; scene.add(g); return { g, a }; });
+  makers.forEach((f, i) => { stations[i].update = f(stations[i].g); });
+  const gA = new THREE.Group(), gB = new THREE.Group(); stations[4].g.add(gA, gB);
+  const upA = sBar(gA), upB = sRipple(gB);
+  allTags.forEach(t => { if (t.owner === gA) { t.variant = 'a'; t.owner = stations[4].g; } else if (t.owner === gB) { t.variant = 'b'; t.owner = stations[4].g; } });
+  let variant = 'a';
+  stations[4].update = (u, time) => { gA.visible = variant === 'a'; gB.visible = variant === 'b'; (variant === 'a' ? upA : upB)(u, time); };
+
+  // the track, its station marks and the result that travels back to step 1
+  const world = new THREE.Group(); scene.add(world);
+  const tracks = [0, 1, 2, 3].map(n => { const r = R - n * 1.1, l = mkLine(241, n ? SKY : MID, n ? 1.4 : 2.2, 0); for (let j = 0; j <= 240; j++) { const a = j / 240 * TAU; l.buf.set([Math.cos(a) * r, 0.05, Math.sin(a) * r], j * 3); } push(l); world.add(l); return l; });
+  const marks = stations.map((s, i) => { const m = dot(0.9, i === 0 ? BLUE : MID); m.position.set(Math.cos(s.a) * R, 0.05, Math.sin(s.a) * R); world.add(m);
+    tag(world, String(i + 1), [Math.cos(s.a) * (R + 3.4), 0.05, Math.sin(s.a) * (R + 3.4)], () => 1, 'num'); return m; });
+  const runner = glow(7), trail = mkLine(40, BLUE, 4, 0); world.add(runner, trail);
+  const lapTag = tag(world, 'What was learned goes back into step 1', [0, 0.05, 0], () => 1, 'hot');
+
+  /* timeline */
+  const HOLD = 8, MOVE = 1.8, OVER = 6.5, LAP = N * HOLD + (N - 1) * MOVE + OVER;
+  let e = 0, last = performance.now(), playing = true, shown = -2, shownLap = -1;
+  const startOf = i => i * (HOLD + MOVE);
+
+  /* panel */
+  const eyebrow = document.getElementById('eyebrow'), title = document.getElementById('title'), desc = document.getElementById('desc'), ctl = document.getElementById('ctl'), mini = document.getElementById('mini');
+  mini.innerHTML = `<circle r="21" fill="none" stroke="rgba(24,76,132,.25)" stroke-width="1.5"/>` + stations.map((s, i) => `<circle cx="${Math.cos(s.a) * 21}" cy="${Math.sin(s.a) * 21}" r="5" data-i="${i}"/>`).join('') + `<text y="5" text-anchor="middle" font-family="Geist Mono,monospace" font-size="14" fill="#0a1a38" id="lapn">1</text>`;
+  const miniDots = Array.from(mini.querySelectorAll('circle[data-i]')), lapN = mini.querySelector('#lapn');
+  const btns = STEPS.map((s, i) => { const b = document.createElement('button'); b.textContent = i + 1; b.setAttribute('aria-label', 'Step ' + (i + 1) + ': ' + s.name); b.addEventListener('click', () => { e = Math.floor(e / LAP) * LAP + startOf(i) + 0.01; }); ctl.appendChild(b); return b; });
+  const sp = document.createElement('span'); sp.className = 'sp'; ctl.appendChild(sp);
+  const vb = document.createElement('button'); vb.addEventListener('click', () => { variant = variant === 'a' ? 'b' : 'a'; shown = -2; e = Math.floor(e / LAP) * LAP + startOf(4) + 0.01; }); ctl.appendChild(vb);
+  const pb = document.createElement('button'); pb.addEventListener('click', () => { playing = !playing; pb.textContent = playing ? 'Pause' : 'Play'; }); pb.textContent = 'Pause'; ctl.appendChild(pb);
+  function panel(i, lap) {
+    if (i === shown && lap === shownLap) return; shown = i; shownLap = lap;
+    vb.textContent = 'Step 5: ' + (variant === 'a' ? 'the bar' : 'the effect'); lapN.textContent = lap + 1;
+    miniDots.forEach((d, j) => d.setAttribute('fill', j === (i < 0 ? 0 : i) ? '#0a1a38' : (i >= 0 && j < i) || i < 0 ? '#2f6fb3' : '#c9d9ef'));
+    btns.forEach((b, j) => b.setAttribute('aria-pressed', j === i));
+    if (i < 0) { eyebrow.textContent = 'Lap ' + (lap + 1) + ' complete'; title.textContent = 'Back to step 1'; desc.textContent = 'What was learned goes into the next round of interviews. Each lap starts from more than the last.'; }
+    else { eyebrow.textContent = 'Step ' + (i + 1) + ' of 5 · Lap ' + (lap + 1); title.textContent = STEPS[i].name; desc.textContent = i === 4 ? D5[variant] : STEPS[i].desc; }
+  }
+
+  let W = 1, H = 1;
+  function resize() { W = innerWidth; H = innerHeight; renderer.setSize(W, H, false); camera.aspect = W / H; camera.updateProjectionMatrix(); mats.forEach(m => m.resolution.set(W, H)); }
+  resize(); addEventListener('resize', resize);
+  const v = new THREE.Vector3(), tgt = new THREE.Vector3(), pos = new THREE.Vector3();
+
+  function frame(now) {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now; if (playing) e += dt;
+    const time = now / 1000, lap = Math.floor(e / LAP), s = e % LAP;
+    let cur = -1, ang = 0, f = 0, o = 0; const us = [0, 0, 0, 0, 0];
+    for (let i = 0; i < N; i++) { const a = startOf(i);
+      if (s >= a + HOLD) us[i] = 1;
+      if (s >= a && s < a + HOLD) { cur = i; us[i] = (s - a) / (HOLD * 0.86); ang = ANG(i); }
+      else if (i < N - 1 && s >= a + HOLD && s < a + HOLD + MOVE) { const m = (s - a - HOLD) / MOVE; cur = m < 0.5 ? i : i + 1; ang = lerp(ANG(i), ANG(i + 1), ease(m)); f = 0.22 * Math.sin(Math.PI * m); } }
+    const tOver = startOf(N - 1) + HOLD;
+    if (s >= tOver) { o = (s - tOver) / OVER; cur = -1; ang = lerp(ANG(4), ANG(5), ease(clamp((o - 0.1) / 0.85))); f = Math.pow(Math.sin(Math.PI * clamp(o)), 0.55); if (o > 0.6) us.fill(0); }
+    panel(cur, lap);
+
+    // camera: inside the ring, looking out at the station; rises over the centre for the overview
+    const asp = W / H, D = Math.max(19, (asp < 1 ? 11.5 : 9.2) / (Math.tan(16 * Math.PI / 180) * asp)), ca = Math.cos(ang), sa = Math.sin(ang), up = 4 - (asp < 1 ? 0.17 : 0.12) * 0.573 * D;
+    pos.set(ca * (R - D), up + 1.2, sa * (R - D)); tgt.set(ca * R, up, sa * R);
+    const od = Math.max(92, 74 / asp); v.set(-ca * od * 0.34, od, -sa * od * 0.34); pos.lerp(v, ease(f)); v.set(0, 0, 0); tgt.lerp(v, ease(f));
+    camera.position.copy(pos); camera.lookAt(tgt);
+
+    stations.forEach((st, i) => { let d = Math.abs(((ang - st.a) % TAU + TAU + Math.PI) % TAU - Math.PI); st.near = d < 1.4; st.g.visible = st.near || f > 0.3; if (st.g.visible) st.update(clamp(us[i]), time); st.u = clamp(us[i]); });
+    const ov = span(0.25, 0.6, f);
+    tracks.forEach((l, n) => { l.material.opacity = (n === 0 ? 0.25 + 0.6 * ov : (n <= Math.min(lap, 3) ? 0.6 * ov : 0)); });
+    marks.forEach((m, i) => { m.material.opacity = ov; });
+    const run = clamp((o - 0.22) / 0.6), ra = lerp(ANG(4), ANG(5), ease(run)); runner.position.set(Math.cos(ra) * R, 0.4, Math.sin(ra) * R); setGlow(runner, o > 0.18 && o < 0.9 ? ov : 0, time);
+    for (let j = 0; j < 40; j++) { const a = ra - (j / 39) * 0.5 * Math.min(1, run * 4); trail.buf.set([Math.cos(a) * R, 0.2, Math.sin(a) * R], (39 - j) * 3); } push(trail); trail.material.opacity = o > 0.2 && o < 0.86 ? ov : 0;
+
+    allTags.forEach(t => { let a = 0;
+      if (t.owner === world) a = t === lapTag ? span(0.3, 0.45, o) * (1 - span(0.8, 0.9, o)) * ov : ov;
+      else { const st = stations.find(x => x.g === t.owner); a = (!t.variant || t.variant === variant) && st.near ? t.alpha(st.u) * (1 - span(0.05, 0.3, f)) * (cur === stations.indexOf(st) ? 1 : 0) : 0; }
+      if (a < 0.01) { if (t.on) { t.el.style.opacity = 0; t.on = false; } return; }
+      v.copy(t.p); t.owner.localToWorld(v); v.project(camera);
+      if (v.z > 1) { t.el.style.opacity = 0; t.on = false; return; }
+      t.el.style.transform = `translate(-50%,-50%) translate(${((v.x + 1) / 2 * W).toFixed(1)}px,${((1 - v.y) / 2 * H).toFixed(1)}px)`; t.el.style.opacity = a.toFixed(2); t.on = true; });
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  window.__seek = x => { e = x; };
+  requestAnimationFrame(frame);
+  return true;
+}
+if (!start()) { const d = document.createElement('div'); d.className = 'nogl'; d.textContent = 'This experiment needs WebGL.'; document.body.appendChild(d); }
+</script>
+</body>
+</html>
