@@ -393,9 +393,19 @@ addEventListener('load', () => {
   const raf = t => { count++; if (lenis) { lenis.raf(t); requestAnimationFrame(raf); } };
   // probe: twelve frames must arrive at a healthy rate before smooth scrolling is allowed to take the wheel
   const probe = t => { if (!seen) t0 = t; if (++seen < 12) { requestAnimationFrame(probe); return; }
-    if ((t - t0) / 11 < 34) { lenis = new window.Lenis({ duration: 1.15, smoothWheel: true }); count = 30; requestAnimationFrame(raf); } };
+    if ((t - t0) / 11 < 34) { lenis = new window.Lenis({ duration: 1.15, smoothWheel: true }); count = 30; root.classList.remove('snap-css'); requestAnimationFrame(raf); } };
   requestAnimationFrame(probe);
-  setInterval(() => { if (lenis && !document.hidden && count < 20) { lenis.destroy(); lenis = null; } count = 0; }, 1000);
+  setInterval(() => { if (lenis && !document.hidden && count < 20) { lenis.destroy(); lenis = null; root.classList.add('snap-css'); } count = 0; }, 1000);
+  // Magnetic sections: once the wheel rests, a section heading that is close to the top of the screen is drawn up to it.
+  // The pull is one-sided, so reading on down a tall section is never dragged back. Without smooth scrolling the
+  // browser's own proximity snapping does the same job (html.snap-css).
+  const secs = [...document.querySelectorAll('.content .sec')];
+  let dir = 1, snapTimer = 0;
+  const settle = () => { if (!lenis) return; const H = innerHeight, y = lenis.targetScroll;
+    for (const s of secs) { const top = s.getBoundingClientRect().top + scrollY, d = top - y;
+      if (Math.abs(d) < 2) return;
+      if (dir > 0 ? (d > -0.12 * H && d < 0.45 * H) : (d > -0.45 * H && d < 0.12 * H)) { lenis.scrollTo(top, { duration: 0.85 }); return; } } };
+  addEventListener('wheel', e => { if (!e.deltaY) return; dir = e.deltaY > 0 ? 1 : -1; clearTimeout(snapTimer); snapTimer = setTimeout(settle, 130); }, { passive: true });
   document.addEventListener('visibilitychange', () => { count = 60; });   // returning from a hidden tab is not a stall
   document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
     const id = a.getAttribute('href'); const el = id.length > 1 && document.querySelector(id);
