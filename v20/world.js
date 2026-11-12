@@ -366,26 +366,34 @@ function start() {
       el.style.opacity = v.toFixed(3); el.style.transform = `translateY(${((1 - v) * 18).toFixed(1)}px)`; el.style.visibility = v < 0.01 ? 'hidden' : 'visible'; });
   }
 
-  let pTarget = 0, p = 0, time = 0, last = performance.now(), running = false, visible = true;
+  let pTarget = 0, p = 0, time = 0, last = performance.now(), running = false, visible = true, lastTick = 0;
   function measure() { const r = journey.getBoundingClientRect(), total = r.height - H; pTarget = total > 0 ? clamp(-r.top / total) : 0; visible = r.bottom > 0; }
-  function frame(now) { const dt = Math.min(0.05, (now - last) / 1000); last = now; time += dt;
-    measure(); p += (pTarget - p) * Math.min(1, dt * 6); if (Math.abs(pTarget - p) < 0.0004) p = pTarget;
+  function tick(now, snap) { const dt = Math.min(snap ? 0.25 : 0.05, (now - last) / 1000); last = now; lastTick = now; time += dt;
+    measure(); if (snap) p = pTarget; else { p += (pTarget - p) * Math.min(1, dt * 6); if (Math.abs(pTarget - p) < 0.0004) p = pTarget; }
     if (window.__p != null) p = window.__p;
-    apply(p, time); renderer.render(scene, camera);
-    if (visible) requestAnimationFrame(frame); else running = false; }
+    apply(p, time); renderer.render(scene, camera); }
+  function frame(now) { tick(now, false); if (visible) requestAnimationFrame(frame); else running = false; }
   function wake() { if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); } }
-  addEventListener('scroll', wake, { passive: true }); measure(); p = pTarget; wake();
+  // Some viewers pause animation frames (a background pane, a throttled embed, a remote view). The page must still
+  // move, so when frames stop arriving it is drawn from the scroll event and from a slow timer instead.
+  function rescue() { const now = performance.now(); if (now - lastTick < 180) return; measure(); if (visible) tick(now, true); }
+  addEventListener('scroll', () => { wake(); rescue(); }, { passive: true }); setInterval(rescue, 250);
+  measure(); p = pTarget; tick(performance.now(), true); wake();
 }
 
 try { start(); } catch (err) { root.classList.remove('webgl'); document.querySelector('canvas.world')?.remove(); console.error(err); }
 
 addEventListener('load', () => {
   if (reduce || !window.Lenis) return;
-  const lenis = new window.Lenis({ duration: 1.15, smoothWheel: true });
-  const raf = t => { lenis.raf(t); requestAnimationFrame(raf); };
-  requestAnimationFrame(raf);
+  // Smooth scrolling takes over the wheel and moves the page on animation frames. If frames are not arriving it would
+  // swallow every scroll, so it starts only once frames are proven to run, and stands down if they stop.
+  let lenis = null, lastRaf = 0;
+  const raf = t => { lastRaf = performance.now(); if (lenis) { lenis.raf(t); requestAnimationFrame(raf); } };
+  requestAnimationFrame(() => requestAnimationFrame(() => { lenis = new window.Lenis({ duration: 1.15, smoothWheel: true }); lastRaf = performance.now(); requestAnimationFrame(raf); }));
+  setInterval(() => { if (lenis && performance.now() - lastRaf > 1200) { lenis.destroy(); lenis = null; } }, 500);
   document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
     const id = a.getAttribute('href'); const el = id.length > 1 && document.querySelector(id);
+    if (!lenis) return;
     if (id === '#top') { e.preventDefault(); lenis.scrollTo(0); return; }
     if (!el) return; e.preventDefault(); lenis.scrollTo(el, { offset: -72 });
   }));
