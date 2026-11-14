@@ -404,29 +404,51 @@ function start() {
 // Some viewers load the page before it has a size. Wait for one, so a wide window is not taken for a phone.
 function begin() { if (!innerWidth) { setTimeout(begin, 60); return; }
   mobile = matchMedia('(max-width: 860px)').matches; slot = mobile ? document.querySelector('.world-slot') : null;
-  try { start(); } catch (err) { root.classList.remove('webgl', 'webgl-inline'); document.querySelector('canvas')?.remove(); console.error(err); } }
+  try { start(); if (root.classList.contains('webgl') || root.classList.contains('webgl-inline')) stepper(); } catch (err) { root.classList.remove('webgl', 'webgl-inline'); document.querySelector('canvas')?.remove(); console.error(err); } }
 begin();
 
-// Arrow keys step through the page: each panel of the walkthrough in turn, then each section below it.
+// Stepping through the page without scrolling: each panel of the walkthrough in turn, then each section below it.
+// The arrow keys do it everywhere; inside the walkthrough there is also a Back and Next control.
 let smooth = null;
+function step(down, pace) {
+  const j = document.querySelector('.webgl .journey, .webgl-inline .journey'); if (!j) return false;
+  const top0 = j.getBoundingClientRect().top + scrollY, run = j.offsetHeight - innerHeight, stops = [];
+  if (slot) { const bar = slot.getBoundingClientRect().height + parseFloat(getComputedStyle(slot).top);   // phones: bring each panel up under the pinned scene
+    j.querySelectorAll('.panel').forEach((el, i) => stops.push(i ? el.getBoundingClientRect().top + scrollY - bar - 20 : top0 - parseFloat(getComputedStyle(slot).top) + 1)); }
+  else j.querySelectorAll('.panel[data-range]').forEach(el => { const r = el.dataset.range.split(/\s+/).map(Number);
+    const mid = r[1] < 0 ? P0 : (r[1] + Math.min(r[2], 1)) / 2; stops.push(top0 + clamp((mid - P0) / (1 - P0)) * run); });
+  document.querySelectorAll('.content .sec').forEach(s => stops.push(s.getBoundingClientRect().top + scrollY));
+  const max = document.documentElement.scrollHeight - innerHeight; stops.push(max);
+  stops.sort((a, b) => a - b);
+  const y = smooth && smooth.isScrolling === 'smooth' ? smooth.targetScroll : gliding ? step.to : scrollY;   // mid-glide, step on from where it is heading
+  const to = down ? stops.find(v => v > y + 8) : [...stops].reverse().find(v => v < y - 8);
+  if (to == null) return true;
+  const top = step.to = Math.min(Math.round(to), max), inside = !slot && top < top0 + run + 4 && top > top0 - 4;
+  if (smooth) smooth.scrollTo(top, { duration: inside ? pace : 0.9 });
+  else glide(top, inside ? pace : 0.9);
+  return true;
+}
+// Without smooth scrolling the page is moved on a timer, which still runs in viewers that pause animation frames.
+let gliding = 0;
+function glide(top, secs) { clearInterval(gliding); const from = scrollY, t0 = performance.now(), snap = root.classList.contains('snap-css');
+  if (reduce) { scrollTo(0, top); return; }
+  root.classList.remove('snap-css');                                         // the browser's snapping would fight the glide
+  gliding = setInterval(() => { const k = Math.min(1, (performance.now() - t0) / (secs * 1000)); scrollTo(0, from + (top - from) * ease(k));
+    if (k >= 1) { clearInterval(gliding); gliding = 0; if (snap && !smooth) root.classList.add('snap-css'); } }, 16); }
+['wheel', 'touchstart'].forEach(ev => addEventListener(ev, () => { if (gliding) { clearInterval(gliding); gliding = 0; if (!smooth) root.classList.add('snap-css'); } }, { passive: true }));
 addEventListener('keydown', e => {
   if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
   if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
   const t = e.target; if (t && t.closest && t.closest('input, textarea, select, [contenteditable]')) return;
-  const j = document.querySelector('.webgl .journey'); if (!j) return;
-  const span = j.offsetHeight - innerHeight, stops = [];
-  document.querySelectorAll('.journey .panel[data-range]').forEach(el => { const r = el.dataset.range.split(/\s+/).map(Number);
-    const mid = r[1] < 0 ? P0 : (r[1] + Math.min(r[2], 1)) / 2; stops.push(j.offsetTop + clamp((mid - P0) / (1 - P0)) * span); });
-  document.querySelectorAll('.content .sec').forEach(s => stops.push(s.getBoundingClientRect().top + scrollY));
-  const max = document.documentElement.scrollHeight - innerHeight; stops.push(max);
-  stops.sort((a, b) => a - b);
-  const y = smooth ? smooth.targetScroll : scrollY, down = e.key === 'ArrowDown';
-  const to = down ? stops.find(v => v > y + 8) : [...stops].reverse().find(v => v < y - 8);
-  e.preventDefault(); if (to == null) return;
-  const top = Math.min(Math.round(to), max);
-  if (smooth) smooth.scrollTo(top, { duration: top < j.offsetTop + span ? 1.5 : 0.9 });
-  else scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+  if (step(e.key === 'ArrowDown', 1.5)) e.preventDefault();
 });
+function stepper() {                                                         // called once the scene is running
+  const box = document.createElement('div'); box.className = 'stepper';
+  box.innerHTML = '<button type="button" class="s-back" aria-label="Back one step"><span aria-hidden="true">←</span></button><button type="button" class="s-next">Next<span aria-hidden="true">→</span></button>';
+  box.querySelector('.s-back').addEventListener('click', () => step(false, 2.2));
+  box.querySelector('.s-next').addEventListener('click', () => step(true, 2.2));
+  (slot || document.querySelector('.stage')).appendChild(box);
+}
 
 addEventListener('load', () => {
   if (reduce || !window.Lenis) return;
