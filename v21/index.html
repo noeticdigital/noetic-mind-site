@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" class="snap-css">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#f7f9fd" />
+<title>Noetic Mind · Know what customers will pay for</title>
+<meta name="description" content="Your team can build almost anything. Noetic Mind finds out what customers will pay for before the budget is committed." />
+<!--
+  NOETIC MIND / V21: Paul's notes on V20. The page now opens on the reader's problem and a short composite story;
+  the system comes second, as the answer. Fewer words and sections. On phones the 3D world is a still picture
+  that plays in place instead of a long scroll; on larger screens the walkthrough is shorter. See world.js.
+-->
+<script>document.documentElement.classList.add('js');</script>
+<link rel="icon" type="image/svg+xml" href="../noetic-logo.svg" />
+<link rel="preconnect" href="https://fonts.bunny.net" />
+<link href="https://fonts.bunny.net/css?family=inter:400,500,600,700|jetbrains-mono:400,500" rel="stylesheet" />
+<style>
+  :root{
+    /* light world: --navy is the page, --white the strongest text (the names are kept from V20 so the rules read as before) */
+    --navy:#f7f9fd; --navy-2:#eef3fb; --raise:#ffffff; --line:rgba(24,76,132,.14);
+    --white:#0a1a38; --text:#223352; --muted:#5b6b85; --blue:#184c84; --blue-2:#2f6fb3; --ink:#0a1a38;
+    --f:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace; --ease:cubic-bezier(.2,.7,.2,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:var(--f);background:linear-gradient(180deg,#ffffff 0%,#f3f7fd 40%,#e3ecf9 100%) fixed;color:var(--text);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit}
+  ul,ol{list-style:none}
+  :focus-visible{outline:2px solid var(--blue-2);outline-offset:3px;border-radius:6px}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+  .label,.steplabel{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue-2)}
+  section[id]{scroll-margin-top:72px}
+  h1 em,h2 em{font-style:normal;color:var(--blue)}
+
+  /* buttons */
+  .btn{display:inline-flex;align-items:center;gap:12px;min-height:48px;padding:0 22px;border-radius:999px;background:var(--ink);color:#ffffff;
+    font:600 15px var(--f);text-decoration:none;white-space:nowrap;transition:transform .2s var(--ease),background-color .2s var(--ease)}
+  .btn:hover{transform:translateY(-1px);background:var(--blue)}
+  .tlink{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:var(--white);text-decoration:none;font-weight:500}
+  .tlink span:first-child{border-bottom:1px solid rgba(24,76,132,.4);padding-bottom:2px}
+  .tlink:hover span:first-child{border-color:var(--white)}
+
+  /* header */
+  .masthead{position:fixed;inset:0 0 auto 0;z-index:50;background:rgba(247,249,253,.86);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 1px 0 var(--line)}
+  .bar{display:flex;align-items:center;gap:28px;height:72px}
+  .brand{display:flex;align-items:center;gap:10px;min-height:44px;font:600 17px var(--f);text-decoration:none;color:var(--white);letter-spacing:-.01em}
+  .brand img{width:28px;height:28px;border-radius:7px;box-shadow:0 0 0 1px rgba(10,26,56,.1)}
+  .nav{display:flex;gap:26px;margin-left:auto}
+  .nav a{font-size:14px;color:var(--muted);text-decoration:none}
+  .nav a:hover{color:var(--white)}
+  .bar .btn{min-height:44px;padding:0 18px;font-size:14px}
+
+  /* ---------- the story: plain, readable sections ---------- */
+  .content{position:relative;z-index:2;background:var(--navy)}
+  .hero{min-height:100vh;min-height:100svh;display:flex;align-items:center;padding:120px 0 72px}
+  .hero h1{font-size:clamp(40px,6.2vw,84px);font-weight:600;letter-spacing:-.045em;line-height:1;color:var(--white);max-width:18ch;margin-top:18px}
+  .hero h1 span{display:block}
+  .hero h1 .dim{color:#8596b3}
+  .hero-sub{max-width:34em;margin-top:28px;font-size:20px;line-height:1.5;color:var(--text)}
+  .hero-cta{margin-top:32px;display:flex;align-items:center;gap:12px 24px;flex-wrap:wrap}
+  .hero-note{font:400 13px var(--mono);color:var(--muted)}
+
+  .sec{padding:120px 0;border-top:1px solid var(--line);scroll-snap-align:start}
+  html.snap-css{scroll-snap-type:y proximity}
+  .sec h2{font-size:clamp(32px,4.2vw,56px);font-weight:600;letter-spacing:-.04em;line-height:1.04;color:var(--white);max-width:17ch;margin-top:14px}
+  .lead{margin-top:20px;font-size:19px;color:var(--muted);max-width:52ch}
+
+  .tale{display:grid;grid-template-columns:1fr 1.15fr;gap:40px 72px;align-items:start}
+  .tale-body p{font-size:clamp(19px,1.6vw,22px);line-height:1.55;color:var(--text);max-width:34em}
+  .tale-body p + p{margin-top:22px}
+  .tale-body .turn{color:var(--white);font-weight:600}
+  .tale-note{margin-top:28px;padding-top:16px;border-top:1px solid var(--line);font:400 12px/1.5 var(--mono);color:var(--muted)}
+  .tale-foot{margin-top:28px}
+  .when{display:block;margin-bottom:6px;font:500 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .tale-body p.found{font-weight:500;color:var(--white);padding-left:20px;box-shadow:inset 3px 0 0 var(--blue)}
+
+  /* ---------- how it works: a plain list by default (phones, no WebGL, reduced motion) ---------- */
+  .journey{position:relative;z-index:1;background:var(--navy);border-top:1px solid var(--line)}
+  .stage{padding:96px 0 40px}
+  .panel{max-width:760px;margin:0 auto 56px;padding:0 24px}
+  .panel h2{font-size:clamp(26px,2.6vw,38px);font-weight:600;letter-spacing:-.035em;line-height:1.1;color:var(--white);margin-top:10px}
+  .panel .body{margin-top:12px;color:var(--muted);font-size:16.5px}
+  .p-intro h2{font-size:clamp(32px,4.2vw,52px);letter-spacing:-.04em;line-height:1.04}
+  .p-step{position:relative;padding-left:64px}
+  .p-step::before{content:attr(data-n);position:absolute;left:24px;top:0;display:grid;place-items:center;width:28px;height:28px;border-radius:8px;
+    font:500 12px var(--mono);color:#fff;background:var(--ink)}
+  .p-step.p-mind::before{content:"";background:radial-gradient(circle,var(--blue) 0 30%,transparent 32%),var(--navy-2);box-shadow:inset 0 0 0 1px var(--line)}
+  .gets{margin-top:16px;border-top:1px solid var(--line)}
+  .gets li{position:relative;padding:12px 0 12px 22px;border-bottom:1px solid var(--line);color:var(--text)}
+  .gets li::before{content:"";position:absolute;left:0;top:23px;width:10px;height:2px;border-radius:2px;background:var(--blue)}
+  .tag3d{display:none}
+  .world-slot{display:none}
+
+  /* phones: the world is a picture that plays in place, above the steps */
+  .webgl-inline .world-slot{display:block;position:relative;height:min(92vw,420px);margin:22px -24px 0;
+    -webkit-mask-image:linear-gradient(transparent,#000 18%,#000 82%,transparent);mask-image:linear-gradient(transparent,#000 18%,#000 82%,transparent)}
+  .webgl-inline .world-slot canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+  /* ---------- how it works: the scroll-driven 3D walkthrough (larger screens) ---------- */
+  .webgl .journey{background:transparent;border-top:0}
+  .webgl .world{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block}
+  .webgl .journey{height:1500vh}
+  .webgl .stage{position:sticky;top:0;height:100vh;height:100svh;padding:0;overflow:hidden;pointer-events:none}
+  .webgl .panel{position:absolute;margin:0;pointer-events:auto;will-change:opacity,transform;
+    left:clamp(24px,4vw,56px);top:50%;translate:0 -50%;width:min(440px,calc(100vw - 48px));max-width:none;
+    padding:24px 26px 22px;border-radius:18px;background:rgba(255,255,255,.76);box-shadow:inset 0 0 0 1px var(--line),0 20px 50px rgba(10,26,56,.08);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  .webgl .p-step{padding-left:26px}
+  .webgl .p-step::before{display:none}
+  .webgl .p-intro h2{font-size:clamp(28px,2.8vw,40px)}
+  .webgl .tag3d{display:block;position:absolute;left:0;top:0;opacity:0;pointer-events:none;white-space:nowrap;
+    font:500 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:7px 11px;border-radius:999px;
+    background:rgba(255,255,255,.88);color:var(--blue);box-shadow:inset 0 0 0 1px rgba(24,76,132,.3)}
+  .webgl .tag3d.t-hot{background:var(--ink);color:#fff;box-shadow:0 0 24px rgba(94,149,216,.45)}
+  .webgl .tag3d.t-dim{color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+
+  /* ---------- the close ---------- */
+  .close h2{max-width:16ch}
+  .close .btn{margin-top:32px}
+  .close-grid{margin-top:80px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px 48px}
+  .close-grid ul{margin-top:12px;border-top:1px solid var(--line)}
+  .close-grid li{position:relative;padding:12px 0 12px 24px;border-bottom:1px solid var(--line);color:var(--text);font-size:16px}
+  .close-grid li::before{content:"";position:absolute;left:2px;top:21px;width:9px;height:9px;border-radius:2px;background:var(--blue-2)}
+  .close-grid .no li{color:var(--muted)}
+  .close-grid .no li::before{background:none;box-shadow:inset 0 0 0 1px var(--muted)}
+  .ways p:not(.label){margin-top:12px;color:var(--muted);font-size:16px}
+  .ways .label + p{padding-top:12px;border-top:1px solid var(--line)}
+  .ways b{color:var(--white);font-weight:600}
+  .founder{margin-top:72px;display:flex;gap:20px;align-items:center;padding:24px 28px;border-radius:18px;background:var(--raise);box-shadow:inset 0 0 0 1px var(--line);max-width:720px}
+  .mono-mark{flex:none;width:56px;height:56px;border-radius:50%;background:var(--white);color:var(--navy);display:grid;place-items:center;font:600 18px var(--f)}
+  .founder p{color:var(--text);font-size:15.5px}
+  .founder b{color:var(--white);font-weight:600}
+
+  .foot{position:relative;z-index:2;background:var(--navy);border-top:1px solid var(--line);padding:28px 0;font-size:14px;color:var(--muted)}
+
+  .js .rv{opacity:0;transform:translateY(16px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+  .js .rv.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none;transition:none}}
+
+  @media (max-width:960px){
+    .tale{grid-template-columns:1fr}
+    .close-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (min-width:861px) and (max-height:820px){
+    .webgl .panel h2{font-size:clamp(24px,2.3vw,32px)}
+    .webgl .gets li{padding:8px 0 8px 22px}
+  }
+  @media (max-width:860px){
+    body{font-size:16px}
+    .wrap{padding:0 20px}
+    .nav{display:none}
+    .bar{gap:12px}
+    .bar .btn{margin-left:auto;padding:0 14px;font-size:13px}
+    .hero{min-height:0;padding:112px 0 64px}
+    .hero-sub{font-size:18px}
+    .sec{padding:80px 0}
+    .stage{padding:72px 0 24px}
+    .panel{padding:0 20px;margin-bottom:40px}
+    .p-step{padding-left:56px}
+    .p-step::before{left:20px}
+    .webgl-inline .world-slot{margin:22px -20px 0}
+    .close-grid{grid-template-columns:1fr;margin-top:56px}
+    .founder{align-items:flex-start;padding:20px}
+  }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap bar">
+    <a class="brand" href="#top"><img src="../noetic-logo.svg" alt="" width="28" height="28" />Noetic Mind</a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#story">The problem</a>
+      <a href="#how">How it works</a>
+      <a href="#book">Working together</a>
+    </nav>
+    <a class="btn" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demonstration">Arrange a demonstration</a>
+  </div>
+</header>
+
+<main id="top">
+  <div class="content first">
+    <section class="hero" aria-labelledby="hero-h">
+      <div class="wrap">
+        <p class="label">For the people who decide what gets built</p>
+        <h1 id="hero-h"><span class="dim">Your team can build almost anything.</span><span>Will customers pay for it?</span></h1>
+        <p class="hero-sub">Noetic Mind finds out before the budget is committed. It asks your customers the right questions, then tests the answer on a small scale, so you build what they will pay for.</p>
+        <div class="hero-cta">
+          <a class="btn" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demonstration">Arrange a demonstration</a>
+          <a class="tlink" href="#story"><span>Read the story</span><span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="content">
+    <section class="sec" id="story" aria-labelledby="story-h">
+      <div class="wrap tale">
+        <div>
+          <p class="label rv">A story you may recognise</p>
+          <h2 id="story-h" class="rv">The feature was built well. Nobody paid for it.</h2>
+        </div>
+        <div class="tale-body">
+          <p class="rv">It starts in a planning meeting. Every competitor is announcing an AI feature, the board would like one too, and the team has a good idea. The engineers are strong. The budget is there.</p>
+          <p class="rv">A year later it ships, on time and working as designed. Customers try it, say it is impressive, and carry on as before. Renewals do not move.</p>
+          <p class="rv">Then the finance director asks why it was built. The honest answer is that it seemed right in the room.</p>
+          <p class="rv turn">Nobody was careless. The team simply had no way of knowing, before they started, what customers would pay for.</p>
+          <p class="tale-note rv">A composite of a pattern common across software companies. It describes no particular client.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="instead" aria-labelledby="instead-h">
+      <div class="wrap tale">
+        <div>
+          <p class="label rv">The same year, run differently</p>
+          <h2 id="instead-h" class="rv">Ask first. <em>Test small.</em> Then build.</h2>
+        </div>
+        <div class="tale-body">
+          <p class="rv"><span class="when">Week one</span>Before any code is written, a handful of customers are interviewed about the last time they struggled with the job the feature was meant to help. The question is what they actually did, not what they would like.</p>
+          <p class="rv found"><span class="when">Week three</span>A pattern appears. They do not need help writing their reports. They need to trust the numbers before they send one.</p>
+          <p class="rv"><span class="when">Week six</span>The team tries a small version of that idea with real customers. It moves the number the business cares about. Only then does the full build begin.</p>
+          <p class="rv turn">The money goes on what customers will pay for, and the reasoning is written down for the board and the finance director.</p>
+          <p class="tale-foot rv"><a class="tlink" href="#how"><span>How Noetic Mind makes this routine</span><span aria-hidden="true">↓</span></a></p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="journey" id="how" aria-label="How Noetic Mind works">
+    <div class="stage">
+
+      <div class="panel p-intro" data-range="-1 -1 0.154 0.165">
+        <p class="label">How it works</p>
+        <h2>One cycle, run again and again</h2>
+        <p class="body">Noetic Mind is software, training and support, set up inside your team. At its centre is the Mind, which holds what you know about your market and your customers. Five steps feed it, and each cycle leaves you surer of what to build next.</p>
+        <div class="world-slot" aria-hidden="true"></div>
+      </div>
+
+      <div class="panel p-step p-mind" data-range="0.17 0.182 0.228 0.24">
+        <p class="steplabel">At the centre · The Mind</p>
+        <h2>It starts with what your team already believes</h2>
+        <p class="body">The Mind reads what is said about your market and asks each person on the team for their view. Every belief is treated as an assumption until customers confirm it.</p>
+      </div>
+
+      <div class="panel p-step" data-n="1" data-range="0.262 0.276 0.356 0.370">
+        <p class="steplabel">Step 1 · Listen</p>
+        <h2>Hear what customers actually did</h2>
+        <p class="body">Your people interview customers about real decisions: the last time they switched, struggled or gave up. We train them to do it, and our Copilot helps during each call.</p>
+      </div>
+
+      <div class="panel p-step" data-n="2" data-range="0.392 0.406 0.486 0.500">
+        <p class="steplabel">Step 2 · Aim</p>
+        <h2>Agree the one number that matters</h2>
+        <p class="body">The team picks a customer behaviour to change, where it stands today and how far it has to move. Everything after this is judged against it.</p>
+      </div>
+
+      <div class="panel p-step" data-n="3" data-range="0.522 0.536 0.616 0.630">
+        <p class="steplabel">Step 3 · Choose</p>
+        <h2>Pick the struggle most worth solving</h2>
+        <p class="body">The struggles customers described are laid out in the order they meet them. You choose the one that matters most to them and to your number. The rest wait their turn.</p>
+      </div>
+
+      <div class="panel p-step" data-n="4" data-range="0.652 0.666 0.746 0.760">
+        <p class="steplabel">Step 4 · Work back</p>
+        <h2>Trace the route back to what you can change</h2>
+        <p class="body">From the goal, the route is worked backwards until it reaches something the team can change this month. Then it is checked forwards.</p>
+      </div>
+
+      <div class="panel p-step" data-n="5" data-range="0.782 0.796 0.876 0.890">
+        <p class="steplabel">Step 5 · Test</p>
+        <h2>Test small, then build</h2>
+        <p class="body">Several small versions are tried with customers. The one that moves the number is built, and what you learn starts the next cycle.</p>
+      </div>
+
+      <div class="panel" data-range="0.95 0.962 2 2">
+        <p class="label">After every cycle</p>
+        <h2>You know what to build next, and you can show why</h2>
+        <ul class="gets">
+          <li>What to build, what to test first and what to drop</li>
+          <li>The evidence behind each call, ready for the board</li>
+          <li>A team that gets better at this with every cycle</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="content">
+    <section class="sec close" id="book" aria-labelledby="cl-h">
+      <div class="wrap">
+        <p class="label rv">A demonstration</p>
+        <h2 id="cl-h" class="rv">Bring the decision you are least sure about</h2>
+        <p class="lead rv">In forty-five minutes we show Noetic Mind working, then apply it to a choice on your roadmap now. We will tell you plainly whether we think it fits.</p>
+        <a class="btn rv" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demonstration">Arrange a demonstration</a>
+        <div class="close-grid">
+          <div class="rv">
+            <p class="label">It suits you if</p>
+            <ul>
+              <li>You have customers you can talk to</li>
+              <li>Someone owns the product’s results</li>
+              <li>You are able to act on what you learn</li>
+            </ul>
+          </div>
+          <div class="rv">
+            <p class="label">It will not suit you if</p>
+            <ul class="no">
+              <li>You want a research report and nothing more</li>
+              <li>The roadmap is settled and needs endorsing</li>
+            </ul>
+          </div>
+          <div class="ways rv">
+            <p class="label">Two ways of working</p>
+            <p><b>Guided.</b> Your team runs the cycle, with our training and advice whenever you need it.</p>
+            <p><b>Led.</b> We run it alongside your team until they are ready to take it on.</p>
+          </div>
+        </div>
+        <div class="founder rv">
+          <div class="mono-mark" aria-hidden="true">GR</div>
+          <p><b>You work with George Reed</b>, founder of Noetic Digital. He trains product teams to interview their customers and sees the work through to tested decisions.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>Noetic Mind · © Noetic Digital</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var rv = [].slice.call(document.querySelectorAll('.rv'));
+  if ('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {rootMargin:'0px 0px -10% 0px'});
+    rv.forEach(function(el){ io.observe(el); });
+  } else { rv.forEach(function(el){ el.classList.add('in'); }); }
+})();
+</script>
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js" defer></script>
+<script type="module" src="world.js?v=21"></script>
+</body>
+</html>
