@@ -24,9 +24,9 @@ const root = document.documentElement;
 const journey = document.querySelector('.journey');
 const panels = Array.from(document.querySelectorAll('.panel')).map(el => ({ el, r: el.dataset.range.split(' ').map(Number) }));
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const mobile = matchMedia('(max-width: 860px)').matches;
+let mobile = matchMedia('(max-width: 860px)').matches;
 const P0 = 0.09;                                                           // the timeline point the walkthrough opens on
-const slot = mobile ? document.querySelector('.world-slot') : null;          // phones: the world plays in place, here
+let slot = mobile ? document.querySelector('.world-slot') : null;          // phones: the world plays in place, here
 
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const ease = t => t * t * t * (t * (t * 6 - 15) + 10);
@@ -401,7 +401,11 @@ function start() {
   measure(); p = pTarget; tick(performance.now(), true); wake();
 }
 
-try { start(); } catch (err) { root.classList.remove('webgl'); document.querySelector('canvas.world')?.remove(); console.error(err); }
+// Some viewers load the page before it has a size. Wait for one, so a wide window is not taken for a phone.
+function begin() { if (!innerWidth) { setTimeout(begin, 60); return; }
+  mobile = matchMedia('(max-width: 860px)').matches; slot = mobile ? document.querySelector('.world-slot') : null;
+  try { start(); } catch (err) { root.classList.remove('webgl', 'webgl-inline'); document.querySelector('canvas')?.remove(); console.error(err); } }
+begin();
 
 // Arrow keys step through the page: each panel of the walkthrough in turn, then each section below it.
 let smooth = null;
