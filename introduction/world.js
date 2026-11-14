@@ -387,7 +387,7 @@ function start() {
       pTarget = cur.at; return; }
     const r = journey.getBoundingClientRect(), total = r.height - H; canvas.style.opacity = clamp(1.2 - r.top / H).toFixed(3); pTarget = P0 + (1 - P0) * (total > 0 ? clamp(-r.top / total) : 0); visible = r.bottom > 0; }
   function tick(now, snap) { const dt = Math.min(snap ? 0.25 : 0.05, (now - last) / 1000); last = now; lastTick = now; time += dt;
-    measure(); if (snap) p = pTarget; else if (slot) { const d = pTarget - p, sp = Math.max(0.05, Math.abs(d) * 0.9) * dt; p += clamp(d, -sp, sp); }
+    measure(); if (snap) p = pTarget; else if (slot) { const d = pTarget - p, sp = Math.max(0.022, Math.abs(d) * 0.3) * dt; p += clamp(d, -sp, sp); }
     else { p += (pTarget - p) * Math.min(1, dt * 6); if (Math.abs(pTarget - p) < 0.0004) p = pTarget; }
     if (window.__p != null) p = window.__p;
     apply(p, time); renderer.render(scene, camera); }
@@ -410,21 +410,21 @@ begin();
 // Stepping through the page without scrolling: each panel of the walkthrough in turn, then each section below it.
 // The arrow keys do it everywhere; inside the walkthrough there is also a Back and Next control.
 let smooth = null;
+const steady = t => t - 0.6 * Math.sin(TAU * t) / TAU;                        // an even pace with soft ends, so a step plays through at a watchable speed
 function step(down, pace) {
   const j = document.querySelector('.webgl .journey, .webgl-inline .journey'); if (!j) return false;
   const top0 = j.getBoundingClientRect().top + scrollY, run = j.offsetHeight - innerHeight, stops = [];
   if (slot) { const bar = slot.getBoundingClientRect().height + parseFloat(getComputedStyle(slot).top);   // phones: bring each panel up under the pinned scene
     j.querySelectorAll('.panel').forEach((el, i) => stops.push(i ? el.getBoundingClientRect().top + scrollY - bar - 20 : top0 - parseFloat(getComputedStyle(slot).top) + 1)); }
-  else j.querySelectorAll('.panel[data-range]').forEach(el => { const r = el.dataset.range.split(/\s+/).map(Number);
-    const mid = r[1] < 0 ? P0 : (r[1] + Math.min(r[2], 1)) / 2; stops.push(top0 + clamp((mid - P0) / (1 - P0)) * run); });
+  else j.querySelectorAll('.panel[data-at]').forEach(el => stops.push(top0 + clamp((Number(el.dataset.at) - 0.004 - P0) / (1 - P0)) * run));   // each stop is where that step has finished playing
   document.querySelectorAll('.content .sec').forEach(s => stops.push(s.getBoundingClientRect().top + scrollY));
   const max = document.documentElement.scrollHeight - innerHeight; stops.push(max);
   stops.sort((a, b) => a - b);
   const y = smooth && smooth.isScrolling === 'smooth' ? smooth.targetScroll : gliding ? step.to : scrollY;   // mid-glide, step on from where it is heading
   const to = down ? stops.find(v => v > y + 8) : [...stops].reverse().find(v => v < y - 8);
   if (to == null) return true;
-  const top = step.to = Math.min(Math.round(to), max), inside = !slot && top < top0 + run + 4 && top > top0 - 4;
-  if (smooth) smooth.scrollTo(top, { duration: inside ? pace : 0.9 });
+  const top = step.to = Math.min(Math.round(to), max), inside = !slot && top < top0 + run + 4 && top > top0 + 4 && y > top0 - 4;   // a move from one step of the walkthrough to the next
+  if (smooth) smooth.scrollTo(top, inside ? { duration: pace, easing: steady } : { duration: 0.9 });
   else glide(top, inside ? pace : 0.9);
   return true;
 }
@@ -433,20 +433,20 @@ let gliding = 0;
 function glide(top, secs) { clearInterval(gliding); const from = scrollY, t0 = performance.now(), snap = root.classList.contains('snap-css');
   if (reduce) { scrollTo(0, top); return; }
   root.classList.remove('snap-css');                                         // the browser's snapping would fight the glide
-  gliding = setInterval(() => { const k = Math.min(1, (performance.now() - t0) / (secs * 1000)); scrollTo(0, from + (top - from) * ease(k));
+  gliding = setInterval(() => { const k = Math.min(1, (performance.now() - t0) / (secs * 1000)); scrollTo(0, from + (top - from) * (secs > 2 ? steady(k) : ease(k)));
     if (k >= 1) { clearInterval(gliding); gliding = 0; if (snap && !smooth) root.classList.add('snap-css'); } }, 16); }
 ['wheel', 'touchstart'].forEach(ev => addEventListener(ev, () => { if (gliding) { clearInterval(gliding); gliding = 0; if (!smooth) root.classList.add('snap-css'); } }, { passive: true }));
 addEventListener('keydown', e => {
   if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
   if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
   const t = e.target; if (t && t.closest && t.closest('input, textarea, select, [contenteditable]')) return;
-  if (step(e.key === 'ArrowDown', 1.5)) e.preventDefault();
+  if (step(e.key === 'ArrowDown', 4)) e.preventDefault();
 });
 function stepper() {                                                         // called once the scene is running
   const box = document.createElement('div'); box.className = 'stepper';
   box.innerHTML = '<button type="button" class="s-back" aria-label="Back one step"><span aria-hidden="true">←</span></button><button type="button" class="s-next">Next<span aria-hidden="true">→</span></button>';
-  box.querySelector('.s-back').addEventListener('click', () => step(false, 2.2));
-  box.querySelector('.s-next').addEventListener('click', () => step(true, 2.2));
+  box.querySelector('.s-back').addEventListener('click', () => step(false, 4));
+  box.querySelector('.s-next').addEventListener('click', () => step(true, 8));
   (slot || document.querySelector('.stage')).appendChild(box);
 }
 

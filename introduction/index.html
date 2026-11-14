@@ -91,6 +91,7 @@
     font:500 12px var(--mono);color:#fff;background:var(--ink)}
   .p-step.p-mind::before{content:"";background:radial-gradient(circle,var(--blue) 0 30%,transparent 32%),var(--navy-2);box-shadow:inset 0 0 0 1px var(--line)}
   .found{display:block;margin-top:10px;padding-left:14px;box-shadow:inset 3px 0 0 var(--blue);color:var(--white);font-weight:500}
+  .eg{display:block;margin-bottom:4px;font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--blue-2)}
   .tag3d,.world-slot{display:none}
   .tag3d{position:absolute;left:0;top:0;opacity:0;pointer-events:none;white-space:nowrap;
     font:500 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:7px 11px;border-radius:999px;
@@ -132,7 +133,16 @@
   .webgl .tag3d{display:block}
 
   /* ---------- what you are buying, and the close ---------- */
-  .buy{margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);gap:0 48px;border-top:1px solid var(--line)}
+  .soft{margin-top:56px;padding:36px 40px;border-radius:20px;background:var(--raise);box-shadow:inset 0 0 0 1px var(--line),0 20px 50px rgba(10,26,56,.06);
+    display:grid;grid-template-columns:1fr 1.5fr;gap:32px 56px;align-items:start}
+  .soft h3{font-size:28px;font-weight:600;letter-spacing:-.03em;color:var(--white)}
+  .soft-lead{margin-top:12px;font-size:20px;line-height:1.4;font-weight:500;color:var(--white)}
+  .soft-lead + p{margin-top:12px;font-size:16.5px;color:var(--text)}
+  .does{display:grid;grid-template-columns:1fr 1fr;gap:0 36px}
+  .does li{padding:16px 0;border-top:1px solid var(--line)}
+  .does h4{font-size:17px;font-weight:600;letter-spacing:-.01em;color:var(--white)}
+  .does p{margin-top:4px;font-size:15px;line-height:1.5;color:var(--muted)}
+  .buy{margin-top:40px;display:grid;grid-template-columns:repeat(2,1fr);gap:0 48px;border-top:1px solid var(--line)}
   .buy li{padding:26px 0 0}
   .buy h3{font-size:22px;font-weight:600;letter-spacing:-.02em;color:var(--white)}
   .buy p{margin-top:8px;font-size:16.5px;color:var(--text)}
@@ -148,6 +158,7 @@
   @media (prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none;transition:none}}
 
   @media (min-width:861px) and (max-width:1040px){
+    .soft{grid-template-columns:1fr}
     .year{grid-template-columns:1fr 1fr;border-top:0}
     .year li{border-top:1px solid var(--line-2);margin-top:36px}
   }
@@ -175,7 +186,9 @@
     .panel{padding:0 20px;margin-bottom:44px}
     .p-step{padding-left:56px}
     .p-step::before{left:20px}
-    .buy{grid-template-columns:1fr;margin-top:40px}
+    .buy{grid-template-columns:1fr;margin-top:32px}
+    .soft{margin-top:40px;padding:24px 20px;grid-template-columns:1fr;gap:20px}
+    .does{grid-template-columns:1fr}
     .close{text-align:left}
     .close h2,.close .lead{margin-left:0}
   }
@@ -210,20 +223,20 @@
         <p class="hero-sub">Your team can build almost anything now. Noetic Mind finds out what customers will pay for, before the budget is spent.</p>
         <div class="hero-cta">
           <a class="btn" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20demonstration">Arrange a demonstration</a>
-          <a class="tlink" href="#story"><span>A story you may recognise</span><span aria-hidden="true">↓</span></a>
+          <a class="tlink" href="#story"><span>A common story</span><span aria-hidden="true">↓</span></a>
         </div>
       </div>
     </section>
 
     <section class="sec" id="story" aria-labelledby="story-h">
       <div class="wrap">
-        <p class="label rv">A story you may recognise</p>
+        <p class="label rv">A common story</p>
         <h2 id="story-h" class="rv">A year, in four meetings</h2>
         <ol class="year">
           <li class="rv"><p class="when">Month 1</p><h3>The plan</h3><p>Competitors are announcing AI features and the board would like one too. The team has a good idea, strong engineers and the budget.</p></li>
           <li class="rv"><p class="when">Month 12</p><h3>The launch</h3><p>It ships on time and works as designed. The demonstration gets a round of applause.</p></li>
           <li class="rv"><p class="when">Month 15</p><h3>The numbers</h3><p>Customers have tried it, called it impressive and carried on as before. Renewals have not moved.</p></li>
-          <li class="rv"><p class="when">Month 16</p><h3>The question</h3><p>The finance director asks why it was built. The honest answer is that it seemed right in the room.</p></li>
+          <li class="rv"><p class="when">Month 16</p><h3>The question</h3><p>The finance director asks why it was built. The honest answer is that it seemed right in internal discussions.</p></li>
         </ol>
         <div class="turn rv">
           <p>Nobody was careless. The team had no way of knowing, before they started, what customers would pay for.</p>
@@ -260,13 +273,13 @@
       <div class="panel p-step" data-n="2" data-at="0.486" data-range="0.392 0.406 0.486 0.500">
         <p class="steplabel">Week 3 · Aim</p>
         <h2>They agree the one number that matters</h2>
-        <p class="body">Renewals: where the figure stands today and how far it has to move. Every idea from here on is judged against it.</p>
+        <p class="body">In this example it is renewals: where the figure stands today and how far it has to move. Every idea from here on is judged against it.</p>
       </div>
 
       <div class="panel p-step" data-n="3" data-at="0.616" data-range="0.522 0.536 0.616 0.630">
         <p class="steplabel">Week 3 · Choose</p>
         <h2>They pick the struggle most worth solving</h2>
-        <p class="body">The interviews turn up several struggles, and one stands out. <span class="found">Customers do not need help writing their reports. They need to trust the numbers before they send one.</span></p>
+        <p class="body">The interviews turn up several struggles, and one stands out. <span class="found"><span class="eg">For example</span>Customers do not need help writing their reports. They need to trust the numbers before they send one.</span></p>
       </div>
 
       <div class="panel p-step" data-n="4" data-at="0.746" data-range="0.652 0.666 0.746 0.760">
@@ -294,8 +307,20 @@
       <div class="wrap">
         <p class="label rv">What you get</p>
         <h2 id="what-h" class="rv">Noetic Mind is three things, set up inside your team</h2>
+        <div class="soft rv">
+          <div>
+            <h3>The software</h3>
+            <p class="soft-lead">A complete method for deciding what to build, held in software that runs the work with your team.</p>
+            <p>It is much more than a place to keep records. The thinking is in the software: it structures each cycle, does the heavy analysis and tells you where the evidence points. Your team approves every change.</p>
+          </div>
+          <ul class="does">
+            <li><h4>It guides every step</h4><p>From the first brief to the final test, it sets out what comes next and keeps the work on track.</p></li>
+            <li><h4>It works the evidence through</h4><p>It researches your market, sorts what customers say into the needs behind it, and sets those needs against the result the business has to reach.</p></li>
+            <li><h4>It grades every belief</h4><p>Each one is marked as an assumption, emerging, validated or disproven, so nobody has to guess how firm the ground is.</p></li>
+            <li><h4>It surfaces what matters</h4><p>The belief that most needs testing, the smallest test that would settle it, and what to build, test or drop, each with its reasons.</p></li>
+          </ul>
+        </div>
         <ul class="buy">
-          <li class="rv"><h3>The software</h3><p>It keeps every belief, interview and test in one place, and shows the evidence behind each decision.</p></li>
           <li class="rv"><h3>The training</h3><p>Your own people learn to interview customers and run the cycle. The skill stays with you.</p></li>
           <li class="rv"><h3>The support</h3><p>George Reed, founder of Noetic Digital, works with your team directly. He can advise while they run it, or lead it alongside them.</p></li>
         </ul>
@@ -332,6 +357,6 @@
 })();
 </script>
 <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js" defer></script>
-<script type="module" src="world.js?v=22"></script>
+<script type="module" src="world.js?v=23"></script>
 </body>
 </html>
