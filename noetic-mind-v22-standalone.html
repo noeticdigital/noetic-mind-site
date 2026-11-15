@@ -721,7 +721,7 @@ function start() {
   // phones: the world holds the finished cycle, seen whole, and is drawn only while its box is on screen
   const stops = panels.map(({ el }) => ({ el, at: Number(el.dataset.at) }));
   function measure() { if (slot) { const r = slot.getBoundingClientRect(); visible = r.bottom > 0 && r.top < innerHeight;
-      const line = Math.max(r.bottom, 0) + (innerHeight - Math.max(r.bottom, 0)) * 0.6; let cur = stops[0];           // the panel being read
+      const line = Math.max(r.bottom, 0) + Math.min(90, (innerHeight - Math.max(r.bottom, 0)) * 0.25); let cur = stops[0];   // the panel being read is the one at the top of the space under the scene, however many fit below it
       for (const st of stops) if (st.el.getBoundingClientRect().top < line) cur = st;
       if (cur.el !== measure.cur) { measure.cur && measure.cur.classList.remove('on'); cur.el.classList.add('on'); measure.cur = cur.el; }
       pTarget = cur.at; return; }
