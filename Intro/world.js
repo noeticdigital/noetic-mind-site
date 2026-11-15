@@ -1,4 +1,7 @@
 /*
+ * V28: the scene takes a light or a dark palette from the page's theme when it starts (the page reloads on a switch),
+ * and a panel can ask for a quicker Next where the scene has little to play (data-pace).
+ *
  * V22: as V21 on larger screens. On phones the world is pinned in a box at the top of the screen while the text
  * scrolls past it in the ordinary way; the scene travels to whichever panel is being read, at its own pace, so
  * nothing about the scroll is taken over.
@@ -45,24 +48,25 @@ function start() {
   renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  const scene = new THREE.Scene(); scene.fog = new THREE.Fog('#eef3fb', 120, 420);
+  const dark = root.dataset.theme === 'dark', pick = (light, night) => dark ? night : light;
+  const scene = new THREE.Scene(); scene.fog = new THREE.Fog(pick('#eef3fb', '#0a1a38'), 120, 420);
   const camera = new THREE.PerspectiveCamera(30, 1, 0.5, 600);
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xdfe8f5, 1.15));
+  scene.add(new THREE.HemisphereLight(0xffffff, pick(0xdfe8f5, 0x1b3566), pick(1.15, 0.95)));
   const sun = new THREE.DirectionalLight(0xffffff, 2.0); sun.castShadow = true;
   sun.shadow.mapSize.set(mobile ? 1024 : 2048, mobile ? 1024 : 2048);
   Object.assign(sun.shadow.camera, { left: -30, right: 30, top: 30, bottom: -30, near: 1, far: 140 });
   sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03; scene.add(sun, sun.target);
   const fill = new THREE.DirectionalLight(0xbdd4f5, 0.7); fill.position.set(40, 22, -30); scene.add(fill);
 
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(500, 500), new THREE.ShadowMaterial({ color: '#0a1a38', opacity: 0.11 }));
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(500, 500), new THREE.ShadowMaterial({ color: pick('#0a1a38', '#020814'), opacity: pick(0.11, 0.4) }));
   ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
-  const grid = new THREE.GridHelper(400, 200, 0xbfd0e8, 0xbfd0e8); grid.material.transparent = true; grid.material.opacity = 0.22; grid.position.y = 0.012; scene.add(grid);
+  const grid = new THREE.GridHelper(400, 200, pick(0xbfd0e8, 0x3c5f9c), pick(0xbfd0e8, 0x3c5f9c)); grid.material.transparent = true; grid.material.opacity = pick(0.22, 0.3); grid.position.y = 0.012; scene.add(grid);
 
-  const NAVY = '#22365c', BLUE = '#184c84', MID = '#2f6fb3', SKY = '#8fb6e6', PALE = '#f4f7fc', PALE2 = '#dfe8f5';
+  const NAVY = pick('#22365c', '#eef3fc'), BLUE = pick('#184c84', '#7fb2f0'), MID = pick('#2f6fb3', '#9cc4f4'), SKY = pick('#8fb6e6', '#4472b8'), PALE = pick('#f4f7fc', '#d5dff1'), PALE2 = pick('#dfe8f5', '#aebfdd');
   const frosted = c => new THREE.MeshPhysicalMaterial({ color: c, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.6 });
   const mBuild = frosted(PALE), mSoft = frosted(PALE2), mFig = new THREE.MeshStandardMaterial({ color: NAVY, roughness: 0.6 });
   const ink = (color = MID, opacity = 1) => new THREE.MeshBasicMaterial({ color, toneMapped: false, transparent: opacity < 1, opacity, depthWrite: opacity >= 1 });
-  const cPale = new THREE.Color('#e9eff9'), cBlue = new THREE.Color(BLUE), cOff = new THREE.Color('#e4e9f1');
+  const cPale = new THREE.Color(pick('#e9eff9', '#c5d2ea')), cBlue = new THREE.Color(BLUE), cOff = new THREE.Color(pick('#e4e9f1', '#4d6088'));
   const lit = () => new THREE.MeshStandardMaterial({ color: cPale.clone(), roughness: 0.55 });
 
   const G = {
@@ -136,7 +140,7 @@ function start() {
   const E2 = new THREE.Vector3(0, 0.8, 0).addScaledVector(FWD, -0.6).normalize(), MAPY = 2.5;
   const mapPt = (a, b) => new THREE.Vector3(S.talk.x, MAPY, S.talk.z).addScaledVector(SIDE, a).addScaledVector(E2, b);
   const mapQ = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(SIDE, E2, new THREE.Vector3().crossVectors(SIDE, E2)));
-  const GROUPS = [{ n: 13, c: BLUE, a: -0.95, b: 0.3, r: 1.28 }, { n: 10, c: MID, a: 0.8, b: 0.65, r: 1.1 }, { n: 8, c: SKY, a: 0.05, b: -0.8, r: 0.96 }, { n: 5, c: '#93a3bf', a: 1.7, b: -0.65, r: 0.72 }], ND = 36;
+  const GROUPS = [{ n: 13, c: BLUE, a: -0.95, b: 0.3, r: 1.28 }, { n: 10, c: MID, a: 0.8, b: 0.65, r: 1.1 }, { n: 8, c: SKY, a: 0.05, b: -0.8, r: 0.96 }, { n: 5, c: pick('#93a3bf', '#6c82ab'), a: 1.7, b: -0.65, r: 0.72 }], ND = 36;
   const jobDots = new THREE.InstancedMesh(new THREE.SphereGeometry(0.08, 14, 10), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }), ND); jobDots.frustumCulled = false; scene.add(jobDots);
   const jobRings = GROUPS.map(g => { const m = new THREE.Mesh(new THREE.TorusGeometry(g.r, 0.011, 6, 96), ink(g.c)); m.position.copy(mapPt(g.a, g.b)); m.quaternion.copy(mapQ); m.visible = false; scene.add(m); return m; });
   const slots = GROUPS.flatMap((g, gi) => Array.from({ length: g.n }, (_, j) => ({ gi, j }))).map(v => [rnd(), v]).sort((p, q) => p[0] - q[0]).map(v => v[1]);
@@ -206,7 +210,7 @@ function start() {
   const mindPts = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 14, 10), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }), mpts.length);
   mpts.forEach((v, i) => { const r = i < NOUT ? 0.095 : 0.13; mindPts.setMatrixAt(i, tmpM.makeScale(r, r, r).setPosition(v.x, v.y, v.z)); mindPts.setColorAt(i, i < NOUT ? cMid : cBlue); });
   mindPts.castShadow = true; mind.add(mindPts);
-  const mindCore = new THREE.Mesh(new THREE.SphereGeometry(0.6, 32, 24), ink(BLUE)), mindHalo = new THREE.Mesh(new THREE.SphereGeometry(1.25, 32, 24), ink(SKY, 0.24)), mindAura = new THREE.Mesh(new THREE.SphereGeometry(MR * 1.05, 48, 32), ink('#cfe0f5', 0.1));
+  const mindCore = new THREE.Mesh(new THREE.SphereGeometry(0.6, 32, 24), ink(BLUE)), mindHalo = new THREE.Mesh(new THREE.SphereGeometry(1.25, 32, 24), ink(SKY, 0.24)), mindAura = new THREE.Mesh(new THREE.SphereGeometry(MR * 1.05, 48, 32), ink(pick('#cfe0f5', '#2c4f8f'), 0.1));
   mind.add(mindAura, mindHalo, mindCore); mindPts.material.transparent = mindCore.material.transparent = true;
   put('cyl', C.x, 0, C.z, 7.4, 0.08, 7.4);
   const mindRing = new THREE.Mesh(new THREE.RingGeometry(4.4, 4.48, 96), ink(SKY, 0.9)); mindRing.rotation.x = -Math.PI / 2; mindRing.position.set(C.x, 0.1, C.z); scene.add(mindRing);
@@ -229,7 +233,7 @@ function start() {
     dots.instanceMatrix.needsUpdate = true; }
   updateDots([0, 0, 0, 0]);
 
-  bake('block', mBuild); bake('box', mSoft); bake('prism', mSoft); bake('vault', mBuild); bake('cyl', mBuild); bake('ball', mSoft); bake('fig', mFig); bake('wall', mBuild); bake('win', new THREE.MeshStandardMaterial({ color: '#a9bfdc', roughness: 0.5 }));
+  bake('block', mBuild); bake('box', mSoft); bake('prism', mSoft); bake('vault', mBuild); bake('cyl', mBuild); bake('ball', mSoft); bake('fig', mFig); bake('wall', mBuild); bake('win', new THREE.MeshStandardMaterial({ color: pick('#a9bfdc', '#41639f'), roughness: 0.5 }));
 
   /* ---------- labels that follow points in the scene ---------- */
   const stage = document.querySelector('.stage'), tags = [], v3 = new THREE.Vector3();
@@ -416,13 +420,15 @@ function step(down, pace) {
   const top0 = j.getBoundingClientRect().top + scrollY, run = j.offsetHeight - innerHeight, stops = [];
   if (slot) { const bar = slot.getBoundingClientRect().height + parseFloat(getComputedStyle(slot).top);   // phones: bring each panel up under the pinned scene
     j.querySelectorAll('.panel').forEach((el, i) => stops.push(i ? el.getBoundingClientRect().top + scrollY - bar - 20 : top0 - parseFloat(getComputedStyle(slot).top) + 1)); }
-  else j.querySelectorAll('.panel[data-at]').forEach(el => stops.push(top0 + clamp((Number(el.dataset.at) - 0.004 - P0) / (1 - P0)) * run));   // each stop is where that step has finished playing
+  const quick = new Map();                                                   // stops that ask for a shorter glide
+  if (!slot) j.querySelectorAll('.panel[data-at]').forEach(el => { const v = top0 + clamp((Number(el.dataset.at) - 0.004 - P0) / (1 - P0)) * run; stops.push(v); if (el.dataset.pace) quick.set(v, Number(el.dataset.pace)); });   // each stop is where that step has finished playing
   document.querySelectorAll('.content .sec').forEach(s => stops.push(s.getBoundingClientRect().top + scrollY));
   const max = document.documentElement.scrollHeight - innerHeight; stops.push(max);
   stops.sort((a, b) => a - b);
   const y = smooth && smooth.isScrolling === 'smooth' ? smooth.targetScroll : gliding ? step.to : scrollY;   // mid-glide, step on from where it is heading
   const to = down ? stops.find(v => v > y + 8) : [...stops].reverse().find(v => v < y - 8);
   if (to == null) return true;
+  if (down && quick.has(to)) pace = Math.min(pace, quick.get(to));
   const top = step.to = Math.min(Math.round(to), max), inside = !slot && top < top0 + run + 4 && top > top0 + 4 && y > top0 - 4;   // a move from one step of the walkthrough to the next
   if (smooth) smooth.scrollTo(top, inside ? { duration: pace, easing: steady } : { duration: 0.9 });
   else glide(top, inside ? pace : 0.9);
