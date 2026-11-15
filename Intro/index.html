@@ -83,6 +83,9 @@
   .turn{margin-top:64px;display:grid;grid-template-columns:1.6fr 1fr;gap:20px 64px;align-items:end}
   .turn p{font-size:clamp(22px,2.3vw,30px);font-weight:600;letter-spacing:-.025em;line-height:1.25;color:var(--white);max-width:26em}
   .turn .tlink{justify-self:end}
+  .bridge{padding:clamp(96px,16vh,168px) 0;text-align:center}
+  .sec.bridge h2{margin:0 auto;max-width:19ch;font-size:clamp(34px,5vw,68px)}
+  .bridge h2 em{font-style:normal;color:var(--blue)}
   .fine{margin-top:36px;font:400 12px/1.5 var(--mono);color:var(--muted)}
 
   /* ---------- the same year again: ordinary text by default (no WebGL, reduced motion) ---------- */
@@ -178,6 +181,8 @@
     .hero{min-height:0;padding:104px 0 64px}
     .hero-sub{font-size:18px}
     .sec{padding:80px 0}
+    .bridge{padding:88px 0;text-align:left}
+    .sec.bridge h2{margin:0}
     .year{margin-top:44px;grid-template-columns:1fr;border-top:0;border-left:1px solid var(--line-2);margin-left:4px}
     .year li{padding:0 0 32px 24px}
     .year li:last-child{padding-bottom:0}
@@ -244,6 +249,12 @@
           <a class="tlink" href="#again"><span>Now run the same year again</span><span aria-hidden="true">↓</span></a>
         </div>
         <p class="fine rv">An example, built from a pattern common in software companies. It describes no particular client.</p>
+      </div>
+    </section>
+
+    <section class="sec bridge" aria-labelledby="bridge-h">
+      <div class="wrap">
+        <h2 id="bridge-h" class="rv">Noetic Mind will show you what your customers <em>need you to build.</em></h2>
       </div>
     </section>
   </div>
@@ -347,6 +358,6 @@
 })();
 </script>
 <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js" defer></script>
-<script type="module" src="world.js?v=27"></script>
+<script type="module" src="world.js?v=28"></script>
 </body>
 </html>
