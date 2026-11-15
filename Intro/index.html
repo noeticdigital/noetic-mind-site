@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#f7f9fd" />
+<title>Noetic Mind · Discover what matters. Then build it.</title>
+<meta name="description" content="What if you could learn what matters before you committed the team and the money? That's the idea behind Noetic Mind." />
+<!--
+  NOETIC MIND / V25: George's copy of 15 November 2026, word for word, as a single column to read.
+  No sections, headings or lists, and no 3D scene. The only motion is each paragraph easing in as it is
+  reached, and that is switched on only where the browser is drawing frames and motion is welcome.
+-->
+<link rel="icon" type="image/svg+xml" href="../noetic-logo.svg" />
+<link rel="preconnect" href="https://fonts.bunny.net" />
+<link href="https://fonts.bunny.net/css?family=inter:400,500,600,700" rel="stylesheet" />
+<style>
+  :root{
+    --page:#f7f9fd; --navy:#0a1a38; --blue:#184c84; --text:#27395a; --quiet:#5b6b85; --line:rgba(24,76,132,.16);
+    --f:'Inter',system-ui,sans-serif; --ease:cubic-bezier(.2,.7,.2,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:var(--f);background:linear-gradient(180deg,#ffffff 0,#f5f8fd 520px,var(--page) 100%);color:var(--text);
+    font-size:22px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:clip}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--blue);outline-offset:4px;border-radius:8px}
+
+  .top{max-width:1180px;margin:0 auto;padding:28px 32px 0}
+  .brand{display:inline-flex;align-items:center;gap:11px;min-height:44px;font-weight:600;font-size:17px;letter-spacing:-.01em;color:var(--navy);text-decoration:none}
+  .brand img{width:30px;height:30px;border-radius:8px;display:block}
+
+  /* one column, set a little left of centre on wide screens so it reads as a letter, not a poster */
+  .read{max-width:1180px;margin:0 auto;padding:clamp(72px,13vh,150px) 32px 0}
+  .read > *{max-width:31em}
+  p{margin-top:1.05em}
+  .lede{margin-top:0;max-width:19em;font-size:clamp(30px,4.3vw,54px);line-height:1.1;font-weight:600;letter-spacing:-.04em;color:var(--navy)}
+  .lede + .lede{margin-top:.55em;color:var(--blue)}
+  .after-lede{margin-top:clamp(56px,9vh,96px)}
+  .pause{margin-top:clamp(48px,8vh,84px)}
+  .weight{font-size:clamp(26px,3vw,36px);line-height:1.2;font-weight:600;letter-spacing:-.03em;color:var(--navy)}
+  .name{font-weight:600;color:var(--navy)}
+  .example{margin-top:1.4em;padding:4px 0 4px clamp(20px,3vw,32px);box-shadow:inset 3px 0 0 var(--blue)}
+  .example p:first-child{margin-top:0}
+  .example p:last-child{font-weight:600;color:var(--navy)}
+  .idea{margin-top:.5em;max-width:14em;font-size:clamp(38px,6.4vw,84px);line-height:1;font-weight:600;letter-spacing:-.045em;color:var(--navy)}
+  .idea span{display:block}
+  .idea span + span{color:var(--blue)}
+
+  .ask{margin-top:clamp(72px,12vh,128px);padding:clamp(40px,7vh,64px) 0 clamp(72px,12vh,120px);border-top:1px solid var(--line);max-width:none;
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px 40px}
+  .ask p{margin:0;font-size:clamp(24px,2.6vw,32px);line-height:1.2;font-weight:600;letter-spacing:-.03em;color:var(--navy)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 30px;border-radius:999px;background:var(--navy);color:#fff;
+    font:600 17px var(--f);letter-spacing:-.005em;text-decoration:none;transition:background-color .2s var(--ease),transform .2s var(--ease)}
+  .btn:hover{background:var(--blue);transform:translateY(-1px)}
+
+  .foot{max-width:1180px;margin:0 auto;padding:0 32px 36px;font-size:14px;color:var(--quiet)}
+
+  /* paragraphs ease in as they are reached; without this class everything is simply there */
+  .anim .rv{opacity:0;transform:translateY(14px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+  .anim .rv.in{opacity:1;transform:none}
+
+  @media (max-width:720px){
+    body{font-size:19px}
+    .top{padding:20px 22px 0}
+    .read{padding-left:22px;padding-right:22px}
+    .foot{padding:0 22px 28px}
+    .ask{flex-direction:column;align-items:flex-start}
+    .btn{width:100%}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="#top" aria-label="Noetic Mind"><img src="../noetic-logo.svg" alt="" width="30" height="30" />Noetic Mind</a>
+</header>
+
+<main class="read" id="top">
+  <p class="lede rv">You've got good engineers. You've got great technology. You can build things today that were impossible five years ago.</p>
+  <p class="lede rv">And you can spend an entire year building something nobody cares about.</p>
+
+  <p class="after-lede rv">It works beautifully. It ships on time. Everybody applauds the demonstration.</p>
+  <p class="rv">Then customers go back to doing what they were doing before.</p>
+  <p class="rv">Revenue doesn't move. And someone asks why you built it.</p>
+  <p class="weight rv">That's an expensive way to learn.</p>
+
+  <p class="pause rv">So Noetic asked a simple question: what if you could learn what matters before you committed the team and the money?</p>
+  <p class="name rv">That's the idea behind Noetic Mind.</p>
+
+  <p class="pause rv">Here's an example.</p>
+  <div class="example">
+    <p class="rv">You think your customers need a faster way to write reports. So you're going to build an AI report writer.</p>
+    <p class="rv">But you sit down with them. You watch how they work. And you discover that writing the report is easy. What takes hours is checking whether the numbers are right.</p>
+    <p class="rv">Now you have a completely different problem to solve.</p>
+  </div>
+
+  <p class="pause rv">Noetic Mind helps your team make that discovery. It keeps three things side by side: what you assumed, what customers showed you, and what happened when you tried a fix.</p>
+  <p class="rv">You try something small. You see whether it helps. Then you decide what deserves to be built.</p>
+  <p class="rv">And everything you learn stays with your team, so the next decision starts from a better place.</p>
+
+  <p class="pause rv">Software to guide the work. Training so your people can do it. Expert help along the way.</p>
+  <p class="rv">All built around one idea:</p>
+  <p class="idea rv"><span>Discover what matters.</span> <span>Then build it.</span></p>
+
+  <div class="ask rv">
+    <p>See it working on a real product.</p>
+    <a class="btn" href="mailto:hello@noetic.digital?subject=Noetic%20Mind%20walkthrough">Book a 30-minute walkthrough</a>
+  </div>
+</main>
+
+<footer class="foot">© Noetic Digital</footer>
+
+<script>
+(function(){
+  var root = document.documentElement, rv = [].slice.call(document.querySelectorAll('.rv'));
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  // The easing-in is switched on only once the browser has shown it is drawing frames. A viewer that is not
+  // (a preview pane, a throttled embed) would otherwise leave the words stuck half faded.
+  var seen = 0;
+  requestAnimationFrame(function probe(){
+    if (++seen < 3) { requestAnimationFrame(probe); return; }
+    var h = innerHeight;
+    rv.forEach(function(el){ if (el.getBoundingClientRect().top < h * 0.9) el.classList.add('in'); });   // what is already on screen stays put
+    root.classList.add('anim');
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {rootMargin:'0px 0px -8% 0px'});
+    rv.forEach(function(el){ if (!el.classList.contains('in')) io.observe(el); });
+    // If frames stop arriving later, the easing is dropped and every paragraph is shown at once.
+    var beat = performance.now();
+    requestAnimationFrame(function tick(t){ beat = performance.now(); requestAnimationFrame(tick); });
+    setInterval(function(){ if (!document.hidden && performance.now() - beat > 700) root.classList.remove('anim'); else if (!document.hidden) root.classList.add('anim'); }, 400);
+  });
+})();
+</script>
+</body>
+</html>
