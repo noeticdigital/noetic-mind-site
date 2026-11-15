@@ -112,7 +112,8 @@
   .year li:last-child::before{background:var(--ink);width:13px;height:13px;top:-7px}
   .year .gap{border-top:1px dashed var(--line-2);padding-right:20px}
   .year .gap::before{display:none}
-  .year .gap span{display:block;font-size:15px;color:var(--muted)}
+  .year .gap span{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:500;color:var(--muted)}
+  .year .gap svg{flex:none;width:18px;height:18px}
   .turn{margin-top:64px}
   .turn p{font-size:clamp(22px,2.3vw,30px);font-weight:600;letter-spacing:-.025em;line-height:1.25;color:var(--white);max-width:26em}
   .turn .tlink{justify-self:end}
@@ -176,9 +177,17 @@
 
   /* ---------- what you are buying, and the close ---------- */
   .buy{margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-  .buy li{padding:30px 30px 34px;border-radius:20px;background:var(--raise);box-shadow:inset 0 0 0 1px var(--line),0 20px 50px var(--shade)}
+  .buy > li{padding:30px 30px 34px;border-radius:20px;background:var(--raise);box-shadow:inset 0 0 0 1px var(--line),0 20px 50px var(--shade)}
   .buy h3{font-size:24px;font-weight:600;letter-spacing:-.03em;line-height:1.15;color:var(--white);min-height:2.3em}
-  .buy h3 + p{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-size:16px;line-height:1.55;color:var(--text)}
+  .buy h3 + p{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-size:17px;line-height:1.5;font-weight:500;color:var(--white)}
+  .pts{margin-top:14px}
+  .pts li{position:relative;padding:9px 0 9px 20px;font-size:15.5px;line-height:1.5;color:var(--text)}
+  .pts li + li{border-top:1px solid var(--line)}
+  .pts li::before{content:"";position:absolute;left:0;top:18px;width:9px;height:2px;border-radius:2px;background:var(--blue)}
+  .why{margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);gap:0 48px}
+  .why li{padding-top:24px;border-top:1px solid var(--line-2)}
+  .why h3{font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.2;color:var(--white)}
+  .why p{margin-top:8px;font-size:16.5px;line-height:1.55;color:var(--text)}
   .buy-lead{margin-top:12px;padding-top:14px;border-top:1px solid var(--line);font-size:18px;line-height:1.4;font-weight:500;color:var(--white)}
   .buy-lead + p{margin-top:8px;font-size:15.5px;line-height:1.55;color:var(--muted)}
   .close{text-align:center}
@@ -196,6 +205,7 @@
 
   @media (min-width:861px) and (max-width:1040px){
     .buy{grid-template-columns:1fr}
+    .why{grid-template-columns:1fr;gap:28px}
     .year{grid-template-columns:1fr 1fr 1fr}
     .year li{margin-top:36px}
     .year li:first-child{grid-column:1 / span 1}
@@ -232,7 +242,8 @@
     .p-step{padding-left:56px}
     .p-step::before{left:20px}
     .buy{grid-template-columns:1fr;margin-top:40px;gap:14px}
-    .buy li{padding:24px 22px 26px}
+    .why{grid-template-columns:1fr;margin-top:40px;gap:28px}
+    .buy > li{padding:24px 22px 26px}
     .buy h3{min-height:0}
     .close{text-align:left}
     .close h2,.close .lead{margin-left:0}
@@ -254,6 +265,7 @@
       <a href="#story">How it’s done today</a>
       <a href="#again">The same year, one more time</a>
       <a href="#what">What you get</a>
+      <a href="#why">Why not once?</a>
     </nav>
     <button class="theme" type="button" aria-label="Switch between light and dark">
       <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg>
@@ -281,7 +293,7 @@
         <h2 id="story-h" class="rv">How it’s done today</h2>
         <ol class="year">
           <li class="rv"><p class="when">Month 1</p><h3>The plan</h3><p>Competitors are shipping AI features and your board wants one. You have an idea: an AI report writer, so customers can write reports faster.</p></li>
-          <li class="gap rv" aria-label="Nine months pass"><span>Nine months of building</span></li>
+          <li class="gap rv"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>9 months of building</span></li>
           <li class="rv"><p class="when">Month 10</p><h3>The launch</h3><p>It works beautifully. It ships on time. Everybody applauds the demonstration.</p></li>
           <li class="rv"><p class="when">Month 11</p><h3>The numbers</h3><p>Customers try it. Then they go back to doing what they were doing before. Revenue doesn’t move.</p></li>
           <li class="rv"><p class="when">Month 12</p><h3>The question</h3><p>Someone asks why you built it. You can explain the thinking, but not why customers would pay.</p></li>
@@ -312,32 +324,32 @@
       <div class="world-slot" aria-hidden="true"></div>
 
       <div class="panel p-step p-mind" data-pace="3.5" data-at="0.2" data-range="0.17 0.182 0.228 0.24">
-        <h2>You write down what you think</h2>
+        <h2>Write down what you think</h2>
         <p class="body">Everyone says what they believe customers need. Noetic Mind records each belief as an assumption to test. <span class="eg"><b>In this example</b>You think customers need a faster way to write reports.</span></p>
       </div>
 
       <div class="panel p-step" data-n="1" data-at="0.356" data-range="0.262 0.276 0.356 0.370">
-        <h2>You sit down with customers</h2>
+        <h2>Sit down with customers</h2>
         <p class="body">You’re listening for why people buy: what they need done, how they want to feel, and how they want to be seen. Functional, emotional and social. So you ask what they did, and what held them back. <span class="eg"><b>In this example</b>Writing the report is easy. Checking the numbers takes hours, and nobody wants to send the board a wrong figure.</span></p>
       </div>
 
       <div class="panel p-step" data-n="2" data-at="0.486" data-range="0.392 0.406 0.486 0.500">
-        <h2>You pick one number</h2>
+        <h2>Pick one number</h2>
         <p class="body">Choose the number the business most needs to move. Every idea is judged against that number: where it stands today, and where it needs to be. <span class="eg"><b>In this example</b>Revenue.</span></p>
       </div>
 
       <div class="panel p-step" data-n="3" data-at="0.616" data-range="0.522 0.536 0.616 0.630">
-        <h2>You choose the problem worth solving</h2>
+        <h2>Choose the problem worth solving</h2>
         <p class="body">Customers describe several struggles. You choose the one that matters most to them and to your number. <span class="eg"><b>In this example</b>Checking the numbers. Now you have a completely different problem to solve.</span></p>
       </div>
 
       <div class="panel p-step" data-n="4" data-at="0.746" data-range="0.652 0.666 0.746 0.760">
-        <h2>You work back to something you can change</h2>
+        <h2>Work back to something you can change</h2>
         <p class="body">Start at the number and ask what would have to happen to move that number. Keep asking until you reach something you can change now. <span class="eg"><b>In this example</b>Show customers where each figure came from.</span></p>
       </div>
 
       <div class="panel p-step" data-n="5" data-at="0.876" data-range="0.782 0.796 0.876 0.890">
-        <h2>You test before you commit</h2>
+        <h2>Test before you commit</h2>
         <p class="body">A few small versions go in front of customers. You see which one helps. Then you decide what deserves to be built. <span class="eg"><b>In this example</b>Three ways of showing where a figure came from, tried on real reports.</span></p>
       </div>
 
@@ -352,11 +364,43 @@
     <section class="sec" id="what" aria-labelledby="what-h">
       <div class="wrap">
         <h2 id="what-h" class="rv">What you get</h2>
-        <p class="lead rv">A repeatable way to turn customer understanding into better business decisions.</p>
+        <p class="lead rv">A repeatable way to turn customer understanding into better business decisions, set up inside your team.</p>
         <ul class="buy">
-          <li class="rv"><h3>Software to guide the work</h3><p>Noetic Mind carries the whole method: what to do next, what you assumed beside what customers showed you, and what to build, test or drop. Your team makes every decision.</p></li>
-          <li class="rv"><h3>Training so your people can do it</h3><p>Noetic trains your team to interview customers and run each cycle themselves. The skill stays with you.</p></li>
-          <li class="rv"><h3>Expert help along the way</h3><p>George Reed, founder of Noetic, works with your team directly. He can advise while they run a cycle, or run the cycle alongside them.</p></li>
+          <li class="rv"><h3>Software to guide the work</h3>
+            <p>Noetic Mind holds the whole method, so the work stays on track when people are busy.</p>
+            <ul class="pts">
+              <li>Guides every step, from the first assumption to the final test.</li>
+              <li>Keeps every interview, assumption and test in one place, with the evidence behind each decision.</li>
+              <li>Shows how firm each belief is: assumed, emerging, validated or disproven.</li>
+              <li>Points to what to build, what to test first and what to drop. Your team makes every decision.</li>
+            </ul></li>
+          <li class="rv"><h3>Training so your people can do it</h3>
+            <p>Your team learns to do this without outside help. The skill stays with you.</p>
+            <ul class="pts">
+              <li>How to interview customers about what they actually did.</li>
+              <li>How to hear the functional, emotional and social reasons behind a purchase.</li>
+              <li>How to turn what customers say into a tested decision.</li>
+              <li>Practised on your own product, with your own customers.</li>
+            </ul></li>
+          <li class="rv"><h3>Expert help along the way</h3>
+            <p>George Reed, founder of Noetic, works with your team directly.</p>
+            <ul class="pts">
+              <li>Advises while your team runs each cycle, or runs the cycle alongside them.</li>
+              <li>Reviews the interviews and helps with the hard calls.</li>
+              <li>Keeps the work pointed at the number the business needs to move.</li>
+            </ul></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="sec" id="why" aria-labelledby="why-h">
+      <div class="wrap">
+        <h2 id="why-h" class="rv">Why not do this once?</h2>
+        <p class="lead rv">A one-off project answers one question. Your team faces a new one every quarter.</p>
+        <ul class="why">
+          <li class="rv"><h3>Customers keep changing</h3><p>What mattered to customers last year may not matter now. A report starts going out of date the day it is delivered.</p></li>
+          <li class="rv"><h3>There is always a next decision</h3><p>After this feature comes the next one. Each deserves the same evidence before you commit people, time and money.</p></li>
+          <li class="rv"><h3>Every cycle makes the next one easier</h3><p>Each cycle starts from everything the last one learnt, so your team reaches an answer faster and with more confidence.</p></li>
         </ul>
       </div>
     </section>
@@ -402,6 +446,6 @@ document.querySelector('.theme').addEventListener('click', function(){
 })();
 </script>
 <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js" defer></script>
-<script type="module" src="world.js?v=30"></script>
+<script type="module" src="world.js?v=31"></script>
 </body>
 </html>
