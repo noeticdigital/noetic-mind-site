@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex" />
-<meta name="theme-color" content="#f7f9fd" />
+<meta name="theme-color" content="#0a1a38" />
 <meta name="color-scheme" content="light dark" />
 <title>Noetic Mind · Discover what matters. Then build it.</title>
 <meta name="description" content="You can spend a year building something nobody cares about. The challenge is figuring out what matters to customers before you commit people, time and money." />
@@ -24,10 +24,10 @@
   top of the screen and the text scrolls past it in the ordinary way. See world.js.
 -->
 <script>
-  // light or dark: the reader's own choice if they have made one, otherwise what their device asks for
+  // light or dark: the reader's own choice if they have made one, otherwise dark
   (function(){ var r = document.documentElement, t = null; r.classList.add('js');
     try { t = localStorage.getItem('nm-theme'); } catch (e) {}
-    if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    if (t !== 'light' && t !== 'dark') t = 'dark';
     r.dataset.theme = t; })();
 </script>
 <link rel="icon" type="image/svg+xml" href="../noetic-logo.svg" />
@@ -186,7 +186,6 @@
   .pts li{position:relative;padding:9px 0 9px 20px;font-size:15.5px;line-height:1.5;color:var(--text)}
   .pts li + li{border-top:1px solid var(--line)}
   .pts li::before{content:"";position:absolute;left:0;top:18px;width:9px;height:2px;border-radius:2px;background:var(--blue)}
-  .path{margin-top:48px;max-width:46em;padding:20px 24px;border-radius:14px;background:var(--raise);box-shadow:inset 0 0 0 1px var(--line);font-size:17px;line-height:1.55;font-weight:500;color:var(--white)}
   .why{margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);gap:0 48px}
   .why li{padding-top:24px;border-top:1px solid var(--line-2)}
   .why h3{font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.2;color:var(--white)}
@@ -368,11 +367,11 @@
     <section class="sec" id="ai" aria-labelledby="ai-h">
       <div class="wrap">
         <h2 id="ai-h" class="rv">Why not just use AI?</h2>
-        <p class="lead rv">AI can tell you what has already been said. It can’t tell you why your customers act, because nobody has written that down yet.</p>
+        <p class="lead rv">AI knows what people have already said. It doesn’t know why your customers buy. Nobody has written that down yet.</p>
         <ul class="why">
-          <li class="rv"><h3>Someone has to ask</h3><p>The reasons people buy come out in conversation, with someone trained to listen for them. Noetic trains your people to be that someone.</p></li>
-          <li class="rv"><h3>A summary is not a decision</h3><p>Give AI a hundred interviews and you get a confident summary. Noetic Mind turns them into evidence, graded and tested against the number your business needs to move.</p></li>
-          <li class="rv"><h3>Someone has to stand behind the call</h3><p>Noetic Mind proposes. Your team decides, with researchers alongside who have spent four decades between them doing exactly this.</p></li>
+          <li class="rv"><h3>Someone has to ask</h3><p>The real reasons come out when you sit down with customers and listen. Noetic trains your people to do that.</p></li>
+          <li class="rv"><h3>A summary isn’t a decision</h3><p>AI can summarise a hundred interviews. Noetic Mind tells you what they mean for what you build next. Then you test it.</p></li>
+          <li class="rv"><h3>People make the call</h3><p>Noetic Mind suggests. Your team decides. Noetic has been helping teams make these calls for over a decade.</p></li>
         </ul>
       </div>
     </section>
@@ -380,10 +379,9 @@
     <section class="sec" id="what" aria-labelledby="what-h">
       <div class="wrap">
         <h2 id="what-h" class="rv">What you get</h2>
-        <p class="lead rv">Noetic brings together a structured method, live market listening and researchers who work inside your team. Together they turn noise into a clear signal about what to build.</p>
         <ul class="buy">
           <li class="rv"><h3>Software to guide the work</h3>
-            <p>Noetic Mind holds the whole method, so the work stays on track when people are busy.</p>
+            <p>A structured method and live market listening in one place. Noetic Mind turns the noise into a clear signal, and keeps the work on track when people are busy.</p>
             <ul class="pts">
               <li>Guides every step, from the first assumption to the final test.</li>
               <li>Keeps every interview, assumption and test in one place, with the evidence behind each decision.</li>
@@ -400,7 +398,7 @@
               <li>Practised on your own product, with your own customers.</li>
             </ul></li>
           <li class="rv"><h3>Expert help along the way</h3>
-            <p>George Reed, founder of Noetic, works with your team directly, backed by four decades of combined market research experience.</p>
+            <p>Researchers who work inside your team. George Reed, founder of Noetic, brings over a decade of market research experience.</p>
             <ul class="pts">
               <li>Advises while your team runs each cycle, or runs the cycle alongside them.</li>
               <li>Reviews the interviews and helps with the hard calls.</li>
@@ -413,13 +411,12 @@
     <section class="sec" id="why" aria-labelledby="why-h">
       <div class="wrap">
         <h2 id="why-h" class="rv">Why continuous discovery?</h2>
-        <p class="lead rv">A one-off project answers one question. Your team faces a new one every quarter.</p>
+        <p class="lead rv">A one-off project answers one question. Your team faces a new one every quarter and the market is always evolving.</p>
         <ul class="why">
           <li class="rv"><h3>Customers keep changing</h3><p>What mattered to customers last year may not matter now. A report starts going out of date the day it is delivered. Noetic Mind keeps listening, so you see the change as it happens.</p></li>
           <li class="rv"><h3>There is always a next decision</h3><p>After this feature comes the next one. Each deserves the same evidence before you commit people, time and money.</p></li>
           <li class="rv"><h3>Every cycle makes the next one more valuable</h3><p>Each cycle builds on everything the last one learnt, so every decision rests on more evidence than the one before.</p></li>
         </ul>
-        <p class="path rv">Most teams start with Noetic running each cycle alongside them. Within six months to a year, they run it themselves, with Noetic Mind and Noetic’s support behind them.</p>
       </div>
     </section>
 
@@ -464,6 +461,6 @@ document.querySelector('.theme').addEventListener('click', function(){
 })();
 </script>
 <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js" defer></script>
-<script type="module" src="world.js?v=33"></script>
+<script type="module" src="world.js?v=34"></script>
 </body>
 </html>
