@@ -135,6 +135,7 @@
     font:500 12px var(--mono);color:var(--on-ink);background:var(--ink)}
   .p-step.p-mind::before{content:"";background:radial-gradient(circle,var(--blue) 0 30%,transparent 32%),var(--navy-2);box-shadow:inset 0 0 0 1px var(--line)}
   .eg{display:block;margin-top:12px;padding:10px 14px 11px;border-radius:10px;background:var(--eg);box-shadow:inset 3px 0 0 var(--blue);color:var(--blue);font-weight:500}
+  .eg em{font-style:normal;font-weight:600;color:var(--white)}
   .eg b{display:block;margin-bottom:3px;font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;opacity:.85}
   .found{display:block;margin-top:10px;padding-left:14px;box-shadow:inset 3px 0 0 var(--blue);color:var(--white);font-weight:500}
   .tag3d,.world-slot{display:none}
@@ -328,32 +329,32 @@
 
       <div class="panel p-step p-mind" data-pace="1.2" data-at="0.2" data-range="0.17 0.182 0.228 0.24">
         <h2>Write down what you think</h2>
-        <p class="body">Everyone says what they believe customers need. Noetic Mind records each belief as an assumption to test. <span class="eg"><b>In this example</b>You think customers need a faster way to write reports.</span></p>
+        <p class="body">Everyone says what they believe customers need. Noetic Mind records each belief as an assumption to test. <span class="eg"><b>In this example</b><em>The assumption:</em> customers need a faster way to write reports.</span></p>
       </div>
 
       <div class="panel p-step" data-n="1" data-at="0.356" data-range="0.262 0.276 0.356 0.370">
         <h2>Sit down with customers</h2>
-        <p class="body">You’re listening for why people buy: what they need done, how they want to feel, and how they want to be seen. Functional, emotional and social. So you ask what they did, and what held them back. <span class="eg"><b>In this example</b>Writing the report is easy. Checking the numbers takes hours, and nobody wants to send the board a wrong figure.</span></p>
+        <p class="body">You’re listening for why people buy: what they need done, how they want to feel, and how they want to be seen. Functional, emotional and social. So you ask what they did, and what held them back. <span class="eg"><b>In this example</b><em>What customers tell you:</em> writing the report is easy. Checking the numbers takes hours, and nobody wants to send the board a wrong figure.</span></p>
       </div>
 
       <div class="panel p-step" data-n="2" data-at="0.486" data-range="0.392 0.406 0.486 0.500">
         <h2>Pick one number</h2>
-        <p class="body">Choose the number the business most needs to move. Every idea is judged against that number: where it stands today, and where it needs to be. <span class="eg"><b>In this example</b>Revenue.</span></p>
+        <p class="body">Choose the number the business most needs to move. Every idea is judged against that number: where it stands today, and where it needs to be. <span class="eg"><b>In this example</b><em>The number:</em> revenue.</span></p>
       </div>
 
       <div class="panel p-step" data-n="3" data-at="0.616" data-range="0.522 0.536 0.616 0.630">
         <h2>Choose the problem worth solving</h2>
-        <p class="body">Customers describe several struggles. You choose the one that matters most to them and to your number. <span class="eg"><b>In this example</b>Checking the numbers. Now you have a completely different problem to solve.</span></p>
+        <p class="body">Customers describe several struggles. You choose the one that matters most to them and to your number. <span class="eg"><b>In this example</b><em>The problem you choose:</em> customers can’t trust the numbers before they send a report. Not the one you started with.</span></p>
       </div>
 
       <div class="panel p-step" data-n="4" data-at="0.746" data-range="0.652 0.666 0.746 0.760">
         <h2>Work back to something you can change</h2>
-        <p class="body">Start at the number and ask what would have to happen to move that number. Keep asking until you reach something you can change now. <span class="eg"><b>In this example</b>Show customers where each figure came from.</span></p>
+        <p class="body">Start at the number and ask what would have to happen to move that number. Keep asking until you reach something you can change now. <span class="eg"><b>In this example</b><em>What you can change now:</em> show customers where each figure came from.</span></p>
       </div>
 
       <div class="panel p-step" data-n="5" data-at="0.876" data-range="0.782 0.796 0.876 0.890">
         <h2>Test before you commit</h2>
-        <p class="body">A few small versions go in front of customers. You see which one helps. Then you decide what deserves to be built. <span class="eg"><b>In this example</b>Three ways of showing where a figure came from, tried on real reports.</span></p>
+        <p class="body">A few small versions go in front of customers. You see which one helps. Then you decide what deserves to be built. <span class="eg"><b>In this example</b><em>What you test:</em> three ways of showing where a figure came from, each tried on real reports.</span></p>
       </div>
 
       <div class="panel p-step" data-n="↻" data-pace="5" data-at="0.97" data-range="0.95 0.962 2 2">
@@ -461,6 +462,6 @@ document.querySelector('.theme').addEventListener('click', function(){
 })();
 </script>
 <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js" defer></script>
-<script type="module" src="world.js?v=34"></script>
+<script type="module" src="world.js?v=35"></script>
 </body>
 </html>
