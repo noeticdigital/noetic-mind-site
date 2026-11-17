@@ -1,0 +1,5 @@
+{"Comment":"www.noeticdigital.uk to the redirect","Changes":[
+ {"Action":"DELETE","ResourceRecordSet":{"Name":"www.noeticdigital.uk.","Type":"A","TTL":300,"ResourceRecords":[{"Value":"35.71.142.77"}]}},
+ {"Action":"CREATE","ResourceRecordSet":{"Name":"www.noeticdigital.uk.","Type":"A","AliasTarget":{"HostedZoneId":"Z2FDTNDATAQYW2","DNSName":"d364bkqbwxfpw6.cloudfront.net.","EvaluateTargetHealth":false}}},
+ {"Action":"CREATE","ResourceRecordSet":{"Name":"www.noeticdigital.uk.","Type":"AAAA","AliasTarget":{"HostedZoneId":"Z2FDTNDATAQYW2","DNSName":"d364bkqbwxfpw6.cloudfront.net.","EvaluateTargetHealth":false}}},
+ {"Action":"CREATE","ResourceRecordSet":{"Name":"noeticdigital.uk.","Type":"AAAA","AliasTarget":{"HostedZoneId":"Z2FDTNDATAQYW2","DNSName":"d364bkqbwxfpw6.cloudfront.net.","EvaluateTargetHealth":false}}}]}
