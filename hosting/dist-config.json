@@ -1,0 +1,22 @@
+{
+  "CallerReference": "noetic-site-info-1",
+  "Comment": "noeticdigital.info",
+  "Enabled": true,
+  "DefaultRootObject": "index.html",
+  "PriceClass": "PriceClass_All",
+  "HttpVersion": "http2and3",
+  "IsIPV6Enabled": true,
+  "Origins": { "Quantity": 1, "Items": [ {
+    "Id": "s3-site", "DomainName": "noetic-site-noeticdigital-info.s3.us-east-1.amazonaws.com",
+    "OriginAccessControlId": "E1249SAN2MSLDH",
+    "S3OriginConfig": { "OriginAccessIdentity": "" } } ] },
+  "DefaultCacheBehavior": {
+    "TargetOriginId": "s3-site",
+    "ViewerProtocolPolicy": "redirect-to-https",
+    "Compress": true,
+    "AllowedMethods": { "Quantity": 2, "Items": ["GET","HEAD"], "CachedMethods": { "Quantity": 2, "Items": ["GET","HEAD"] } },
+    "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+    "FunctionAssociations": { "Quantity": 1, "Items": [ { "FunctionARN": "arn:aws:cloudfront::682963928636:function/noetic-site-info-edge", "EventType": "viewer-request" } ] }
+  },
+  "CustomErrorResponses": { "Quantity": 1, "Items": [ { "ErrorCode": 403, "ResponsePagePath": "/index.html", "ResponseCode": "404", "ErrorCachingMinTTL": 60 } ] }
+}

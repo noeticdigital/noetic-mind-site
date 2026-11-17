@@ -1,0 +1,1 @@
+E38XVDYUIFRSWJ	dv1bjz27zur86.cloudfront.net	arn:aws:cloudfront::682963928636:distribution/E38XVDYUIFRSWJ

@@ -1,0 +1,124 @@
+{
+ "Comment": "copy of Squarespace records",
+ "Changes": [
+  {
+   "Action": "UPSERT",
+   "ResourceRecordSet": {
+    "Name": "noeticdigital.info.",
+    "Type": "A",
+    "TTL": 3600,
+    "ResourceRecords": [
+     {
+      "Value": "35.71.142.77"
+     },
+     {
+      "Value": "52.223.52.2"
+     }
+    ]
+   }
+  },
+  {
+   "Action": "UPSERT",
+   "ResourceRecordSet": {
+    "Name": "www.noeticdigital.info.",
+    "Type": "CNAME",
+    "TTL": 3600,
+    "ResourceRecords": [
+     {
+      "Value": "sites.framer.app."
+     }
+    ]
+   }
+  },
+  {
+   "Action": "UPSERT",
+   "ResourceRecordSet": {
+    "Name": "noeticdigital.info.",
+    "Type": "MX",
+    "TTL": 3600,
+    "ResourceRecords": [
+     {
+      "Value": "10 alt3.aspmx.l.google.com."
+     },
+     {
+      "Value": "1 aspmx.l.google.com."
+     },
+     {
+      "Value": "5 alt1.aspmx.l.google.com."
+     },
+     {
+      "Value": "10 alt4.aspmx.l.google.com."
+     },
+     {
+      "Value": "5 alt2.aspmx.l.google.com."
+     }
+    ]
+   }
+  },
+  {
+   "Action": "UPSERT",
+   "ResourceRecordSet": {
+    "Name": "noeticdigital.info.",
+    "Type": "TXT",
+    "TTL": 3600,
+    "ResourceRecords": [
+     {
+      "Value": "\"v=spf1 include:_spf.google.com ~all\""
+     }
+    ]
+   }
+  },
+  {
+   "Action": "UPSERT",
+   "ResourceRecordSet": {
+    "Name": "_dmarc.noeticdigital.info.",
+    "Type": "TXT",
+    "TTL": 3600,
+    "ResourceRecords": [
+     {
+      "Value": "\"v=DMARC1; p=none; rua=mailto:george@noeticdigital.info; ruf=mailto:george@noeticdigital.info; fo=1\""
+     }
+    ]
+   }
+  },
+  {
+   "Action": "UPSERT",
+   "ResourceRecordSet": {
+    "Name": "google._domainkey.noeticdigital.info.",
+    "Type": "TXT",
+    "TTL": 3600,
+    "ResourceRecords": [
+     {
+      "Value": "\"v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApHdiVwuEKmVynVSO+CVN6E/b7GTYrhU1CkifM/q1IgjdOppQErmp9a9mM7tbeLKZKgJYPVc7tIuIsNp0yanvspAAcFuDU5C0IWuCVpM7enZ3URmgziaCKK8GvIfffIg6BugUTXNfoLvMe1FdzwnHwKjiMzKuymsXtooq0evOQPqN2c5T1WpPN92rAdiZHiK/5\" \"Wc5TqxTVJcj1jUkcLXRAX1YgA+011/+0G7hz4zbWNla7KBlDl4cP0NFgFJwi9amE1FgBnC5wBpEyDNLw77LWesMRPCouYk4rGOI5yVWvTvQtyx6qipqSahE7lZ8EySS8l1WYRoK6IpIaDvyH24HpwIDAQAB\""
+     }
+    ]
+   }
+  },
+  {
+   "Action": "UPSERT",
+   "ResourceRecordSet": {
+    "Name": "_6f4887a231c420750ac782ce6ca289b8.noeticdigital.info.",
+    "Type": "CNAME",
+    "TTL": 300,
+    "ResourceRecords": [
+     {
+      "Value": "_553d5f8b6b68f23ec565729e58363847.wzccmgtwzk.acm-validations.aws."
+     }
+    ]
+   }
+  },
+  {
+   "Action": "UPSERT",
+   "ResourceRecordSet": {
+    "Name": "_669ea9c4276474a937caa3229a021bae.www.noeticdigital.info.",
+    "Type": "CNAME",
+    "TTL": 300,
+    "ResourceRecords": [
+     {
+      "Value": "_5d00d528fff383c03259d2aee39ee739.wzccmgtwzk.acm-validations.aws."
+     }
+    ]
+   }
+  }
+ ]
+}
