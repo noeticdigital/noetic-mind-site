@@ -369,7 +369,7 @@ function start() {
     mind.rotation.y = time * 0.1; mindLines.geometry.setDrawRange(0, 2 * Math.round(segs.length * (0.32 + 0.136 * know)));
     mindHalo.scale.setScalar(1 + 0.08 * Math.sin(time * 1.6));
     spokes.forEach(({ curve, beads }, i) => { const act = Math.max(fed[i], opening);
-      beads.forEach(({ m, o }) => { if (act < 0.05) { m.visible = false; return; } const ph = (time * 0.2 + o) % 1; m.visible = true; curve.getPointAt(ph, m.position); m.scale.setScalar(act * 1.3 * Math.sqrt(Math.sin(Math.PI * ph))); }); });
+      beads.forEach(({ m, o }) => { if (act < 0.05) { m.visible = false; return; } const ph = ((time * 0.2 + o) % 1 + 1) % 1; m.visible = true; curve.getPointAt(ph, m.position); m.scale.setScalar(act * 1.3 * Math.sqrt(Math.sin(Math.PI * ph))); }); });
 
     tags.forEach(t => { if (t.a < 0.01) { if (t.shown) { t.el.style.opacity = 0; t.shown = false; } return; }
       v3.copy(t.pos).project(camera); if (v3.z > 1) { t.el.style.opacity = 0; t.shown = false; return; }
@@ -390,7 +390,7 @@ function start() {
       if (cur.el !== measure.cur) { measure.cur && measure.cur.classList.remove('on'); cur.el.classList.add('on'); measure.cur = cur.el; }
       pTarget = cur.at; return; }
     const r = journey.getBoundingClientRect(), total = r.height - H; canvas.style.opacity = clamp(1.2 - r.top / H).toFixed(3); pTarget = P0 + (1 - P0) * (total > 0 ? clamp(-r.top / total) : 0); visible = r.bottom > 0; }
-  function tick(now, snap) { const dt = Math.min(snap ? 0.25 : 0.05, (now - last) / 1000); last = now; lastTick = now; time += dt;
+  function tick(now, snap) { const dt = Math.max(0, Math.min(snap ? 0.25 : 0.05, (now - last) / 1000));   // two clocks can disagree by a few ms; never run time backwards last = now; lastTick = now; time += dt;
     measure(); if (snap) p = pTarget; else if (slot) { const d = pTarget - p, sp = Math.max(0.022, Math.abs(d) * 0.3) * dt; p += clamp(d, -sp, sp); }
     else { p += (pTarget - p) * Math.min(1, dt * 6); if (Math.abs(pTarget - p) < 0.0004) p = pTarget; }
     if (window.__p != null) p = window.__p;
